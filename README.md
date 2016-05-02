@@ -24,7 +24,7 @@ Zima 2015/2016:
 * Rozszerzony kurs języka Python
 * Wstęp do topologii algebraicznej
 * Funckje rzeczywiste
-* Matematyka dyskretna (M) (w: Grzegorz Stachowiak, ćw: Krzysztof Nowicki)
+* Matematyka dyskretna (M) 
 * Analiza numeryczna (M) 
 * Kurs języka Java
 * Applied Statistical Methods (wykład po angielsku prowadzony przez prof. Annę Panorską z Univeristy of Nevada)

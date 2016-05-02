@@ -2,15 +2,12 @@
 Napisane przeze mnie programy, zrealizowane projekty, notatki, materiały do nauki ze studiów.
 
 Zima 2014/2015:
+*Algebra I ISIM 
+*Analiza I ISIM 
+*Kurs: Wstęp do programowania w języku C
+*Logika dla informatyków 
 
-Algebra I ISIM 
-
-
-Analiza I ISIM 
-Kurs: Wstęp do programowania w języku C
-Logika dla informatyków 
-
-#Lato 2014/2015:
+Lato 2014/2015:
 
 Programowanie obiektowe (w: Marcin Młotkowski, ćw: Marcin Młotkowski)
 Praktyka zawodowa

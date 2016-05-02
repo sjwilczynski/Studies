@@ -1,0 +1,10 @@
+Stanis³aw Wilczyñski projekt koñcowy 272955 1.02.2015
+niestandardowe biblioteki:
+<windows.h>, <gtk/gtk.h> <cairo.h>
+opis struktury programu w samym kodzie Ÿród³owym
+
+Program nie wymaga wprowadzenia argumentów wywo³ania programu. Po uruchomieniu programu nale¿y wybraæ gracza(A lub B).
+Potem trzeba poczekaæ na uruchomienie programu przez drugiego gracza. Gracz B czeka, a¿ gracz A wybierze ustawienia gry.
+Gracz A musi to zrobiæ(inaczej gracz B nie otrzyma informacji o wybranym boisku). Obs³uga samej gry i jej zasady s¹ opisane
+w instrukcji(w samym programie).
+

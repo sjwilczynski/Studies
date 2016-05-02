@@ -1,0 +1,10 @@
+
+public class Cosinus extends Operator1 {
+
+	@Override
+	public double oblicz() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

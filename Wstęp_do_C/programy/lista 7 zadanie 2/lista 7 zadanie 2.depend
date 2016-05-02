@@ -1,0 +1,19 @@
+# depslib dependency file v1.0
+1417650183 source:d:\studia\wstêp do c\programy\lista 7 zadanie 2\lista.c
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"lista.h"
+	<math.h>
+
+1417650183 d:\studia\wstêp do c\programy\lista 7 zadanie 2\lista.h
+	<stdlib.h>
+	<stdbool.h>
+
+1417650183 source:d:\studia\wstêp do c\programy\lista 7 zadanie 2\main.c
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"lista.h"
+	<math.h>
+

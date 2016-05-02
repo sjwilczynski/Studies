@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1420906802 source:d:\studia\wstêp do c\programy\kolo2\zadanie 2\main.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	<string.h>
+	<math.h>
+

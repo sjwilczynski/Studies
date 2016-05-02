@@ -1,0 +1,19 @@
+
+public class Przeciwienstwo extends Operator1 {
+
+	Wyrazenie wyn;
+	public Przeciwienstwo(Wyrazenie w)
+	{
+		wyn = w;
+	}
+	public double oblicz() 
+	{
+		return -1 * wyn.oblicz();
+	}
+	@Override
+	public String toString() {
+		return "-" + wyn.toString();
+	}
+	
+
+}

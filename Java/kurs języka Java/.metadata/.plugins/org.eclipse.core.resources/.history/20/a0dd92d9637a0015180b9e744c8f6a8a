@@ -1,0 +1,19 @@
+
+public class Min extends Operator2 {
+
+	Wyrazenie w1;
+	Wyrazenie w2;
+	public Min(Wyrazenie p, Wyrazenie q)
+	{
+		w1 = p;
+		w2 = q;
+	}
+	public double oblicz() 
+	{
+		return Math.min(w1.oblicz(),w2.oblicz());
+	}
+	public String toString()
+	{
+		return "min("+w1.toString() + "," + w2.toString()+")";
+	}
+}

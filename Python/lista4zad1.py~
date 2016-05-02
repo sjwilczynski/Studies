@@ -1,0 +1,49 @@
+import time
+
+def isPrime(n):
+	if(n == 2): return True
+	if(n%2==0): return False
+	for i in range(3,n,2):
+		if(i*i > n): break
+		if(n%i == 0): return False
+	return True
+
+
+def pierwsze_skladana(n):
+	lp = [x for x in range(2,n+1) if len([y for y in range(2,x//2) if x%y == 0])==0]
+	return lp
+
+def pierwsze_funkcyjna(n):
+	
+	return filter(lambda x: len([y for y in range(2,x//2) if x%y == 0]) == 0 , range(2,n+1))
+
+class PrimeIter(object):
+	def __init__(self):
+		self.licznik = 2
+	def __next__(self):
+		wynik = self.licznik
+		while(isPrime(wynik)==False): wynik += 1
+		self.licznik = wynik+1
+		return wynik
+
+class PrimeCol(object):
+	def __iter__(self):
+		return PrimeIter()
+ 
+def pierwsze_iterator(n):
+	x = PrimeCol()
+	y = x.__iter__()
+	return list(y.__next__() for i in range(1,n+1))
+
+
+start1 = time.clock()
+pierwsze_skladana(10000)
+stop1 = time.clock()
+pierwsze_funkcyjna(100000)
+stop2 = time.clock()
+#pierwsze_iterator(100000)
+stop3 = time.clock()
+
+
+
+print( stop1 - start1, stop2-stop1, stop3 - stop2)

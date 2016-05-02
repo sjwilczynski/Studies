@@ -1,0 +1,18 @@
+
+public class Arctan extends Operator1 {
+
+	Wyrazenie wyn;
+	public Arctan(Wyrazenie w)
+	{
+		wyn = w;
+	}
+	public double oblicz() 
+	{
+		return Math.atan(wyn.oblicz());
+	}
+	@Override
+	public String toString() {
+		return "arctan(" + wyn.toString()+ ")";
+	}
+
+}

@@ -1,0 +1,20 @@
+/**
+ * 
+ */
+
+/**
+ * @author stachu
+ *
+ */
+public class Arctan extends Operator1 {
+
+	/* (non-Javadoc)
+	 * @see Operator1#oblicz()
+	 */
+	@Override
+	public double oblicz() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

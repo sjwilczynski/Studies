@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1459185653 source:d:\studia\aisd\themis\stokrotki\main.cpp
+	<iostream>
+	<cstdio>
+	<climits>
+

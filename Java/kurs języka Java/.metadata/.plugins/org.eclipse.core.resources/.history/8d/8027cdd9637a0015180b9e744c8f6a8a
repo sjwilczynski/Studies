@@ -1,0 +1,19 @@
+
+public class Odejmij extends Operator2 {
+
+	Wyrazenie w1;
+	Wyrazenie w2;
+	public Odejmij(Wyrazenie p, Wyrazenie q)
+	{
+		w1 = p;
+		w2 = q;
+	}
+	public double oblicz() 
+	{
+		return w1.oblicz()-w2.oblicz();
+	}
+	public String toString()
+	{
+		return "("+w1.toString() + " - " + w2.toString()+")";
+	}
+}

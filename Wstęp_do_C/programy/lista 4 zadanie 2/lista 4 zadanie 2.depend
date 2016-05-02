@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1415658964 source:d:\studia\wstêp do c\programy\lista 4 zadanie 2\funkcjewymierne.c
+	<stdio.h>
+	"funkcjewymierne1.h"
+
+1415658202 source:d:\studia\wstêp do c\programy\lista 4 zadanie 2\main.c
+	<stdio.h>
+	"funkcjewymierne1.h"
+
+1415367543 d:\studia\wstêp do c\programy\lista 4 zadanie 2\funkcjewymierne.h
+	<stdio.h>
+
+1415657738 d:\studia\wstêp do c\programy\lista 4 zadanie 2\funkcjewymierne1.h
+	<stdio.h>
+

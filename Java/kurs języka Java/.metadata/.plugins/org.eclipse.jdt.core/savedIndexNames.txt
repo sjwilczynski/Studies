@@ -1,0 +1,2 @@
+INDEX VERSION 1.126+/home/stachu/programy/java/kurs/.metadata/.plugins/org.eclipse.jdt.core
+2798237720.index

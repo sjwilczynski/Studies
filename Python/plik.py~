@@ -1,0 +1,6 @@
+import csv
+data = [ [1, "Kubus"], [2, "Puchatek"] ]
+writer = csv.writer(
+			open(’out’, ”w”),
+			dialect=csv.excel)
+writer.writerows(data)

@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1457215031 source:d:\studia\aisd\themis\mst2\main.cpp
+	<cstdlib>
+	<iostream>
+	<vector>
+	<queue>
+	<cstdio>
+

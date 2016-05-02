@@ -1,0 +1,33 @@
+
+public class Main 
+{
+	public static void main(String[] args) 
+	{
+		Zbior Z = new Zbior(20);
+		Z.wstaw(new Para("A",1));
+		Z.wstaw(new Para("B",2));
+		Z.wstaw(new Para("C",3));
+		Z.wstaw(new Para("D",4));
+		Z.wstaw(new Para("E",5));
+		Z.wstaw(new Para("F",6));
+		Z.wstaw(new Para("G",7));
+		Z.wstaw(new Para("H",8));
+		System.out.println( Z.szukaj("B").toString() );
+		Z.wstaw(new Para("A",3));
+		System.out.println( Z.szukaj("A").toString() );
+		Z.ustal(new Para("A",2));
+		System.out.println( Z.szukaj("A").toString() );
+		System.out.println( Z.czytaj("H") );
+		System.out.println( Z.ile() );
+		//System.out.println( Z.szukaj("I").toString() );
+		Z.czysc();
+		//System.out.println( Z.szukaj("B").toString() );
+		Zmienna.Zmienne.wstaw(new Para("x",1.68));
+		Wyrazenie w = new Przeciwienstwo(new Zmienna("x"));
+		System.out.println(w.toString());
+		System.out.println(w.oblicz());
+		
+
+	}
+
+}

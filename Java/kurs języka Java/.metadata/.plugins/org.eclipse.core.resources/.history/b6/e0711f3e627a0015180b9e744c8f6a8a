@@ -1,0 +1,18 @@
+
+public class Odwrotnosc extends Operator1 
+{
+	Wyrazenie wyn;
+	public Odwrotnosc(Wyrazenie w)
+	{
+		wyn = w;
+	}
+	public double oblicz() 
+	{
+		return 1/ wyn.oblicz();
+	}
+	@Override
+	public String toString() 
+	{
+		return "1/"+wyn.toString();
+	}
+}

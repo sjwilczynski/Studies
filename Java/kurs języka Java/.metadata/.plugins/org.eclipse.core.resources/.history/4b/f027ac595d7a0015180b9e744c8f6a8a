@@ -1,0 +1,10 @@
+
+public class Odejmij extends Operator2 {
+
+	@Override
+	public double oblicz() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

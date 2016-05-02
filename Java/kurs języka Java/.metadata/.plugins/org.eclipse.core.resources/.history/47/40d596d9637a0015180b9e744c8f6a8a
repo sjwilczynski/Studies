@@ -1,0 +1,19 @@
+
+public class Max extends Operator2 {
+
+	Wyrazenie w1;
+	Wyrazenie w2;
+	public Max(Wyrazenie p, Wyrazenie q)
+	{
+		w1 = p;
+		w2 = q;
+	}
+	public double oblicz() 
+	{
+		return Math.max(w1.oblicz(),w2.oblicz());
+	}
+	public String toString()
+	{
+		return "max("+w1.toString() + "," + w2.toString()+")";
+	}
+}

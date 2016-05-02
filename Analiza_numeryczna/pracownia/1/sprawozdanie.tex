@@ -1,0 +1,225 @@
+
+\documentclass[12pt,wide]{mwart}
+
+\usepackage[cp1250]{inputenc}  % Polskie literki...
+\usepackage[OT4,plmath]{polski}% Polskie tytu?y, data, bibliografia, itp.
+\usepackage{graphicx}    % Pakiet pozwalaj?cy ,,wkleja?'' grafik?...
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{epstopdf}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+                               % Do??czamy zestaw r??nych przydatnych znaczk?w ..
+\usepackage{bbm}               % \mathbbm{N} - zbior liczb naturalnych
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{comment}           % Pakiet komentarzy wieloliniowych
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\date{Wroc�aw, \today}
+\title{\LARGE\textbf{Pracownia z analizy numerycznej}\\Sprawozdanie do zadania \textbf{P.1.12}}
+\author{Stanis�aw Wilczy�ski\thanks{\textit{E-mail}: \texttt{opos1@onet.eu}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% �rodowisko do pisania twierdze�.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{tw}{Twierdzenie}
+\newtheorem{alg}{Algorytm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+\maketitle                % Utworzenie tytu?u.
+\thispagestyle{empty}     % Nie numerujemy pierwszej strony.
+\tableofcontents          % Spis tre?ci
+
+\section{Wst�p}
+Obliczanie ca�ek jest problemem nie tylko teoretycznym. Jest one wa�ne ze wzgl�du na swoje zastosowania w praktyce w dziedzinach takich jak fizyka,chemia, budownictwo, czy analiza ryzyka finansowego. Obliczenie jednej czy dw�ch prostych ca�ek nie jest problem dla przeci�tnych student�w pierwszego roku dowolnych studi�w �cis�ych, jednak w przypadku powa�niejszych oblicze� wymagana jest pomoc komputera. Niestety, jednak przy ka�dym u�yciu takiego sprz�tu musimy liczy� si� z mo�liwym b��dem zwi�zanym np. ze zjawiskiem utraty cyfr znacz�cych. Powszechnie znane metody Simpsona czy trapez�w s� dok�adne, ale wymagaj� obliczania warto�ci ca�kowanej funkcji w wielu punktach. W niekt�rych wypadkach, przy odpowiedniej postaci funkcji podca�kowej mo�liwe jest wykorzytsanie innego sposobu opartego na rekurencji. W tym sprawozdaniu zajmiemy si� ca�k� $\int_{0}^{1} t^n e^t \mathrm{d}t$. Zaprezentujemy dwie metody do obliczania warto�ci tej ca�ki dla kolejnych $n \in \mathbbm{N}$.
+
+\section{Matematyczne podstawy}
+Niech $(y_n)$ b�dzie ci�giem zdefiniowanym nast�puj�co:
+$$
+		y_n = \int_{0}^{1} t^n e^t \mathrm{d}t.
+$$
+Najpierw sprawdzimy �e ten ci�g jest malej�cy:
+\begin{eqnarray*}
+y_n - y_{n-1} &=& \int_{0}^{1} t^n e^t \mathrm{d}t - \int_{0}^{1} t^{n-1} e^t \mathrm{d}t = 
+\int_{0}^{1} t^{n-1}(t-1) e^t \mathrm{d}t \leq 0, \\
+&& \mbox{\rm bo } (t-1) \leq 0 \mbox{\rm \,dla ka�dego }t \in (0,1). 
+\end{eqnarray*}
+Teraz poka�emy, �e $(y_n)$ zbiega do 0.
+Z twierdzenia o warto�ci �redniej (\cite[strona 102]{RS}): 
+
+\begin{equation}
+1\int_{0}^{1} t^n \mathrm{d}t \leq y_n \leq e\int_{0}^{1} t^n \mathrm{d}t.
+\end{equation}
+Otrzymujemy wi�c:
+\begin{equation}\label{row1}
+\frac{1}{n+1} \leq y_n \leq \frac{e}{n+1}.
+\end{equation}
+Zauwa�my, �e
+$$
+\lim_{n\to\infty} \frac{1}{n+1} = \lim_{n\to\infty} \frac{e}{n+1}} = 0.
+$$
+wi�c z twierdzenia o trzech ci�gach(\cite[strona 6]{RS}) i nier�wno�ci (\ref{row1}) mamy:
+$$
+\lim_{n\to\infty} y_n = 0.
+$$	
+Stosuj�c ca�kowanie przez cz��ci znajdujemy rekurencyjny zwi�zek mi�dzy $y_n$ i $y_{n-1}$:
+\begin{equation}\label{rekur}
+y_n = \int_{0}^{1} t^n e^t \mathrm{d}t =  t^n e^t| \limits_{t=0}^{t=1} - \int_{0}^{1} n t^{n-1} e^t \mathrm{d}t = e - n\int_{0}^{1} t^{n-1} e^t \mathrm{d}t = e - ny_{n-1}.
+\end{equation}
+Obliczamy jeszce 
+\begin{equation}\label{y0}
+y_0 = \int_{0}^{1} e^t \mathrm{d}t = e - 1 = 1.718281828459045... .
+\end{equation}
+
+\section{Metoda I - naiwna}
+\subsection{Opis i dzia�anie metody I}
+W tej metodzie wykorzystamy zwi�zek rekurencyjny (\ref{rekur}) do obliczania kolejnych warto�ci, tzn. maj�c dane $y_{n-1}$ wyznaczamy $y_n$. Za pomoc� za��czonego programu \textit{program.jl} policzyli�my pierwsze 21 wyraz�w naszego ci�gu(w arytmetyce z podw�jn� precyzj�). Niech $\tilde{y}_n$ oznacza obliczon� w ten spos�b warto�� n-tego wyrazu ci�gu. Otrzymane wyniki prezentujemy w tabelce (w tej i ka�dej nast�pnej tabelce rzeczywisty wynik $y_n$jest podawany do 16 miejsca po przecinku)\footnote{Warto�ci $y_n$ zosta�y obliczone za pomoc� pakietu Wolfram Mathematica 10}:\\\\
+\begin{flushleft}
+\small{
+\begin{tabular}{||c|c|c|c||} \hline
+n &  $\tilde{y}_n$ & y_n & liczba tych samych cyfr znacz�cych w $y_n$ i $\tilde{y}_n$ \\ \hline
+0      &  1.7182818284590452 &  1.7182818284590452 & 16\\
+\hline
+2      &  0.7182818284590451 &  0.7182818284590452 & 15\\
+\hline
+4      &  0.4645364561314058 &  0.4645364561314071 & 14\\
+\hline
+6      &  0.3446845416469490 &  0.3446845416469873 & 13\\
+\hline
+8      &  0.2743615330158317 &  0.2743615330179760 & 11\\
+\hline
+10     &  0.2280015152934535 &  0.2280015154864418 & 9 \\
+\hline
+12     &  0.1950999056863769 &  0.1950999311608206 & 7\\
+\hline
+14     &  0.1705190649530128 &  0.1705237013017674 & 4\\
+\hline
+16     &  0.1503481618374036 &  0.1514608855385011 & 2\\
+\hline 
+18     &  -0.204253561558256 &  0.1362398909775906 & 0\\
+\hline
+20     &  -129.2637081328594 &  0.1238038307625699 & 0\\
+\hline  
+\end{tabular}}\\\\
+\end{flushleft}
+Zauwa�amy, �e liczba takich samych cyfr znacz�cych w liczbach $y_n$ i $\tilde{y}_n$ maleje o 1 przy prawie ka�dej iteracji. Oznacza to, �e wyniki $\tilde{y}_n$ dla $n\geq 18$ nie maj� nawet jednej takiej samej cyfry jak rzeczywiste warto�ci $y_n$. Co wi�cej ci�g $\tilde{y}_n$ nie jest nawet nieujemny tak jak $y_n$. Sk�d bierze si� tak ogromna niedok�adno�� oblicze�?
+
+\subsection{Analiza metody I}
+Niech $d_n$ oznacza b��d bezwzgl�dny, tzn. $d_n = \left|\tilde{y}_n - y_n\rigth|$. 
+Zgodnie z definicj� zawart� w \cite[strona 48]{Kin} m�wimy, �e algorytm jest numerycznie niestabilny, je�li ma�e b��dy pope�nione na pocz�tku oblicze� powoduj� wypaczanie wyniku w kolejnych krokach algorytmu. Formalnie, aby sprawdzi� czy algorytm jest niestabilny numerycznie nale�y sprawdzi� b��d wzgl�dny, czyli w naszym wypadku $\frac{d_n}{y_n}$.
+Przeprowadzimy analiz� b��du bezwzgl�dnego. Zauwa�my, �e b��d $d_2$ jest rz�du precyzji naszej arytmetyki DOUBLE, tzn. $d_2 \approx 10^{-16}$. Co wi�cej:\\
+
+\begin{equation}
+	d_n = \left|\tilde{y}_n - y_n\right| = \left|(e - n\tilde{y}_{n-1}) - (e - ny_{n-1})\right| =
+		\left|n(\tilde{y}_{n-1} - y_{n-1})\right| = nd_{n-1} .
+\end{equation}
+Powy�szy rachunek daje nam tylko przybli�on� warto�� b��du, gdy� pomijamy tu niedok�adno�ci wynikaj�ce z wykonywania operacji arytmetycznych. Mimo wszystko, korzystaj�c z powy�szej r�wno�ci mo�emy obliczy� przybli�ony wz�r na $d_n$:\\
+\begin{equation}\label{err}
+	d_n = nd_{n-1} = n(n-1)d_{n-2} = ... = \frac{1}{2}n!d_{2}.
+\end{equation}
+Korzystaj�c z tego wzoru obliczamy $d_{20} = \frac{1}{2}20!d_{2} \approx \frac{1}{2}2,4\times10^{18}\times10^{-16} \approx 120$ i zauwa�amy, �e dla 20 wyrazu naszego ci�gu obliczona warto�� nie jest nawet bliska warto�ci rzeczywistej. Ten wniosek wynika z tego, �e b��d wzgl�dny wynosi a� $\frac{d_{20}}{y_{20}} \approx 1044,13 $, co oznacza,�e warto�� $d_{20}$ jest blisko 1000 razy wi�ksza ni� rzeczywista warto�� $y_{20}$. Oczywi�cie, maj�c na uwadze wz�r (\ref{err}) wnioskujemy, �e zastosowany tutaj algorytm wyliczania $y_n$ jest numerycznie niestabiny.
+
+\section{Metoda II - ulepszona}
+\subsection{Opis metody II}
+Druga metoda jest oparta na algorytmie Millera (\cite[strony 23-28]{JW}). Zauwa�my, �e korzystj�c z nier�wno�ci (\ref{row1}) mo�emy stwierdzi�, �e ci�g $(y_{n})$
+jest wolno zbie�ny, a co za tym idzie, dla du�ych N, $y_N \approx e - Ny_N$.
+Z tego zwi�zku mo�emy policzy�, �e $y_N \approx \frac{e}{N+1}$. Stosuj�c oznaczenia z poprzedniego rozdzia�u k�adziemy:\\
+$$
+\tilde{y}_N = \frac{e}{N+1}.     
+$$
+Wtedy ${d_N} \leq \frac{e-1}{N+1}$ (nier�wno�� (\ref{row1}))
+Oczywi�cie, dzi�ki zwi�zkowi rekurencyjnemu(\ref{rekur}) mo�emy si� cofa�, tzn. obliczy� $y_{n-1}$ w zale�no�ci od $y_n$. Przekszta�caj�c r�wnanie (\ref{rekur}) otrzymujemy:\\
+\begin{equation}\label{r2}
+	y_{n-1} = \frac{e-y_n}{n}.
+\end{equation}
+Za pomoc� powy�szej r�wno�ci, wykorzystuj�c za��czony program \textit{program.jl} obliczamy warto�ci wyraz�w ci�gu $\tilde{y}_n$ zaczynaj�c od N=20. Wyniki prezentujemy w poni�szej tabelce:\\
+
+\begin{flushleft}
+\small{
+\begin{tabular}{||c|c|c|c||} \hline
+N &  $\tilde{y}_N$ & y_N & liczba tych samych cyfr znacz�cych w $y_N$ i $\tilde{y}_N$ \\ \hline
+
+20    &  0.1294419918313831 &  0.1238038307625699 & 2\\
+\hline
+18    &  0.1362547282435611 &  0.1362398909775906 & 4 \\
+\hline
+16    &  0.1514609340262984 &  0.1514608855385011 & 6  \\
+\hline
+14    &  0.1705237015037999 &  0.1705237013017674 & 9\\
+\hline
+12    &  0.1950999311619307 &  0.1950999311608206 & 11\\
+\hline
+10    &  0.2280015154864502 &  0.2280015154864418 & 13 \\
+\hline
+8     &  0.2743615330179761 &  0.2743615330179760 & 15\\
+\hline
+6     &  0.3446845416469873 &  0.3446845416469873 & 16\\
+\hline
+4     &  0.4645364561314070 &  0.4645364561314071 & 16\\
+\hline
+2     &  0.7182818284590452 &  0.7182818284590452 & 16\\
+\hline
+0     &  1.7182818284590452 &  1.7182818284590452 & 16\\
+\hline 
+\end{tabular}}\\\\
+\end{flushleft}
+
+Por�wnuj�c tabelki dla metody I i II zauwa�amy, �e II jest dok�adniejsza o oko�o 5 cyfr. Poniewa� w metodzie II b��d przy obliczaniu pierwszej warto�ci zale�y od tego jakie N wybrali�my, stwierdzamy, �e dla $N \geq 20$  dok�adno�� b�dzie jeszcze lepsza, a dok�adno�� metody I ulega pogorszeniu wraz ze wzrostem N. Sk�d bierze si� tak znaczna r��nica wyniku dla obu metod? 
+
+\subsection{Analiza metody II}
+Podobnie jak w metodzie I przeprowadzimy analiz� b��du bezwzgl�dnego. Ju� w poprzednim rozdziale zauwa�yli�my, �e je�li rozpoczynamy dzia�anie naszej metody od N, to 
+$$
+d_N \leq \frac{e-1}{N+1}.
+$$
+Skoro mamy wz�r rekurencyjny na wcze�niejsze wyrazy ci�gu (\ref{r2}),, mo�emy r�wnie� obliczy� przybli�one b��dy bezwzgl�dne (ponownie ignorujemy b��d wynikaj�cy z wykonywania operacji arytmetycznych):\\
+\begin{equation}
+	d_{N-1} = \left|\tilde{y}_{N-1} - y_{N-1}\right| = \left|\frac{e-\tilde{y}_N}{N} - \frac{e-y_N}{N}\right| =
+		\left|\frac{\tilde{y}_N - y_N}{N}\right| = \frac{d_N}{N}. 
+\end{equation}\\
+Dalej korzystaj�c z powy�szej r�wno�ci otrzymujemy:\\
+\begin{equation}\label{er1}
+	d_{N-k} = \frac{(N-k)!}{N!}d_N.
+\end{equation}\\
+
+\noindent
+Gdy $N=20$, $d_{20} \approx 3\times10^{-3}$\\
+Oznacza to, �e ju� $d_8 = \frac{8!}{20!}d_N \approx 1,6 \times 10^{-14} \times 6 \times 10^{-3} \approx 1\times10^{-16}$. Je�li zagl�dniemy do tabelki jest to nawet dok�adnie b��d, kt�ry otrzymali�my przy obliczaniu $\tilde{y}_8$. 
+
+
+\section{Podsumowanie}
+
+Z przeprowadzoenj analizy wynika, �e metoda I nie nadaje si� do obliczania dok�adnych warto�ci wyraz�w ci�gu $(y_n)$. Jednak�e, jak �atwo zauwa�y�, metoda II pozwala nam oblicza� ka�dy wyraz ci�gu $(y_n)$ z dok�adno�ci� do 16. miejsca po przecinku. Korzystaj�c ze wzoru (\ref{er1}) otrzymujemy:\\
+\begin{equation}
+	d_n = \frac{n!}{(n+k)!}d_{n+k},\; \forall k \in \bbm{N}. 
+\end{equation}
+W takim razie, by zachodzi�a nier�wno�� $d_n < 10^{-16}$ wystarczy znale�� takie $k$, dla kt�rego 
+$$
+\frac{n!}{(n+k)!}d_{n+k} \leq \frac{n!}{(n+k)!} \times \frac{e-1}{n+1} < 10^{-16}.
+$$\\
+Oczywi�cie takie $k$ mo�na znale�� dla ka�dego $n$. Co wi�cej, im wi�ksze $n$ tym mniejsze $k$. Przyk�adowo dla $n=100$ $k = 9$, a dla $n = 1000$ $k=6$. 
+
+Podsumowuj�c, aby za pomoc� metody II obliczy� $y_n$ z du�� dok�adno�ci�, wystarczy rozpocz�� obliczenia od wyrazu ci�gu o indeksie o kilka(-na�cie) wi�kszym. Ponadto, aby zwi�kszy� dodatkowo dok�adno�� metody II do wi�kszej liczb cyfr po przecinku, wystarczy wybra� dla danego n wi�ksze ni� wcze�niej k w taki spos�b, aby $\frac{n!}{(n+k)!} \times \frac{e-1}{n+1} < 10^{-p}$, gdzie $p$ jest liczb� cyfr po dziesi�tnych, kt�re chcemy wyznaczy�.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{thebibliography}{9}
+\itemsep2pt
+\bibitem{RS} R. Szwarc, Skrypt do wyk�adu z analizy matematycznej I
+             \url{http://www.math.uni.wroc.pl/~szwarc/pdf/AnalizaISIM1.pdf}.
+             
+						
+\bibitem{Kin} D.Kincaid, W.Cheney, Numerical Analysis. Mathematics of scientific computing,
+							Brooks/Cole Publishing Company,Pacific Groove California, 1991.
+							
+\bibitem{JW} J.Wimp, Computation with recurrence relations, 
+							Boston:Pitman Advanced Publ. Program, 1984.
+							
+\end{thebibliography}
+\end{document}

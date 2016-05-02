@@ -1,0 +1,7 @@
+
+abstract public class Operator2 extends Operator1 
+{
+
+	public abstract double oblicz();
+
+}

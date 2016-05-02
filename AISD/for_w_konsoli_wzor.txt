@@ -1,0 +1,2 @@
+for ((i=0;i<100;i++)) do echo "$i"; time ./main < "$i.in" > "tmp$i.out"; diff "$i.out" "tmp$i.out"; done &> wyniki
+

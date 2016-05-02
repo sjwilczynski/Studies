@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module kontakt</title>
+<meta charset="utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>kontakt</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/stachu/programy/python/aProjekt/kontakt.py">/home/stachu/programy/python/aProjekt/kontakt.py</a></font></td></tr></table>
+    <p><tt>#&nbsp;coding=&nbsp;utf-8</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="gtk.html">gtk</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="exceptions.html#Exception">exceptions.Exception</a>(<a href="exceptions.html#BaseException">exceptions.BaseException</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="kontakt.html#NieMaKluczaError">NieMaKluczaError</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="gtk.html#Window">gtk.Window</a>(<a href="gtk.html#Bin">gtk.Bin</a>)
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="kontakt.html#Edycja">Edycja</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="kontakt.html#Kontakt">Kontakt</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Edycja">class <strong>Edycja</strong></a>(<a href="gtk.html#Window">gtk.Window</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Klasa&nbsp;służąca&nbsp;do&nbsp;edycji&nbsp;bazy&nbsp;danych&nbsp;przechowującej&nbsp;kontakty<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="kontakt.html#Edycja">Edycja</a></dd>
+<dd><a href="gtk.html#Window">gtk.Window</a></dd>
+<dd><a href="gtk.html#Bin">gtk.Bin</a></dd>
+<dd><a href="gtk.html#Container">gtk.Container</a></dd>
+<dd><a href="gtk.html#Widget">gtk.Widget</a></dd>
+<dd><a href="gtk.html#Object">gtk.Object</a></dd>
+<dd><a href="gobject._gobject.html#GObject">gobject._gobject.GObject</a></dd>
+<dd><a href="atk.html#ImplementorIface">atk.ImplementorIface</a></dd>
+<dd><a href="gtk.html#Buildable">gtk.Buildable</a></dd>
+<dd><a href="gobject.html#GInterface">gobject.GInterface</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Methods defined here:<br>
+<dl><dt><a name="Edycja-__init__"><strong>__init__</strong></a>(self, db, nr)</dt><dd><tt>Inicjalizacja&nbsp;GUI<br>
+:param&nbsp;db:&nbsp;baza&nbsp;danych<br>
+:param&nbsp;nr:&nbsp;tryb&nbsp;edycji&nbsp;-&nbsp;dodawanie&nbsp;lub&nbsp;usuwanie<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Edycja-kontrolki"><strong>kontrolki</strong></a>(self, nr)</dt><dd><tt>Inicjalizacja&nbsp;GUI&nbsp;cd.<br>
+:param&nbsp;nr:&nbsp;tryb&nbsp;edycji<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Edycja-usun"><strong>usun</strong></a>(self, sender)</dt><dd><tt>Usuwa&nbsp;kontakt&nbsp;z&nbsp;bazy&nbsp;o&nbsp;wartościach&nbsp;z&nbsp;kontrolek&nbsp;Entry<br>
+:param&nbsp;sender:<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Edycja-wyszukaj"><strong>wyszukaj</strong></a>(self, p)</dt><dd><tt>sprawdza&nbsp;czy&nbsp;dany&nbsp;element&nbsp;jest&nbsp;w&nbsp;bazie<br>
+:param&nbsp;p:&nbsp;szukany&nbsp;element<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Edycja-zapisz"><strong>zapisz</strong></a>(self, sender)</dt><dd><tt>po&nbsp;kliknięciu&nbsp;na&nbsp;przycisk&nbsp;dodaje&nbsp;do&nbsp;bazy&nbsp;kontakt&nbsp;o&nbsp;wartościach&nbsp;z&nbsp;kontrolek&nbsp;Entry<br>
+:param&nbsp;sender:&nbsp;przycisk<br>
+:return:</tt></dd></dl>
+
+<hr>
+Methods inherited from <a href="gtk.html#Window">gtk.Window</a>:<br>
+<dl><dt><a name="Edycja-__iter__"><strong>__iter__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__iter__">__iter__</a>()&nbsp;&lt;==&gt;&nbsp;iter(x)</tt></dd></dl>
+
+<dl><dt><a name="Edycja-activate_default"><strong>activate_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-activate_focus"><strong>activate_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-activate_key"><strong>activate_key</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-add_accel_group"><strong>add_accel_group</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-add_mnemonic"><strong>add_mnemonic</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-begin_move_drag"><strong>begin_move_drag</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-begin_resize_drag"><strong>begin_resize_drag</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-deiconify"><strong>deiconify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_activate_default"><strong>do_activate_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_activate_focus"><strong>do_activate_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_frame_event"><strong>do_frame_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_keys_changed"><strong>do_keys_changed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_move_focus"><strong>do_move_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_set_focus"><strong>do_set_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-fullscreen"><strong>fullscreen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_accept_focus"><strong>get_accept_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_decorated"><strong>get_decorated</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_default_size"><strong>get_default_size</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_default_widget"><strong>get_default_widget</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_deletable"><strong>get_deletable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_destroy_with_parent"><strong>get_destroy_with_parent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_focus"><strong>get_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_focus_on_map"><strong>get_focus_on_map</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_frame_dimensions"><strong>get_frame_dimensions</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_gravity"><strong>get_gravity</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_group"><strong>get_group</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_has_frame"><strong>get_has_frame</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_icon"><strong>get_icon</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_icon_list"><strong>get_icon_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_icon_name"><strong>get_icon_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_mnemonic_modifier"><strong>get_mnemonic_modifier</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_mnemonics_visible"><strong>get_mnemonics_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_modal"><strong>get_modal</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_opacity"><strong>get_opacity</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_position"><strong>get_position</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_resizable"><strong>get_resizable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_role"><strong>get_role</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_screen"><strong>get_screen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_size"><strong>get_size</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_skip_pager_hint"><strong>get_skip_pager_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_skip_taskbar_hint"><strong>get_skip_taskbar_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_title"><strong>get_title</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_transient_for"><strong>get_transient_for</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_type_hint"><strong>get_type_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_urgency_hint"><strong>get_urgency_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_window_type"><strong>get_window_type</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-has_group"><strong>has_group</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-has_toplevel_focus"><strong>has_toplevel_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-iconify"><strong>iconify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_active"><strong>is_active</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-maximize"><strong>maximize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-mnemonic_activate"><strong>mnemonic_activate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-move"><strong>move</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-parse_geometry"><strong>parse_geometry</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-present"><strong>present</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-present_with_time"><strong>present_with_time</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-propagate_key_event"><strong>propagate_key_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove_accel_group"><strong>remove_accel_group</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove_mnemonic"><strong>remove_mnemonic</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-reshow_with_initial_size"><strong>reshow_with_initial_size</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-resize"><strong>resize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_accept_focus"><strong>set_accept_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_decorated"><strong>set_decorated</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_default"><strong>set_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_default_size"><strong>set_default_size</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_deletable"><strong>set_deletable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_destroy_with_parent"><strong>set_destroy_with_parent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_focus"><strong>set_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_focus_on_map"><strong>set_focus_on_map</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_frame_dimensions"><strong>set_frame_dimensions</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_geometry_hints"><strong>set_geometry_hints</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_gravity"><strong>set_gravity</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_has_frame"><strong>set_has_frame</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_icon"><strong>set_icon</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_icon_from_file"><strong>set_icon_from_file</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_icon_list"><strong>set_icon_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_icon_name"><strong>set_icon_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_keep_above"><strong>set_keep_above</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_keep_below"><strong>set_keep_below</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_mnemonic_modifier"><strong>set_mnemonic_modifier</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_mnemonics_visible"><strong>set_mnemonics_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_modal"><strong>set_modal</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_opacity"><strong>set_opacity</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_policy"><strong>set_policy</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_position"><strong>set_position</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_resizable"><strong>set_resizable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_role"><strong>set_role</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_screen"><strong>set_screen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_skip_pager_hint"><strong>set_skip_pager_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_skip_taskbar_hint"><strong>set_skip_taskbar_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_startup_id"><strong>set_startup_id</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_title"><strong>set_title</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_transient_for"><strong>set_transient_for</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_type_hint"><strong>set_type_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_urgency_hint"><strong>set_urgency_hint</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_wmclass"><strong>set_wmclass</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-stick"><strong>stick</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-tooltips_get_info_from_tip_window"><strong>tooltips_get_info_from_tip_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unfullscreen"><strong>unfullscreen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unmaximize"><strong>unmaximize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unstick"><strong>unstick</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="gtk.html#Window">gtk.Window</a>:<br>
+<dl><dt><strong>allow_grow</strong></dt>
+</dl>
+<dl><dt><strong>allow_shrink</strong></dt>
+</dl>
+<dl><dt><strong>configure_notify_received</strong></dt>
+</dl>
+<dl><dt><strong>configure_request_count</strong></dt>
+</dl>
+<dl><dt><strong>decorated</strong></dt>
+</dl>
+<dl><dt><strong>default_widget</strong></dt>
+</dl>
+<dl><dt><strong>destroy_with_parent</strong></dt>
+</dl>
+<dl><dt><strong>focus_widget</strong></dt>
+</dl>
+<dl><dt><strong>frame</strong></dt>
+</dl>
+<dl><dt><strong>frame_bottom</strong></dt>
+</dl>
+<dl><dt><strong>frame_left</strong></dt>
+</dl>
+<dl><dt><strong>frame_right</strong></dt>
+</dl>
+<dl><dt><strong>frame_top</strong></dt>
+</dl>
+<dl><dt><strong>gravity</strong></dt>
+</dl>
+<dl><dt><strong>group</strong></dt>
+</dl>
+<dl><dt><strong>has_focus</strong></dt>
+</dl>
+<dl><dt><strong>has_frame</strong></dt>
+</dl>
+<dl><dt><strong>has_user_ref_count</strong></dt>
+</dl>
+<dl><dt><strong>iconify_initially</strong></dt>
+</dl>
+<dl><dt><strong>keys_changed_handler</strong></dt>
+</dl>
+<dl><dt><strong>maximize_initially</strong></dt>
+</dl>
+<dl><dt><strong>mnemonic_modifier</strong></dt>
+</dl>
+<dl><dt><strong>modal</strong></dt>
+</dl>
+<dl><dt><strong>need_default_position</strong></dt>
+</dl>
+<dl><dt><strong>need_default_size</strong></dt>
+</dl>
+<dl><dt><strong>position</strong></dt>
+</dl>
+<dl><dt><strong>stick_initially</strong></dt>
+</dl>
+<dl><dt><strong>title</strong></dt>
+</dl>
+<dl><dt><strong>transient_parent</strong></dt>
+</dl>
+<dl><dt><strong>type</strong></dt>
+</dl>
+<dl><dt><strong>type_hint</strong></dt>
+</dl>
+<dl><dt><strong>wm_role</strong></dt>
+</dl>
+<dl><dt><strong>wmclass_class</strong></dt>
+</dl>
+<dl><dt><strong>wmclass_name</strong></dt>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="gtk.html#Window">gtk.Window</a>:<br>
+<dl><dt><strong>__gtype__</strong> = &lt;GType GtkWindow (16823296)&gt;</dl>
+
+<hr>
+Methods inherited from <a href="gtk.html#Bin">gtk.Bin</a>:<br>
+<dl><dt><a name="Edycja-get_child"><strong>get_child</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="gtk.html#Bin">gtk.Bin</a>:<br>
+<dl><dt><strong>child</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="gtk.html#Container">gtk.Container</a>:<br>
+<dl><dt><a name="Edycja-__len__"><strong>__len__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__len__">__len__</a>()&nbsp;&lt;==&gt;&nbsp;len(x)</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__nonzero__"><strong>__nonzero__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__nonzero__">__nonzero__</a>()&nbsp;&lt;==&gt;&nbsp;x&nbsp;!=&nbsp;0</tt></dd></dl>
+
+<dl><dt><a name="Edycja-add"><strong>add</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-add_with_properties"><strong>add_with_properties</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-check_resize"><strong>check_resize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_get"><strong>child_get</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_get_property"><strong>child_get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_set"><strong>child_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_set_property"><strong>child_set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_type"><strong>child_type</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-children"><strong>children</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_add"><strong>do_add</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_check_resize"><strong>do_check_resize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_child_type"><strong>do_child_type</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_composite_name"><strong>do_composite_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_forall"><strong>do_forall</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_get_child_property"><strong>do_get_child_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_remove"><strong>do_remove</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_set_child_property"><strong>do_set_child_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_set_focus_child"><strong>do_set_focus_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-forall"><strong>forall</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-foreach"><strong>foreach</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_border_width"><strong>get_border_width</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_children"><strong>get_children</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_focus_chain"><strong>get_focus_chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_focus_child"><strong>get_focus_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_focus_hadjustment"><strong>get_focus_hadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_focus_vadjustment"><strong>get_focus_vadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_resize_mode"><strong>get_resize_mode</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-install_child_property"><strong>install_child_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-list_child_properties"><strong>list_child_properties</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-propagate_expose"><strong>propagate_expose</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove"><strong>remove</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-resize_children"><strong>resize_children</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_border_width"><strong>set_border_width</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_focus_chain"><strong>set_focus_chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_focus_child"><strong>set_focus_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_focus_hadjustment"><strong>set_focus_hadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_focus_vadjustment"><strong>set_focus_vadjustment</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_reallocate_redraws"><strong>set_reallocate_redraws</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_resize_mode"><strong>set_resize_mode</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unset_focus_chain"><strong>unset_focus_chain</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="gtk.html#Container">gtk.Container</a>:<br>
+<dl><dt><strong>border_width</strong></dt>
+</dl>
+<dl><dt><strong>focus_child</strong></dt>
+</dl>
+<dl><dt><strong>has_focus_chain</strong></dt>
+</dl>
+<dl><dt><strong>need_resize</strong></dt>
+</dl>
+<dl><dt><strong>reallocate_redraws</strong></dt>
+</dl>
+<dl><dt><strong>resize_mode</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="gtk.html#Widget">gtk.Widget</a>:<br>
+<dl><dt><a name="Edycja-activate"><strong>activate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-add_accelerator"><strong>add_accelerator</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-add_events"><strong>add_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-add_mnemonic_label"><strong>add_mnemonic_label</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-can_activate_accel"><strong>can_activate_accel</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_focus"><strong>child_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-child_notify"><strong>child_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-class_path"><strong>class_path</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-create_pango_context"><strong>create_pango_context</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-create_pango_layout"><strong>create_pango_layout</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-destroy"><strong>destroy</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_button_press_event"><strong>do_button_press_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_button_release_event"><strong>do_button_release_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_can_activate_accel"><strong>do_can_activate_accel</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_client_event"><strong>do_client_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_composited_changed"><strong>do_composited_changed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_configure_event"><strong>do_configure_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_delete_event"><strong>do_delete_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_destroy_event"><strong>do_destroy_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_direction_changed"><strong>do_direction_changed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_begin"><strong>do_drag_begin</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_data_delete"><strong>do_drag_data_delete</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_data_get"><strong>do_drag_data_get</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_data_received"><strong>do_drag_data_received</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_drop"><strong>do_drag_drop</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_end"><strong>do_drag_end</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_leave"><strong>do_drag_leave</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_drag_motion"><strong>do_drag_motion</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_enter_notify_event"><strong>do_enter_notify_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_event"><strong>do_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_expose_event"><strong>do_expose_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_focus"><strong>do_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_focus_in_event"><strong>do_focus_in_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_focus_out_event"><strong>do_focus_out_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_get_accessible"><strong>do_get_accessible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_grab_broken_event"><strong>do_grab_broken_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_grab_focus"><strong>do_grab_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_grab_notify"><strong>do_grab_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_hide"><strong>do_hide</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_hide_all"><strong>do_hide_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_hierarchy_changed"><strong>do_hierarchy_changed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_key_press_event"><strong>do_key_press_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_key_release_event"><strong>do_key_release_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_leave_notify_event"><strong>do_leave_notify_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_map"><strong>do_map</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_map_event"><strong>do_map_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_mnemonic_activate"><strong>do_mnemonic_activate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_motion_notify_event"><strong>do_motion_notify_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_no_expose_event"><strong>do_no_expose_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_parent_set"><strong>do_parent_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_popup_menu"><strong>do_popup_menu</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_property_notify_event"><strong>do_property_notify_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_proximity_in_event"><strong>do_proximity_in_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_proximity_out_event"><strong>do_proximity_out_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_realize"><strong>do_realize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_screen_changed"><strong>do_screen_changed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_scroll_event"><strong>do_scroll_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_selection_clear_event"><strong>do_selection_clear_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_selection_get"><strong>do_selection_get</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_selection_notify_event"><strong>do_selection_notify_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_selection_received"><strong>do_selection_received</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_selection_request_event"><strong>do_selection_request_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_show"><strong>do_show</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_show_all"><strong>do_show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_show_help"><strong>do_show_help</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_size_allocate"><strong>do_size_allocate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_size_request"><strong>do_size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_state_changed"><strong>do_state_changed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_style_set"><strong>do_style_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_unmap"><strong>do_unmap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_unmap_event"><strong>do_unmap_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_unrealize"><strong>do_unrealize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_visibility_notify_event"><strong>do_visibility_notify_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_window_state_event"><strong>do_window_state_event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_begin"><strong>drag_begin</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_check_threshold"><strong>drag_check_threshold</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_add_image_targets"><strong>drag_dest_add_image_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_add_text_targets"><strong>drag_dest_add_text_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_add_uri_targets"><strong>drag_dest_add_uri_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_find_target"><strong>drag_dest_find_target</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_get_target_list"><strong>drag_dest_get_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_get_track_motion"><strong>drag_dest_get_track_motion</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_set"><strong>drag_dest_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_set_proxy"><strong>drag_dest_set_proxy</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_set_target_list"><strong>drag_dest_set_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_set_track_motion"><strong>drag_dest_set_track_motion</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_dest_unset"><strong>drag_dest_unset</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_get_data"><strong>drag_get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_highlight"><strong>drag_highlight</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_add_image_targets"><strong>drag_source_add_image_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_add_text_targets"><strong>drag_source_add_text_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_add_uri_targets"><strong>drag_source_add_uri_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_get_target_list"><strong>drag_source_get_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_set"><strong>drag_source_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_set_icon"><strong>drag_source_set_icon</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_set_icon_name"><strong>drag_source_set_icon_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_set_icon_pixbuf"><strong>drag_source_set_icon_pixbuf</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_set_icon_stock"><strong>drag_source_set_icon_stock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_set_target_list"><strong>drag_source_set_target_list</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_source_unset"><strong>drag_source_unset</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-drag_unhighlight"><strong>drag_unhighlight</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-draw"><strong>draw</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-ensure_style"><strong>ensure_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-error_bell"><strong>error_bell</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-event"><strong>event</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-freeze_child_notify"><strong>freeze_child_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_accessible"><strong>get_accessible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_action"><strong>get_action</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_activate_signal"><strong>get_activate_signal</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_allocation"><strong>get_allocation</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_ancestor"><strong>get_ancestor</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_app_paintable"><strong>get_app_paintable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_can_default"><strong>get_can_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_can_focus"><strong>get_can_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_child_requisition"><strong>get_child_requisition</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_child_visible"><strong>get_child_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_clipboard"><strong>get_clipboard</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_colormap"><strong>get_colormap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_composite_name"><strong>get_composite_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_direction"><strong>get_direction</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_display"><strong>get_display</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_double_buffered"><strong>get_double_buffered</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_events"><strong>get_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_extension_events"><strong>get_extension_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_has_tooltip"><strong>get_has_tooltip</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_has_window"><strong>get_has_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_mapped"><strong>get_mapped</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_modifier_style"><strong>get_modifier_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_name"><strong>get_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_no_show_all"><strong>get_no_show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_pango_context"><strong>get_pango_context</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_parent"><strong>get_parent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_parent_window"><strong>get_parent_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_pointer"><strong>get_pointer</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_realized"><strong>get_realized</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_receives_default"><strong>get_receives_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_requisition"><strong>get_requisition</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_root_window"><strong>get_root_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_sensitive"><strong>get_sensitive</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_settings"><strong>get_settings</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_size_request"><strong>get_size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_snapshot"><strong>get_snapshot</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_state"><strong>get_state</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_style"><strong>get_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_tooltip_markup"><strong>get_tooltip_markup</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_tooltip_text"><strong>get_tooltip_text</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_tooltip_window"><strong>get_tooltip_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_toplevel"><strong>get_toplevel</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_visible"><strong>get_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_visual"><strong>get_visual</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_window"><strong>get_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-grab_add"><strong>grab_add</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-grab_default"><strong>grab_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-grab_focus"><strong>grab_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-grab_remove"><strong>grab_remove</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-has_default"><strong>has_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-has_grab"><strong>has_grab</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-has_rc_style"><strong>has_rc_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-has_screen"><strong>has_screen</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-hide"><strong>hide</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-hide_all"><strong>hide_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-hide_on_delete"><strong>hide_on_delete</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-input_shape_combine_mask"><strong>input_shape_combine_mask</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-intersect"><strong>intersect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_ancestor"><strong>is_ancestor</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_composited"><strong>is_composited</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_drawable"><strong>is_drawable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_focus"><strong>is_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_sensitive"><strong>is_sensitive</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-is_toplevel"><strong>is_toplevel</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-keynav_failed"><strong>keynav_failed</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-list_accel_closures"><strong>list_accel_closures</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-list_mnemonic_labels"><strong>list_mnemonic_labels</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-map"><strong>map</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-menu_get_for_attach_widget"><strong>menu_get_for_attach_widget</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_base"><strong>modify_base</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_bg"><strong>modify_bg</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_cursor"><strong>modify_cursor</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_fg"><strong>modify_fg</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_font"><strong>modify_font</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_style"><strong>modify_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-modify_text"><strong>modify_text</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-path"><strong>path</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-queue_clear"><strong>queue_clear</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-queue_clear_area"><strong>queue_clear_area</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-queue_draw"><strong>queue_draw</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-queue_draw_area"><strong>queue_draw_area</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-queue_resize"><strong>queue_resize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-queue_resize_no_redraw"><strong>queue_resize_no_redraw</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-rc_get_style"><strong>rc_get_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-realize"><strong>realize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-region_intersect"><strong>region_intersect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove_accelerator"><strong>remove_accelerator</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove_mnemonic_label"><strong>remove_mnemonic_label</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-render_icon"><strong>render_icon</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-reparent"><strong>reparent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-reset_rc_styles"><strong>reset_rc_styles</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-reset_shapes"><strong>reset_shapes</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-selection_add_target"><strong>selection_add_target</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-selection_add_targets"><strong>selection_add_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-selection_clear_targets"><strong>selection_clear_targets</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-selection_convert"><strong>selection_convert</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-selection_owner_set"><strong>selection_owner_set</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-selection_remove_all"><strong>selection_remove_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-send_expose"><strong>send_expose</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-send_focus_change"><strong>send_focus_change</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_accel_path"><strong>set_accel_path</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_activate_signal"><strong>set_activate_signal</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_allocation"><strong>set_allocation</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_app_paintable"><strong>set_app_paintable</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_can_default"><strong>set_can_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_can_focus"><strong>set_can_focus</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_child_visible"><strong>set_child_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_colormap"><strong>set_colormap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_composite_name"><strong>set_composite_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_direction"><strong>set_direction</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_double_buffered"><strong>set_double_buffered</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_events"><strong>set_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_extension_events"><strong>set_extension_events</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_has_tooltip"><strong>set_has_tooltip</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_has_window"><strong>set_has_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_mapped"><strong>set_mapped</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_name"><strong>set_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_no_show_all"><strong>set_no_show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_parent"><strong>set_parent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_parent_window"><strong>set_parent_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_realized"><strong>set_realized</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_receives_default"><strong>set_receives_default</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_redraw_on_allocate"><strong>set_redraw_on_allocate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_scroll_adjustments"><strong>set_scroll_adjustments</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_sensitive"><strong>set_sensitive</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_set_scroll_adjustments_signal"><strong>set_set_scroll_adjustments_signal</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_size_request"><strong>set_size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_state"><strong>set_state</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_style"><strong>set_style</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_tooltip_markup"><strong>set_tooltip_markup</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_tooltip_text"><strong>set_tooltip_text</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_tooltip_window"><strong>set_tooltip_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_uposition"><strong>set_uposition</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_usize"><strong>set_usize</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_visible"><strong>set_visible</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_window"><strong>set_window</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-shape_combine_mask"><strong>shape_combine_mask</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-show"><strong>show</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-show_all"><strong>show_all</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-show_now"><strong>show_now</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-size_allocate"><strong>size_allocate</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-size_request"><strong>size_request</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-style_attach"><strong>style_attach</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-style_get_property"><strong>style_get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-thaw_child_notify"><strong>thaw_child_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-translate_coordinates"><strong>translate_coordinates</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-trigger_tooltip_query"><strong>trigger_tooltip_query</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unmap"><strong>unmap</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unparent"><strong>unparent</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unrealize"><strong>unrealize</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="gtk.html#Widget">gtk.Widget</a>:<br>
+<dl><dt><strong>allocation</strong></dt>
+</dl>
+<dl><dt><strong>name</strong></dt>
+</dl>
+<dl><dt><strong>parent</strong></dt>
+</dl>
+<dl><dt><strong>requisition</strong></dt>
+</dl>
+<dl><dt><strong>saved_state</strong></dt>
+</dl>
+<dl><dt><strong>state</strong></dt>
+</dl>
+<dl><dt><strong>style</strong></dt>
+</dl>
+<dl><dt><strong>window</strong></dt>
+</dl>
+<hr>
+Methods inherited from <a href="gtk.html#Object">gtk.Object</a>:<br>
+<dl><dt><a name="Edycja-do_destroy"><strong>do_destroy</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-flags"><strong>flags</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove_data"><strong>remove_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-remove_no_notify"><strong>remove_no_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_flags"><strong>set_flags</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-unset_flags"><strong>unset_flags</strong></a>(...)</dt></dl>
+
+<hr>
+Methods inherited from <a href="gobject._gobject.html#GObject">gobject._gobject.GObject</a>:<br>
+<dl><dt><a name="Edycja-__copy__"><strong>__copy__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-__deepcopy__"><strong>__deepcopy__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__eq__"><strong>__eq__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__eq__">__eq__</a>(y)&nbsp;&lt;==&gt;&nbsp;x==y</tt></dd></dl>
+
+<strong>__gdoc__</strong> = 'Object GtkWindow<font color="#c040c0">\n\n\n</font>    Klasa s<font color="#c040c0">\xc5\x82</font>u<font color="#c040c0">\xc5\xbc\xc4\x85</font>ca do edycj...ownika<font color="#c040c0">\n\n</font>Signals from GObject:<font color="#c040c0">\n</font>  notify (GParam)<font color="#c040c0">\n\n</font>'
+<dl><dt><a name="Edycja-__ge__"><strong>__ge__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__ge__">__ge__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;=y</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__gobject_init__"><strong>__gobject_init__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-__gt__"><strong>__gt__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__gt__">__gt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&gt;y</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__hash__"><strong>__hash__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__hash__">__hash__</a>()&nbsp;&lt;==&gt;&nbsp;hash(x)</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__le__"><strong>__le__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__le__">__le__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;=y</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__lt__"><strong>__lt__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__lt__">__lt__</a>(y)&nbsp;&lt;==&gt;&nbsp;x&lt;y</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__ne__"><strong>__ne__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__ne__">__ne__</a>(y)&nbsp;&lt;==&gt;&nbsp;x!=y</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="Edycja-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#Edycja-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="Edycja-chain"><strong>chain</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-connect"><strong>connect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-connect_after"><strong>connect_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-connect_object"><strong>connect_object</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-connect_object_after"><strong>connect_object_after</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-disconnect"><strong>disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-disconnect_by_func"><strong>disconnect_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-emit"><strong>emit</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-emit_stop_by_name"><strong>emit_stop_by_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-freeze_notify"><strong>freeze_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_data"><strong>get_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_properties"><strong>get_properties</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_property"><strong>get_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-handler_block"><strong>handler_block</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-handler_block_by_func"><strong>handler_block_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-handler_disconnect"><strong>handler_disconnect</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-handler_is_connected"><strong>handler_is_connected</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-handler_unblock"><strong>handler_unblock</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-handler_unblock_by_func"><strong>handler_unblock_by_func</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-notify"><strong>notify</strong></a>(...)</dt></dl>
+
+<strong>props</strong> = &lt;gobject.GProps object&gt;
+<dl><dt><a name="Edycja-set_data"><strong>set_data</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_properties"><strong>set_properties</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-set_property"><strong>set_property</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-stop_emission"><strong>stop_emission</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-thaw_notify"><strong>thaw_notify</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-weak_ref"><strong>weak_ref</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="gobject._gobject.html#GObject">gobject._gobject.GObject</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>__grefcount__</strong></dt>
+</dl>
+<hr>
+Data and other attributes inherited from <a href="gobject._gobject.html#GObject">gobject._gobject.GObject</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of GObjectMeta object&gt;<dd><tt>T.<a href="#Edycja-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="atk.html#ImplementorIface">atk.ImplementorIface</a>:<br>
+<dl><dt><a name="Edycja-ref_accessible"><strong>ref_accessible</strong></a>(...)</dt></dl>
+
+<hr>
+Methods inherited from <a href="gtk.html#Buildable">gtk.Buildable</a>:<br>
+<dl><dt><a name="Edycja-add_child"><strong>add_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-construct_child"><strong>construct_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_add_child"><strong>do_add_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_construct_child"><strong>do_construct_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_get_internal_child"><strong>do_get_internal_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_parser_finished"><strong>do_parser_finished</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-do_set_name"><strong>do_set_name</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-get_internal_child"><strong>get_internal_child</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="Edycja-parser_finished"><strong>parser_finished</strong></a>(...)</dt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Kontakt">class <strong>Kontakt</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Klasa&nbsp;<a href="#Kontakt">Kontakt</a>&nbsp;służy&nbsp;do&nbsp;przechowywania&nbsp;kontaktów&nbsp;w&nbsp;bazie&nbsp;danych.<br>
+Zawiera&nbsp;nazwę,numer&nbsp;użytkownika&nbsp;oraz&nbsp;czas&nbsp;ostatniego&nbsp;kontaktu<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Kontakt-__init__"><strong>__init__</strong></a>(self, nazwa, nr)</dt><dd><tt>Konstruktor<br>
+:param&nbsp;nazwa:&nbsp;nazwa&nbsp;użytkownika<br>
+:param&nbsp;nr:&nbsp;numer&nbsp;użytkownika<br>
+:return:</tt></dd></dl>
+
+<dl><dt><a name="Kontakt-pokaz"><strong>pokaz</strong></a>(self)</dt></dl>
+
+<dl><dt><a name="Kontakt-setdate"><strong>setdate</strong></a>(self, czas)</dt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="NieMaKluczaError">class <strong>NieMaKluczaError</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr><td bgcolor="#ffc8d8"><tt>&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="kontakt.html#NieMaKluczaError">NieMaKluczaError</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><a name="NieMaKluczaError-__init__"><strong>__init__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__init__">__init__</a>(...)&nbsp;initializes&nbsp;x;&nbsp;see&nbsp;help(type(x))&nbsp;for&nbsp;signature</tt></dd></dl>
+
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object&gt;<dd><tt>T.<a href="#NieMaKluczaError-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
+
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="NieMaKluczaError-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NieMaKluczaError-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="NieMaKluczaError-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#NieMaKluczaError-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<dl><dt><a name="NieMaKluczaError-__unicode__"><strong>__unicode__</strong></a>(...)</dt></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+</dl>
+</td></tr></table></td></tr></table>
+</body></html>

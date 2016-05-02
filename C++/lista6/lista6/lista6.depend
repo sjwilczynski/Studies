@@ -1,0 +1,53 @@
+# depslib dependency file v1.0
+1428331682 source:/home/stachu/programy/lista6/listtest.cpp
+	"listtest.h"
+
+1428331553 /home/stachu/programy/lista6/listtest.h
+	<list>
+	<vector>
+	<string>
+	<fstream>
+	<iostream>
+
+1428331593 source:/home/stachu/programy/lista6/nr06.cpp
+	<fstream>
+	<iostream>
+	<chrono>
+	"listtest.h"
+	"vectortest.h"
+
+1428330803 /home/stachu/programy/lista6/vectortest.h
+	<vector>
+	<string>
+	<fstream>
+	<iostream>
+
+1428330495 source:/home/stachu/programy/lista6/vectortest.cpp
+	"vectortest.h"
+
+1428331682 source:/home/stachu/programy/c++/lista6/listtest.cpp
+	"listtest.h"
+
+1428331553 /home/stachu/programy/c++/lista6/listtest.h
+	<list>
+	<vector>
+	<string>
+	<fstream>
+	<iostream>
+
+1429015141 source:/home/stachu/programy/c++/lista6/nr06.cpp
+	<fstream>
+	<iostream>
+	<chrono>
+	"listtest.h"
+	"vectortest.h"
+
+1428330803 /home/stachu/programy/c++/lista6/vectortest.h
+	<vector>
+	<string>
+	<fstream>
+	<iostream>
+
+1428330495 source:/home/stachu/programy/c++/lista6/vectortest.cpp
+	"vectortest.h"
+

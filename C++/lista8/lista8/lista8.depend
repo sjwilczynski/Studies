@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1430157175 source:/home/stachu/programy/c++/lista8/lista8/main.cpp
+	<fstream>
+	<iostream>
+	<map>
+	<vector>
+	<unordered_map>
+	"case_insensitive.h"
+
+1430157206 /home/stachu/programy/c++/lista8/lista8/case_insensitive.h
+	<iostream>
+	<vector>
+	<unordered_map>
+

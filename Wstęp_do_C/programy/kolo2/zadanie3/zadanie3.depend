@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1420894232 source:d:\studia\wstêp do c\programy\kolo2\zadanie3\main.c
+	"drzewa.h"
+
+1420895394 d:\studia\wstêp do c\programy\kolo2\zadanie3\drzewa.h
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+

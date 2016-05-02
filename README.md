@@ -1,4 +1,4 @@
-# Univeristy
+# Studia
 Napisane przeze mnie programy, zrealizowane projekty, notatki, materiały do nauki ze studiów.
 
 Zima 2014/2015:

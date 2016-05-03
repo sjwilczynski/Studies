@@ -1,6 +1,0 @@
-klub1 1 1 1
-klub2 2 1 2
-klub3 3 2 1 
-klub4 7 2 2
-klub6 10 1 5
-klub5 0 0 0

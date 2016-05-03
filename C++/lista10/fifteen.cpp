@@ -71,10 +71,7 @@ void fifteen::makemove( move m )
     {
         case move::up:
                 if( open_i == 0 )
-                {
-                    illegalmove i(m);
-                    std::cout << i;
-                }
+					throw illegalmove(m);
                 else
                 {
                     std::swap(table[open_i][open_j], table[open_i-1][open_j]);
@@ -83,10 +80,7 @@ void fifteen::makemove( move m )
                 break;
         case move::left:
                 if( open_j == 0 )
-                {
-                    illegalmove i(m);
-                    std::cout << i;
-                }
+                	throw illegalmove(m);
                 else
                 {
                     std::swap(table[open_i][open_j], table[open_i][open_j-1]);
@@ -95,10 +89,7 @@ void fifteen::makemove( move m )
                 break;
         case move::right:
                 if( open_j == dimension - 1 )
-                {
-                    illegalmove i(m);
-                    //std::cout << i;
-                }
+                	throw illegalmove(m);
                 else
                 {
                     std::swap(table[open_i][open_j], table[open_i][open_j+1]);
@@ -107,10 +98,7 @@ void fifteen::makemove( move m )
                 break;
         case move::down:
                 if( open_i == dimension - 1 )
-                {
-                    illegalmove i(m);
-                    std::cout << i;
-                }
+               		throw illegalmove(m);
                 else
                 {
                     std::swap(table[open_i][open_j], table[open_i+1][open_j]);

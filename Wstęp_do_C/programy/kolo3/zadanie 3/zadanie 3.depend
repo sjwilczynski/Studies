@@ -1,9 +1,0 @@
-# depslib dependency file v1.0
-1420977385 source:d:\studia\wstêp do c\programy\kolo3\zadanie 3\main.c
-	"rzadka.h"
-
-1420978427 d:\studia\wstêp do c\programy\kolo3\zadanie 3\rzadka.h
-	<stdio.h>
-	<stdlib.h>
-	<stdbool.h>
-

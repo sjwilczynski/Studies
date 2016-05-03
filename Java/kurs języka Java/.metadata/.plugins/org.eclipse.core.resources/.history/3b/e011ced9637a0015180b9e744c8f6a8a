@@ -1,7 +1,0 @@
-
-abstract public class Operator1 extends Wyrazenie 
-{
-
-	public abstract double oblicz();
-
-}

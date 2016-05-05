@@ -3,7 +3,7 @@ Napisane przeze mnie programy, zrealizowane projekty, notatki, materiały do nau
 
 Zima 2014/2015:
 * Algebra I 
-* Analiza I
+* Analiza matematyczna I
 * Kurs: Wstęp do programowania w języku C
 * Logika dla informatyków 
 * Język angielski B2II (certyfikat FCE)

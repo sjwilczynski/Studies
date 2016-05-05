@@ -2,8 +2,8 @@
 Napisane przeze mnie programy, zrealizowane projekty, notatki, materiały do nauki ze studiów.
 
 Zima 2014/2015:
-* Algebra I ISIM 
-* Analiza I ISIM 
+* Algebra I 
+* Analiza I
 * Kurs: Wstęp do programowania w języku C
 * Logika dla informatyków 
 * Język angielski B2II (certyfikat FCE)
@@ -14,7 +14,7 @@ Lato 2014/2015:
 * Programowanie obiektowe 
 * Metody programowania 
 * Kurs: Programowanie w C++ (kurs w języku angielskim) 
-* Analiza matematyczna II ISIM 
+* Analiza matematyczna II
 * Algebra II 
 * Ochrona własności intelektualnej
 * Kultura języka

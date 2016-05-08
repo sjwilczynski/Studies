@@ -1,8 +1,0 @@
-# depslib dependency file v1.0
-1459894459 source:d:\studia\aisd\themis\short\main.cpp
-	<iostream>
-	<cstdio>
-	<cmath>
-	<algorithm>
-	<vector>
-

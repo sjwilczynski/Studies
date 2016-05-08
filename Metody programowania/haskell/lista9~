@@ -1,3 +1,0 @@
-roots :: (Double,Double,Double) -> [Double]
-roots (a,b,c) = 
-	| a == 0 error"not quadratic" 

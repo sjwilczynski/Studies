@@ -1,8 +1,0 @@
-# depslib dependency file v1.0
-1458328594 source:d:\studia\aisd\themis\balas\main.cpp
-	<iostream>
-	"costam.h"
-
-1458328603 d:\studia\aisd\themis\balas\costam.h
-	<iostream>
-

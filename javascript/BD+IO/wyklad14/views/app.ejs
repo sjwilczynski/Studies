@@ -1,0 +1,110 @@
+<!--obczaj class selectors
+specifity - jak aplikowane sa style 
+css default attriburtes values-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .bluespan {
+            color :blue;
+        }
+        #bluespanid {
+            color : red;
+        }
+        div > p{
+            color: aliceblue;
+        }
+        #span1{
+            height : 300px;
+            background-color : aqua;
+            display: block;
+        }
+        #container {
+            height: 500px;
+            background-color: yellow;
+            position : relative
+        }
+        #div1{
+            display: inline-block;
+            width : 100px;
+            height : 100px;
+            background-color: palevioletred;
+            position : relative;
+            top : 10px;
+            left : 10px;
+        }
+        #div2{
+            display: inline-block;
+            width : 100px;
+            height : 100px;
+            background-color: chocolate;
+            position: absolute;
+            top : 20px;
+            left : 20px;
+        }
+        #div3{
+            display: inline-block;
+            width : 100px;
+            height : 100px;
+            background-color: olive;
+            position : fixed;
+            bottom : 0px;
+            left: 100px;
+        }
+        #header{
+            background-color: red;
+            height: 120px;
+        }
+        #left{
+            width : 25%;
+            background-color: greenyellow;
+            float: left;
+        }
+        #content{
+            width : 75%;
+            background-color: blue;
+            float: right;
+        }
+        #footer{
+            height: 80px;
+            background-color: darkgoldenrod;
+            overflow: scroll;
+            clear: left;
+        }
+        
+    </style>
+<!-- span ma doymslnie display inline ustawienie wysokosci nei dziala trzeba zmienic display, div ma domyslnie block -->
+</head>
+<body>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. <span id = 'span1'> Excepteur sint occaecat cupidatat non proident</span>, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    <span id = 'bluespanid'> foo </span>
+
+
+    <div id = 'container'>
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+        <div id = 'div1'></div>
+        <div id = 'div2'></div>
+        <div id = 'div3'></div>
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </div>
+
+    <div id = 'header'>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+    </div>
+    <div id = 'left'>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+    </div>
+    <div id = 'content'>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+    </div>
+    <div id = 'footer'>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu . Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu . Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
+    </div>
+
+
+</body>
+</html>

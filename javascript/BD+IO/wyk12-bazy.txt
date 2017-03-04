@@ -1,0 +1,135 @@
+czym sa bazy danych?
+relacyjne/nierelacyjne
+
+relacyjne:
+ - postgresql
+ - mysql
+ - oracle
+ - sql server
+nierelacyjne:
+ - mongo
+-----------------------------------------------------------------------------------------
+microsoft sql server jako przyklad
+
+jêzyk SQL - hybrydowy, imperatywno deklaratywny
+
+silnik baz analitycznych(wielowymiarowych) (jêzyk MDX)
+silnik zapytañ statystycznych (R)
+
+
+sql server express - wersja darmowa
+protokol transportowy(co bysm chcieli):
+ - tcp/ip
+ - protokol pamieci wspoldzielonej
+-----------------------------------------------------------------
+narzedzia: osql.exe - konsola
+windows : management studio
+---------------------------------------
+autentykacja:
+ - uzytkownik/haslo
+ - uwierzytelnienie zintegrowane(kerberos) - lepsze bo nie podaje sie hasla (windows authetification)
+----------------------------------
+fizycznie baza danych to co najmniej 2 pliki(z danymi i log transakcyjny)
+
+schemty w bazie danych(namespace)
+
+Uczelnia  		MIasto
+Nazwa                   Nazwa,gmian,blabla
+
+Uczlenia
+Nazwa
+Miejscowosc
+
+wskazowka: jezeli to jest wiecej niz jeden atrybut to wydzielamy do kolejnej tabeli
+--------------------------------------------------------------------------------------
+
+Child -> Parent
+chcemy sie efektywnie dostawac do wiersza
+co jest indentyfikatorem wiersza?
+
+to nam pozwoli na zrobenie indexowania(jak haszowanie)
+
+dla kazdej tabeli okreslamy klucz glówny:
+- jeden z atrybutów(rzadko)
+- artificial id
+	- typ numeryczny lub typ guid
+
+typ literalny:
+ - char - okreslony rozmiar
+ - varchain - rozmiar zmienny
+ n - prefix mowiacy ze uzywamy UTF-16
+
+-----------------------------------------------------------------------------
+
+startegia wyboru wartosci klucza glownego:
+ - guid - losowy(male prawd trafienia na ten sam)
+ - numeryczny - sekwencje(next val i takie tam)
+
+klucz obcy
+kontrola spojnosci referencyjnej
+
+----------------------------------------------
+z poziomu js:
+obiekt polaczenia
+obiekt polecenia
+
+ciag polaczenia - napis k=w;k2=w2;...
+connectionstrings.com
+
+-----------------------------
+obsluga async await
+
+w nodzie 7 bedzie ale zeby zadzaialo:
+
+w launch.json:
+runtimeParams[
+	'--harmony'
+] czy jakos tak
+
+
+------------------------------------------------------------------------------------
+proces wstawiania danych do co najmniej dwoch tabel
+kwerendy parametryczne, sql injection
+css
+----------------------------------------------------------------------------------------
+
+jak z kodu wrzucic cos do bazy danych?
+wzorzec projektowy repository 
+klient nie ma w ogole wiedziec ze repo jest dostepem do bazy
+oparta ne obiektach
+insert(parent) gdzie parent( parentName : 'fofok'}
+delete(parent lub id)
+findById
+findAll
+findByFirstLetter
+
+DOstarczamy defnicije funckji z innego modulu
+module.exports.insert
+uzywamy innego modulu dzieki temu - mozna jednoczesnie pracowac nad interfejsem i logika
+latwiej przeniesc aplikacje na uzywanie innej logiki(zmienic tylko repo)
+
+'; DELETE FROM sys.users'
+insert into parent () values (''); DELETE FROM sys.users -- ') -> SQL INJECTION
+
+lekarstwo: oddzielenie parametryzowania i parsowanie query
+najpierw parsowanie query potem dopiero wstawianie parametru i wtedy spoczko 
+--------
+
+indeskowanie kolumny - tradeoff - szybsze wyszukiwanie, ale wolniejsze wstawainie usuwanie, modyfikowanie i wieksza baza ( ale i tak czesto sie kalkuluje)
+jeszcze widoki -> juz gotowe zapytanie??? -> to podgladanie triggerow, indeksow itp( wbudowane widoki systemowe)
+
+---------------------------
+transakcje :
+	szereg zapytan
+	.
+	.
+	.
+
+	commit -> wszytsko
+	rollback -> nic
+W NIERELACYJNYCH JEST Z TYM PROBLEM
+
+-------------------------
+sekwencja a automatyczne nadawanie wartosci
+chyba lepiej sekwencja
+

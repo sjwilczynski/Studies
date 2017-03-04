@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rejestracja</title>
+    <style>
+    html, body, form {
+        height: 100%;
+        overflow: hidden;
+    }
+    body{
+        background-color : #c4cec2;
+        font-family: "Copperplate Gothic Light", sans-serif;;
+    }
+
+    #form1 {
+        display         : flex;
+        justify-content : center;
+        align-items     : center;        
+    }
+
+    #login {
+        padding          : 20px;
+        border           : 2px solid #293826;
+        border-radius: 8px;
+        text-align: center;
+        background-color:#b5bab4;
+        font-weight: bold;
+        font-family: Courier, "Lucida Console", monospace;
+    }
+
+    #login div {
+        overflow : auto;
+    }
+
+    #login input {
+        float : right;
+    }
+
+    button{
+            margin : 5px 5px;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            cursor: pointer;
+            background-color: white;
+            color: darkslategray;
+            border: 2px solid black;
+            border-radius: 10px;
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            clear : both;
+            width: 60%;
+            height: 35px;
+            font-size: 16px;
+            border-radius: 8px;
+    }
+    button:hover{
+        background-color: darkslategray;
+        color: white;
+    }
+   
+    input{
+        border: 1px solid black;
+        margin: 2px 2px;
+    }
+    .message {
+        color : #f28237;
+    }
+    #header{
+                width : 100%;
+                position: fixed; 
+                color: #293826;
+                top : 0px;
+                margin-bottom: 4px;
+                background-color: #84ba7a;
+                border : solid 1px black;
+                height : 60px;
+                line-height: 50px;
+                text-align: center;
+                display: inline-block;
+                font-size: 36px;
+                font-weight: bold;
+                justify-content: center;               
+            }
+    </style>
+</head>
+<body>
+    <div id = 'header'>
+            Mysterious Woodland Yavalath
+    </div>
+    <div style = 'margin-top : 70px'>
+    <form id = 'form1' method="POST" action = "/login">
+        <div id='login'>
+            <div style = 'margin-bottom : 12px; font-size : 20px'>
+                Rejestracja
+            </div>
+            <div>
+                <label>Nazwa użytkownika:</label>
+                <input type='text' name='username' />
+            </div>
+            <div>
+                <input type='password' name='pwd' />
+                <label>Hasło:</label>
+            </div>
+            <div>
+                <input type='password' name='pwd2' />
+                <label>Powtórz Hasło:</label>
+            </div>
+            <div>
+                <button>Zarejestruj</button>
+            </div>
+            
+            <% if ( locals.message ) { %>
+                <div class='message'>
+                    <%= locals.message %>
+                </div>
+            <% } %>
+        </div>
+    </form>
+    </div>
+</body>
+</html>

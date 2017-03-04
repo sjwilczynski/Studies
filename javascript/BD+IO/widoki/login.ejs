@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST">
+    <% include header %>
+    <div>
+        <%var name = combo1.name %>
+        <%var options = combo1.options%>
+        <%include select>
+    </div>
+
+    <div>
+    Login: <input type='text' name='txtLogin'/>
+    </div>
+    <div>
+    Haslo: <input type='password' name='txtPassword'/>
+    </div>
+    <div>
+        <button>Zaloguj</button>
+    </div>
+    <div>
+        <select>
+            <%options.forEach(option => { %>
+
+            })
+        </select>
+    </div>
+    <div>
+        <select>
+            <option value='1'>elem1</option>
+            <option value='2'>elem2</option>
+        </select>
+    </div>
+    <div>
+        <% if (locals.message) { %>
+        <div><%= locals.message %></div>
+        <% } %>
+    </div>
+
+    </form>
+</body>
+</html>

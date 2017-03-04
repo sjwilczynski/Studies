@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    .message {
+        color : red;
+    }
+    input {
+        padding: 10px;
+        margin: 1px;
+    }
+    </style>
+</head>
+<body>
+    <form method="POST" action="/print">
+    <table>
+        <tr>
+            <th> </th>
+            <th colspan="5">Imię nazwisko<input type="text" name="name"/><th>
+            <th colspan="5">Data<input type="date" name="date"/><th>
+        </tr>
+        <tr>
+            <th> </th>
+            <th colspan="5">Nazwa przedmiotu<input type="text" name="subject"/><th>
+            <th colspan="5">Numer listy<input type="number" name="number"/><th>
+        </tr>
+        <tr>
+            <td> Numer zadania </td>
+            <% for( i = 1; i <= 10; i++) { %>
+            <td> <%= i %> </td> 
+            <% } %>
+        </tr>
+        <tr>
+            <td> Liczba punktów </td>
+            <% for( i = 1; i <= 10; i++) { %>
+            <td> <input type="number" name="task<%= i %>"/> </td> 
+            <% } %>
+        </tr>
+    </table>
+    <div>
+        <button>Zapisz</button>
+    </div>
+    <% if ( locals.message ) { %>
+            <div class='message'>
+                <%= locals.message %>
+            </div>
+    <% } %>
+    </form>
+</body>
+</html>

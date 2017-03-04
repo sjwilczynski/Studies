@@ -1,0 +1,9 @@
+<ion-radio>
+		   <% options.forEach( option => { %>
+            <div>
+            <label>
+                <input type="radio" name="<%= option.text %>" value="<%= option.value %>"> <%= option.text %>
+            </label>
+            </div>
+		   <% }) %>
+</ion-radio>

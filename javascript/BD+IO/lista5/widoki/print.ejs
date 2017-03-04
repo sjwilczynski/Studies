@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    form {
+        display         : flex;
+        justify-content : center;
+        align-items     : center;        
+    }
+    </style>
+</head>
+<body>
+    <form method="POST" action = "foo.txt">
+    <table>
+        <tr>
+            <th> </th>
+            <th colspan="3">Imię nazwisko</th>
+            <td colspan="2"> <%= params['name'] %> </td>
+            <th colspan="3">Data</th>
+            <td colspan="2"> <%= params['date'] %> </td>
+        </tr>
+        <tr>
+            <th> </th>
+            <th colspan="3">Nazwa przedmiotu</th>
+            <td colspan="2"> <%= params['subject'] %> </td>
+            <th colspan="3">Numer listy</th>
+            <td colspan="2"> <%= params['number'] %> </td>
+        </tr>
+        <tr>
+            <td> Numer zadania </td>
+            <% for( i = 1; i <= 10; i++) { %>
+            <td width="50"> <%= i %> </td> 
+            <% } %>
+        </tr>
+        <tr>
+            <td> Liczba punktów </td>
+            <% for( i = 1; i <= 10; i++) { %>
+            <td width="50"> <%= params['task'+ i] %> </td> 
+            <% } %>
+        </tr>
+    </table>
+    </form>
+</body>
+</html>

@@ -1,0 +1,46 @@
+//tu bedzie mozna odwolac sie do danych -dyanmicznie w przecwienstwie do html
+//! tabulator robi mi ten szablon -> skroty: wpisz wgoogle emmet - do podpowiedzi na dole zmien na html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    moja strona
+
+    <% var foo = 1 %>
+    <%for (var i = 0; i < 5; i++){ %>
+        <input value = '<%= i.toString() %>' /><br/>
+    <% } %>
+    <% var dh = '<div>foobar<div>'; %>  //patrz endkodowanie tresci
+    <% dh %> //mechanizm enkodowania do zabezpieczenia sie przed atakiem  --> cross-site scripting :)
+    <% -dh %> //wylaczenie enkodowanie -> na wlasna odpowiedzialnosc
+
+    f1: <%= f1 %> <br/>
+    f2: <%= f2 %> <br/>
+
+    <table>
+        <tr>
+            <th>Kwota
+            </th>
+            <th>Data</th>
+            <th>
+        </tr>
+        <% przelewy.forEach( przelew =>{ %>
+            <tr>
+                <td>
+                    <%= przelew.kwota %>
+                </td>
+                <td>
+                    <%= przelew.data %>
+                </td>
+                <td>
+                    <a href="/przelew/<%= przelew.id %>">Pokaz wiecej </a>
+                </td>
+            </tr>
+        <% }) %>
+     
+     <a href="/foo">Przejdz do foo </a>   //tu cos nie pyka
+</body>
+</html>

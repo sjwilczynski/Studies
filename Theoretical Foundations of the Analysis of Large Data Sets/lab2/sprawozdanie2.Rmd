@@ -1,0 +1,247 @@
+---
+title: "Teoria analizy dużych zbiorów - sprawozdanie 2"
+author: "Stanisław Wilczyński"
+date: "18 marca 2017"
+output:
+  pdf_document: default
+  html_document: default
+header-includes:
+- \usepackage{booktabs}
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+```{r global_options, R.options=knitr::opts_chunk$set(warning=FALSE, message=FALSE)}
+```
+
+##Zadanie1
+```{r}
+est_prob = matrix(nrow = 3, ncol = 3);
+est_mean = matrix(nrow = 3, ncol = 3);
+est_quantile = matrix(nrow = 3, ncol = 3);
+est_maximum  = matrix(nrow = 3, ncol = 3);
+est_var = matrix(nrow = 3, ncol = 3);
+
+est_mean_tylda = matrix(nrow = 3, ncol = 3);
+est_quantile_tylda = matrix(nrow = 3, ncol = 3);
+est_maximum_tylda  = matrix(nrow = 3, ncol = 3);
+est_var_tylda = matrix(nrow = 3, ncol = 3);
+
+
+P = c(5000,50000,500000);
+EPS = c(-0.3,-0.2,-0.1);
+everything = function(i,j,rep){
+  prob = 0;
+  p = P[i];
+  eps = EPS[j]
+  results = matrix(nrow = 2, ncol = rep);
+  for(k in 1:rep){
+    x = rnorm(p);
+    c = sqrt(2*log(p))
+    mi = (1+eps)*c;
+    y = exp(x*mi - (mi^2)/2);
+    l = mean(y)
+    y_tylda = y*(x<c);
+    if(!all(y==y_tylda)){
+      prob = prob + 1;
+    }
+    l_tylda = mean(y_tylda);
+    results[,k] = c(l,l_tylda);
+  }
+  maxim = apply(results,1,max)
+  meann = apply(results,1,mean)
+  quant = apply(results,1,quantile, probs = c(0.95))
+  varr = apply(results,1,var);
+  
+  est_prob[i,j] <<- prob/rep;
+  est_maximum_tylda[i,j] <<- maxim[2]; 
+  est_quantile_tylda[i,j] <<- quant[2];
+  est_mean_tylda[i,j] <<- meann[2];
+  est_var_tylda[i,j] <<- varr[2];
+  est_maximum[i,j] <<- maxim[1]; 
+  est_quantile[i,j] <<- quant[1];
+  est_mean[i,j] <<- meann[1];
+  est_var[i,j] <<- varr[1]
+  
+}
+
+for(i in 1:3){
+  for(j in 1:3){
+    everything(i,j,500)
+  }
+}
+
+
+```
+```{r, results = 'asis'}
+
+library(knitr);
+library(xtable)
+library(latex2exp)
+t1 <- kable(est_prob,format = 'latex', booktabs = TRUE, col.names = EPS);
+t2 <- kable(est_maximum, format = 'latex', booktabs = TRUE, col.names = EPS);
+t3 <- kable(est_maximum_tylda, format = 'latex', booktabs = TRUE, col.names = EPS);
+t4 <- kable(est_mean, format = 'latex', booktabs = TRUE,  col.names = EPS);
+t5 <- kable(est_mean_tylda, format = 'latex',booktabs = TRUE, col.names = EPS);
+t6 <- kable(est_quantile, format = 'latex', booktabs = TRUE, col.names = EPS);
+t7 <- kable(est_quantile_tylda, format = 'latex', booktabs = TRUE, col.names = EPS);
+t8 <- kable(est_var, format = 'latex', booktabs = TRUE, col.names = EPS);
+t9 <- kable(est_var_tylda, format = 'latex', booktabs = TRUE, col.names = EPS);
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{Estymowane prawdopodobieństwo}
+      \\centering",
+        t1,
+    "\\end{minipage}
+\\end{table}"
+))
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{L maximum}
+      \\centering",
+        t2,
+    "\\end{minipage}%
+    \\begin{minipage}{.5\\linewidth}
+      \\centering
+        \\caption{$\\tilde{L}$ maximum}",
+        t3,
+    "\\end{minipage} 
+\\end{table}"
+))  
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{L średnia}
+      \\centering",
+        t4,
+    "\\end{minipage}%
+    \\begin{minipage}{.5\\linewidth}
+      \\centering
+        \\caption{$\\tilde{L}$ średnia}",
+        t5,
+    "\\end{minipage} 
+\\end{table}"
+))  
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{L kwantyl}
+      \\centering",
+        t6,
+    "\\end{minipage}%
+    \\begin{minipage}{.5\\linewidth}
+      \\centering
+        \\caption{$\\tilde{L}$ kwantyl}",
+        t7,
+    "\\end{minipage} 
+\\end{table}"
+))  
+
+cat(c("\\begin{table}[!htb]
+    \\begin{minipage}{.5\\linewidth}
+      \\caption{L wariancja}
+      \\centering",
+        t8,
+    "\\end{minipage}%
+    \\begin{minipage}{.5\\linewidth}
+      \\centering
+        \\caption{$\\tilde{L}$ wariancja}",
+        t9,
+    "\\end{minipage} 
+\\end{table}"
+))  
+
+
+```
+W powyższych tabelkach w kolejnych wierszach mamy wartości dla odpowiednio dla $p=500,50000,500000$ (dla każdego p przeprowadziliśmy symulację 500 razy). Wyniki zgadzają się z teorią z wykładu: po pierwsze jeśli $\mu = (1 - \epsilon)\sqrt{2\log{p}}$ dla $\epsilon > 0$ to $L$ i $\tilde{L}$ powinny dążyć według prawdopodobieństwa do $1$. W przypadku $\tilde{L}$ zbieżność jest dość szybka. Zarówno maksimum, średnia i kwantyl rzędu $95$% dążą do $1$. W przypadku $L$ zbieżność nie jest tak szybka, ale tendencja jest widoczna. Oczywiście zarówno dla $L$ jak i $\tilde{L}$ widzimy, że kwantyl i maksimum maleją wraz ze wzrostem $p$ co jest oczekiwanym rezultatem. Po drugie zgodnie z teorią z wykładu wariancja $\tilde{L}$ powinna dążyć do zera, co również możemy zaobserwować patrząc na ostatnią tabelkę. Po trzecie zgodnie z teorią wyestymowane przez nas $P(L \ne \tilde{L})$ dąży do zera wraz ze wzrostem $p$. Jedyną własnością, której nie możemy potwierdzić jest "Jeżeli $2(1-\epsilon)^2 > 1$ to $Var(L) \rightarrow{\infty}$". Wtedy dla ostatnich dwóch kolumn wariancja $L$ powinna dązyć do nieskończoności, co nie jest potwierdzone wynikami symulacji.
+
+##Zadanie 2
+
+W tym zadaniu będziemy estymować wartości krytyczne dla optymalnego testu bayesowskiego w problemie igły w stogu siana. Niech $p = (5000,50000)$. Zakładamy, że nasze zmienne $X_1, \ldots, X_p$ pochodzą z rozkładu normalnego o wariancji $1$. Dla $H_0: \mu = 0$ będziemy testować alternatywy:
+$$H_1:\mu^{(p)} = 1.2 \sqrt{2\log{p}} $$
+$$H_2:\mu^{(p)} = 0.8 \sqrt{2\log{p}} $$
+Jest to test ilorazu wiarygodności, więc $H_0$ odrzucamy dla dużych wartości statystyki 
+$L = \frac{1}{p}\sum_{i=1}^p \exp\left(X_i\mu - \frac{\mu^2}{2}\right)$. Wygenerujemy naszą szatystykę 1000 razy i weźmiemy kwantyl próbkowy rzędu $95$%.
+```{r}
+rep = 1000;
+calcL = function(p,eps){
+  x = rnorm(p);
+  c = sqrt(2*log(p))
+  mi = (1+eps)*c;
+  y = exp(x*mi - (mi^2)/2);
+  mean(y)
+}
+
+L = matrix(nrow = 4, ncol = rep);
+L[1,] = replicate(rep, calcL(5000,-0.2));
+L[2,] = replicate(rep, calcL(50000,-0.2));
+L[3,] = replicate(rep, calcL(5000,0.2));
+L[4,] = replicate(rep, calcL(50000,0.2));
+quant = apply(L,1,quantile, probs = c(0.95))
+
+```
+
+Otrzymaliśmy wyniki: \newline
+1. Dla $H_1$ z $p=5000$: `r quant[3]`. \newline
+2. Dla $H_1$ z $p=50000$: `r quant[4]`. \newline 
+3. Dla $H_2$ z $p=5000$: `r quant[1]`. \newline
+4. Dla $H_2$ z $p=50000$: `r quant[2]`.
+
+Są one zgodne z oczekiwaniami - podobnie jak w zadaniu pierwszym wartości statystyki $L$ są bliskie $1$, co jest zgodne z teorią z wykładu i zbiżają się do tej wartości wraz ze wzrostem $p$.
+
+##Zadanie 3
+
+Tym razem korzystając z wyników poprzedniego zadania porównamy moc testów Bonferroniego i optymalnego testu bayesowskiego dla alternatyw: 
+$$H_1:\mu_1 = 1.2 \sqrt{2\log{p}}, \mu_2, \ldots, \mu_p = 0 $$
+$$H_2:\mu_1 = 0.8 \sqrt{2\log{p}}, \mu_2, \ldots, \mu_p = 0 $$
+```{r}
+calcPowerNP = function(p,eps,crit){
+  c = sqrt(2*log(p))
+  mi = (1+eps)*c;
+  u = c(mi, seq(0,0, length.out = p-1));
+  x = rnorm(n = p, mean = u)
+  y = exp(x*mi - (mi^2)/2);
+  L = mean(y);
+  as.numeric(L > crit)
+}
+calcPowerBon = function(p,eps){
+  alpha = 0.05;
+  c = sqrt(2*log(p))
+  mi = (1+eps)*c;
+  u = c(mi, seq(0,0, length.out = p-1));
+  x = rnorm(n = p, mean = u)
+  genPvalue = function(x){
+    2*(1-pnorm(abs(x)))
+  }
+  p_val = sapply(x,genPvalue)
+  as.numeric(min(p_val) <= alpha/p)
+}
+
+pNP = vector(length = 4);
+pBon = vector(length = 4);
+
+pNP[1] = mean(replicate(1000,calcPowerNP(5000,0.2, quant[3])))
+pBon[1] = mean(replicate(1000,calcPowerBon(5000,0.2)))
+pNP[2] = mean(replicate(1000,calcPowerNP(50000,0.2, quant[4])))
+pBon[2] = mean(replicate(1000,calcPowerBon(50000,0.2)))
+pNP[3] = mean(replicate(1000,calcPowerNP(5000,-0.2, quant[1])))
+pBon[3] = mean(replicate(1000,calcPowerBon(5000,-0.2)))
+pNP[4] = mean(replicate(1000,calcPowerNP(50000,-0.2, quant[2])))
+pBon[4] = mean(replicate(1000,calcPowerBon(50000,-0.2)))
+
+```
+Moc obu testów szacujemy, generując zmienne z rozkładu przy alternatywie $1000$ razy i sprawdzamy w jak wielu przypadkach hipoteza zerowa jest odrzucana. Otrzyaliśmy następujące wyniki: \newline
+1. Przy $H_1$ dla parametru $p=5000$ moc testu Neymana-Pearsona wynosi `r pNP[1]`. \newline
+2. Przy $H_1$ dla parametru $p=5000$ moc testu Bonferroniego wynosi `r pBon[1]`. \newline
+3. Przy $H_1$ dla parametru $p=50000$ moc testu Neymana-Pearsona wynosi `r pNP[2]`. \newline 
+4. Przy $H_1$ dla parametru $p=50000$ moc testu Bonferroniego wynosi `r pBon[2]`. \newline 
+5. Przy $H_2$ dla parametru $p=5000$ moc testu Neymana-Pearsona wynosi `r pNP[3]`. \newline
+6. Przy $H_2$ dla parametru $p=5000$ moc testu Bonferroniego wynosi `r pBon[3]`. \newline
+7. Przy $H_2$ dla parametru $p=50000$ moc testu Neymana-Pearsona wynosi `r pNP[4]`. \newline
+8. Przy $H_2$ dla parametru $p=50000$ moc testu Bonferroniego wynosi `r pBon[4]`. \newline
+Otrzymane wyniki zgadzają się z teorią z wykładu, jeśli sygnał jest silny, tzn. któreś $\mu = (1+\epsilon)\sqrt{2\log{p}}$ dla $\epsilon > 0$ to moce obu tych testów dążą do 1 wraz ze wzrostem rozmiaru próby. Kiedy jednak sygnał jest słaby ($\epsilon < 0$) to oba testy mają małą moc, dążącą przy rozmiarze próby do czegoś mniejszego niż poziom istotności $\alpha = 0.05$, co przy danym nam rozmiarze danych nie jest jeszcze wyrażnie widoczne.

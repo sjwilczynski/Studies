@@ -1,0 +1,290 @@
+---
+title: "Teoria analizy dużych zbiorów - sprawozdanie 1"
+author: "Stanisław Wilczyński"
+date: "5 marca 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Zadanie1
+
+Sprawdzimy czy zgodnie z teorią z wykładu zachodzą nierówności:
+$$\frac{\phi(x) \cdot x}{x^2+1} \leq 1 - \Phi(x)  \leq \frac{\phi(x)}{x} $$
+oraz czy granice tych wyrażeń przy $x \rightarrow \infty$ są równe.
+Niech
+$$ g_1(x) = 1 - \Phi(x) $$
+$$ g_2(x) = \frac{\phi(x)}{x} $$
+$$ g_3(x) = \frac{\phi(x) \cdot x}{x^2+1} $$
+Wtedy dostajemy
+
+```{r}
+library(latex2exp)
+x = seq(from = 0.2, to = 4, by = 0.01);
+g1 = 1 - pnorm(x);
+g2 = dnorm(x)/x;
+g3 = dnorm(x)*x/(x^2 + 1);
+
+par(mfrow = c(1,2))
+plot(x,g1,type = 'l', ylab = "", col = "red", main = "Funkcje");
+lines(x, g2, col = "blue");
+lines(x, g3, col = "green");
+legend("topright", c(TeX('$g_1(x)$'), TeX('$g_2(x)$'), TeX('$g_3(x)$')), col = c('red','blue','green'), pch = 15);
+
+
+plot(x,g1/g2,type = 'l',ylim = c(0,3), ylab = "", col = "red", main = "Ilorazy");
+lines(x, g1/g3, col = "blue");
+abline(1,0,lty = 2);
+legend("topright", c(TeX('$g_1(x) / g_2(x)$'), TeX('$g_1(x) / g_3(x)$')), col = c('red','blue'), pch = 15);
+```
+
+
+
+
+
+Nasze wyniki zgadzają się z teorią z wykładu - nierówności są zachowane oraz granice są równe. Możemy jednak zauważyć, że dla $x = 2$ wyrażenia $g_1(x)$ oraz $g_3(x)$ są już prawie równe natomiast funkcje $g_1(x)$ oraz $g_2(x)$ zbiżają się do siebie wolniej.
+
+##Zadanie 2
+
+Niech
+$$ g_1(p,\alpha) = \Phi^{-1} \left( 1 - \frac{\alpha}{2p} \right)$$
+$$ c(p) = \sqrt{2\log p}$$
+$$ B(p, \alpha) = 2\log \left( \frac{2p}{\alpha} \right) - \log(2\pi) $$
+$$ g_2(p,\alpha) = \sqrt{B\left(1 - \frac{\log B}{B}\right)}$$
+Powyższe funkcje zostały przedstawione na wykresach poniżej razem z odpowiednimi ilorazami z treści zadania.
+
+```{r}
+p = seq(from = 10^2, to = 10^9, by = 10000)
+logp = seq(from = 2, to = 9, by = 0.001)
+ticks = seq(2,9, by = 1)
+alpha = c(0.01,0.1,0.5)
+c = sqrt(2*log(exp(logp)))
+g1 = function(p,alpha){
+  qnorm(1-alpha/(2*p))
+}
+B = function(p, alpha){
+  2*log(2*p/alpha) - log(2*pi)
+}
+g2 = function(b){
+  sqrt(b*(1 - log(b)/b))
+}
+g1_res = sapply(exp(logp),g1,alpha)
+B_res = sapply(exp(logp),B,alpha)
+g2_res = matrix(sapply(B_res,g2), nrow = nrow(B_res), ncol = ncol(B_res))
+dane = c(c,g1_res,g2_res)
+
+
+#par(mfrow=c(3,3))#, pin = c(1.5,1.7))
+m <- matrix( seq(from=1,to=6,by=1), nrow = 2, ncol = 3, byrow = TRUE )
+layout(m)
+par(mar = c(2, 2, 1, 1), cex = 0.6, oma = c(1,1,1,1))
+
+
+
+plot(logp,g1_res[1,], type = 'l', ylim = c(2,5), xlab = "p", xaxt = "n", ylab = "", main = TeX('Funkcje dla $\\alpha = 0.01$'), col = 'red');
+lines(logp, c, col = "blue");
+legend("topleft", c(TeX('$g_1(p)$'), TeX('$c(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[2,], type = 'l', ylim = c(2,5), xlab = "p", xaxt = "n", ylab = "", main = TeX('Funkcje dla $\\alpha = 0.1$'), col = 'red');
+lines(logp, c, col = "blue");
+legend("topleft", c(TeX('$g_1(p)$'), TeX('$c(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[3,], type = 'l', ylim = c(2,5), xlab = "p", xaxt = "n", ylab = "", main = TeX('Funkcje dla $\\alpha = 0.5$'), col = 'red');
+lines(logp, c, col = "blue");
+legend("topleft", c(TeX('$g_1(p)$'), TeX('$c(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+#par(mfrow = c(1,3))
+
+plot(logp,g1_res[1,], type = 'l', xlab = "p", xaxt = "n", ylab = "", main = TeX('Funkcje dla $\\alpha = 0.01$'), col = 'red');
+lines(logp, g2_res[1,], col = "blue");
+legend("topleft", c(TeX('$g_1(p)$'), TeX('$g_2(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[2,], type = 'l', xlab = "p", xaxt = "n", ylab = "", main = TeX('Funkcje dla $\\alpha = 0.1$'), col = 'red');
+lines(logp, g2_res[2,], col = "blue");
+legend("topleft", c(TeX('$g_1(p)$'), TeX('$g_2(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[3,], type = 'l', xlab = "p", xaxt = "n", ylab = "", main = TeX('Funkcje dla $\\alpha = 0.5$'), col = 'red');
+lines(logp, g2_res[3,], col = "blue");
+legend("topleft", c(TeX('$g_1(p)$'), TeX('$g_2(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+m <- matrix( seq(from=1,to=6,by=1), nrow = 2, ncol = 3, byrow = TRUE )
+layout(m)
+par(mar = c(2, 2, 1, 1), cex = 0.6, oma = c(1,1,1,1))
+
+#par(mfrow = c(1,3))
+
+plot(logp,g1_res[1,]/c, type = 'l', ylim = c(0.9,1.6), xlab = "p", xaxt = "n", ylab = "", main = TeX('Ilorazy dla $\\alpha = 0.01$'), col = 'red');
+lines(logp, g1_res[1,]/g2_res[1,], col = "blue");
+legend("topleft", c(TeX('$g_1(p)/c(p)$'), TeX('$g_1(p)/g_2(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[2,]/c, type = 'l', ylim = c(0.9,1.6), xlab = "p", xaxt = "n", ylab = "", main = TeX('Ilorazy dla $\\alpha = 0.1$'), col = 'red');
+lines(logp, g1_res[2,]/g2_res[2,], col = "blue");
+legend("topleft", c(TeX('$g_1(p)/c(p)$'), TeX('$g_1(p)/g_2(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[3,]/c, type = 'l', ylim = c(0.9,1.6), xlab = "p", xaxt = "n", ylab = "", main = TeX('Ilorazy dla $\\alpha = 0.5$'), col = 'red');
+lines(logp, g1_res[3,]/g2_res[3,], col = "blue");
+legend("topleft", c(TeX('$g_1(p)/c(p)$'), TeX('$g_1(p)/g_2(p)$')), col =  c('red','blue'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+#par(mfrow = c(1,3))
+
+plot(logp,g1_res[1,]/g2_res[1,], type = 'l', xlab = "p", xaxt = "n", ylab = "", main = TeX('Ilorazy dla $\\alpha = 0.5$'), col = 'red');
+legend("topleft", c(TeX('$g_1(p)/g_2(p)$')), col =  c('red'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[2,]/g2_res[2,], type = 'l', xlab = "p", xaxt = "n", ylab = "", main = TeX('Ilorazy dla $\\alpha = 0.5$'), col = 'red');
+legend("topleft", c(TeX('$g_1(p)/g_2(p)$')), col =  c('red'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+
+plot(logp,g1_res[3,]/g2_res[3,], type = 'l', xlab = "p", xaxt = "n", ylab = "", main = TeX('Ilorazy dla $\\alpha = 0.5$'), col = 'red');
+legend("topleft", c(TeX('$g_1(p)/g_2(p)$')), col =  c('red'), pch = 15);
+labels = sapply(ticks, function(i) as.expression(bquote(10^ .(i))));
+axis(1, at=ticks, labels=labels);
+```
+
+Wyniki, które możemy odczytać z wykresów potwierdzają teorię z wykładu, tzn. dla $p \rightarrow \infty$ mamy, że granice funkcji $g_1(p,\alpha)$, $g_2(p,\alpha)$ są równe, a zbieżność można zaobserwować już dla niewielkich wartości $p$ takich jak $10^2,10^3$ i to niezależnie od parametru $\alpha$. Jeśli chodzi o funckje $c(p)$ jest ona pewnym przybliżeniem $g_1(p)$, jednak dla pewnych wartości parametru $\alpha$, np. $0.01$ jest ona dość słabym przybliżeniem.
+
+##Zadanie 3
+
+
+Niech $Y_1, \ldots, Y_p$ dla $p = 10^8$ będą i.i.d ~$N(0,1)$. Niech $M(k) = max_{j \in \{1,\ldots,k\}} |Y_j|$ oraz $g(k) = \sqrt{2\log k}$ dla $k \in\{10^1,10^2,\ldots,10^8\}$. Będziemy porównywać funckje $M$ i $g$. Przetestujemy w ten sposón teorię mówiącą, że dla $Z_1, \ldots, Z_n$ $i.i.d$ zmiennych losowych z rozkładu $N(0,1)$ mamy $$ \frac{ \max_{i \in \{1,\ldots, n\}} |Z_i| }{ \sqrt{2 \log{n}}} \rightarrow^{P} 1 $$
+
+```{r}
+fun = function(){
+   x = rnorm(10^6)
+  ind = seq(1,6, by = 1)
+  k = 10^ind
+  mymax = function(k){
+    r = range(x[1:k])
+    r = abs(r)
+    max(r)
+  }
+  M = sapply(k,mymax)
+  g = sqrt(2*log(k))
+  
+  #par(mfrow = c(1,2), mar = c(1, 1, 1, 1), cex = 0.7, oma = c(1,1,1,1));
+  plot(ind,g, type = 'p', xlab = "k", xaxt = "n", ylab = "", main = "Funkcje", col = 'red');
+  points(ind, M, col = "blue");
+  legend("topleft", c(TeX('$g(k)$'), TeX('$M(k)$')), col = c('red','blue'), pch = 15);
+  labels = sapply(ind, function(i) as.expression(bquote(10^ .(i))))
+  axis(1, at=ind, labels=labels)
+  
+  plot(ind,M/g, type = 'p', xlab = "k", ylim = c(0.5,1.5), ylab ="", xaxt = "n", main = TeX('$M(k)/g(k)$'), col = 'red');
+  abline(1,0, lty = 2);
+  legend("topleft", c(TeX('$M(k)/g(k)$')), col = c('red'), pch = 15);
+  labels = sapply(ind, function(i) as.expression(bquote(10^ .(i))))
+  axis(1, at=ind, labels=labels)
+}
+m <- matrix( c(seq(from=1,to=10,by=1),0,0), nrow = 3, ncol = 4, byrow = TRUE )
+layout(m)
+par(mar = c(2, 2, 1, 1), cex = 0.6, oma = c(1,1,1,1))
+for(i in 1:5){
+  fun()
+}
+```
+
+Możemy zauważyć, że rzeczywiście dla dużych wartości $k$ (od około $10^5$) funkcje $M(k), g(k)$ zbliżają się do siebie, jednak nie jest to zbyt wyraźna i szybka zbieżność tak jak w przykładach w poprzednich zadaniach.
+```{r}
+linki = "
+Przydatne linki:  
+http://www.statpower.net/Content/310/R%20Stuff/SampleMarkdown.html  
+http://www.dataanalytics.org.uk/Publications/Writers%20Bloc/Expression.htm  
+https://biowize.wordpress.com/2013/04/24/log-plots-in-r/     http://www.statmethods.net/advgraphs/layout.html  
+https://www.programiz.com/r-programming/subplot  
+https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf  "
+```
+
+
+##Zadanie 4
+
+W tym zadaniu będziemy estymować moc testów Bonferroniego i Fishera. Niech $p = 5000$. Zakładamy, że nasze zmienne pochodzą z rozkładu normalnego o wariancji $1$. Dla $H_0: \mu_1, \ldots,\mu_{p} = 0$ będziemy testować alternatywy:
+$$H_1:\mu_1 = 1.2 \sqrt{2\log{p}}, \mu_2, \ldots, \mu_p = 0 $$
+$$H_2:\mu_1, \ldots,\mu_{1000} = 0.15\sqrt{2\log{p}}, \mu_{1001}, \ldots,\mu_{p} = 0$$
+Aby oszacować moc, wygenerujemy zmienne z rozkładów przy hipotezie alternatywnej i sprawdzimy w jak wielu przypadkach hipoteza zerowa została odrzucona. 
+```{r}
+rejectBonf = 0;
+rejectFish = 0;
+rejectChi = 0;
+alpha = 0.05;
+howmany = 1000;
+for(i in 1:howmany){
+  p = 5000;
+  u = c(1.2*sqrt(2*log(p)), seq(0,0, length.out = 4999));
+  x = rnorm(n = p, mean = u)
+  genPvalue = function(x){
+    2*(1-pnorm(abs(x)))
+  }
+  p_val = sapply(x,genPvalue)
+  if(min(p_val) <= alpha/p){
+    rejectBonf = rejectBonf + 1;
+  }
+  if( -2*sum(log(p_val)) > qchisq(1-alpha,2*p)){
+    rejectFish = rejectFish + 1;
+  }
+  if(sum(x^2) > qchisq(1-alpha,p)){
+    rejectChi = rejectChi + 1;
+  }
+}
+```
+Niech $\hat\gamma_B, \hat\gamma_F, \hat\gamma_C$ oznaczją wyestymowane przez nas moce testów odpowienio Bonferroniego ,Fishera i  chi-kwadrat. Przy testowaniu przeciwko $H_1$ otrzymujemy $\hat\gamma_B =$ `r rejectBonf/howmany`, $\hat\gamma_F =$ `r rejectFish/howmany`, $\hat\gamma_C =$ `r rejectChi/howmany`. 
+```{r}
+rejectBonf = 0;
+rejectFish = 0;
+rejectChi = 0;
+alpha = 0.05
+for(i in 1:howmany){
+  p = 5000;
+  val = 0.15*sqrt(2*log(p))
+  u = c(seq(val,val, length.out = 1000), seq(0,0, length.out = 4000));
+  x = rnorm(n = p, mean = u)
+  genPvalue = function(x){
+    2*(1-pnorm(abs(x)))
+  }
+  p_val = sapply(x,genPvalue)
+  if(min(p_val) <= alpha/p){
+    rejectBonf = rejectBonf + 1;
+  }
+  if( -2*sum(log(p_val)) > qchisq(1-alpha,2*p)){
+    rejectFish = rejectFish + 1;
+  }
+  if(sum(x^2) > qchisq(1-alpha,p)){
+    rejectChi = rejectChi + 1;
+  }
+}
+```
+
+Przy testowaniu przeciwko $H_2$ otrzymujemy natomiast $\hat\gamma_B =$ `r rejectBonf/howmany`, $\hat\gamma_F =$ `r rejectFish/howmany` oraz $\hat\gamma_C =$ `r rejectChi/howmany`. Te wyniki potwierdzają przedstawione na wykładzie cechy tych testów. Otoż test Bonferroniego ma w pierwszym przypadku dużą moc, gdyż $H_0$ odrzucamy, gdy $\min(p_{value}) \leq \frac{\alpha}{p}$, służy, więc do wykrywania dużego odstępstwa od normy na jednej zmiennej. Z kolei test Fishera odrzuca $H_0$ dla dużych wartości statystyki $-2\sum{\log{p_{value}}}$, dlatego działa lepiej w drugim przypadku - kiedy wiele zmiennych odbiega od normy, ale niekoniecznie w znacznym stopniu którakolwiek z nich. Podobnie test chi-kwadrat - odrzuca on $H_0$ dla dużych wartości statystyki $\sum{Y_i^2}$, gdzie $Y_i$ były naszą próba losową, dlatego działa lepiej w drugim przypadku. $\\$
+
+
+
+
+
+
+
+
+
+
+

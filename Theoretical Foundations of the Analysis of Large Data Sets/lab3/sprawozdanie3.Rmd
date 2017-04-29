@@ -1,0 +1,306 @@
+---
+title: "Sprawozdanie 3"
+author: "Stanisław Wilczyński"
+date: "17 kwietnia 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Zadanie1
+
+```{r}
+p = c(5000,50000,500000);
+genPvalue = function(x){
+    2*(1-pnorm(abs(x)))
+}
+HCstat = function(alpha, pval,p){
+  fn = sum(pval <= alpha);
+  stat = (fn - p*alpha)/sqrt(p*alpha*(1-alpha))
+  stat
+}
+
+HCtest = function(p){
+  alpha = 0.05;
+  data = rnorm(p);
+  pval = sapply(data, genPvalue);
+  x = seq(0.001,alpha,length.out = 50);
+  stat = max(sapply(x, HCstat, pval,p));
+  #stat = optimise(HCstat, c(0.000000001, alpha), pval, p, maximum = TRUE)$objective; #niby lepsze ale wyników specjalnie nie zmienilo
+  stat
+}
+
+rep = 100;
+results = matrix(nrow = 3,ncol = rep);
+for(i in 1:3){
+  results[i,] = replicate(rep, HCtest(p[i]))
+}
+HCquants = apply(results,1,quantile, probs = c(0.95));
+
+```
+
+
+W tym zadaniu będziemy estymować wartości krytyczne testu Higher Criticism na poziomie istotności $\alpha_0 = 0.05$. Niech $p \in (5000,50000,500000)$. Zakładamy, że nasze zmienne $X_1, \ldots, X_p$ pochodzą z rozkładu normalnego o wariancji $1$. Testujemy globalną hipotezę $H_0: \mu_1, \ldots, \mu_p = 0, H_0 = \cap_{i=1}^p H_{0i}$ przeciwko alternatywie $H_1$ mowiącej, że istnieje $\mu_i$ niezerowe. Będziemy generować statystykę
+$$
+  HC^{*} = \max_{0 < \alpha \leq 0.05} \sqrt{p}\frac{F_p(\alpha) - \alpha}{\sqrt{\alpha(1-\alpha)}},
+$$
+gdzie $F_p(\alpha)$ jest dystrybuantą empiryczną dla p-wartości pojedynczych testów dla hipotez $H_{0i}$. Wygenerujemy naszą statystykę `r rep` razy i weźmiemy kwantyl próbkowy rzędu $95$%.
+
+
+Otrzymaliśmy następujące wyniki:\newline 
+1. Dla $p = 5000$ `r HCquants[1]`. \newline
+2. Dla $p = 50000$ `r HCquants[2]`. \newline
+3. Dla $p = 500000$ `r HCquants[3]`. 
+
+
+##Zadanie 2
+
+W tym zadaniu będziemy estymować moc testów Bonferroniego, Higher Criticism, chi-kwadrat, Kołmogorowa-Smirnowa i Andersona-Darlinga. Niech $p = 5000$. Zakładamy, że nasze zmienne pochodzą z rozkładu normalnego o wariancji $1$. Dla $H_0: \mu_1, \ldots,\mu_{p} = 0$ będziemy testować alternatywy:
+$$H_1:\mu_1 = 1.2 \sqrt{2\log{p}}, \mu_2, \ldots, \mu_p = 0 $$
+$$H_2:\mu_1, \ldots,\mu_{1000} = 0.15\sqrt{2\log{p}}, \mu_{1001}, \ldots,\mu_{p} = 0$$
+$$H_3:\mu_1, \ldots, \mu_{100} = 2, \mu_{101}, \ldots \mu_{p} = 0$$
+```{r}
+howmany = 500;
+```
+
+Aby oszacować moc, wygenerujemy zmienne `r howmany` razy z rozkładów przy hipotezie alternatywnej i sprawdzimy w jak wielu przypadkach hipoteza zerowa została odrzucona.
+```{r}
+library(stats);
+library(goftest);
+p = 5000;
+alpha = 0.05;
+runAllTests = function(u){
+  rejectBonf = 0;
+  rejectHC = 0;
+  rejectChi = 0;
+  rejectKS = 0;
+  rejectAD = 0;
+  for(i in 1:howmany){
+    data = rnorm(n = p, mean = u);
+    pval = genPvalue(data);
+    if(min(pval) <= alpha/p){
+      rejectBonf = rejectBonf + 1;
+    }
+    if(sum(data^2) > qchisq(1-alpha,p)){
+      rejectChi = rejectChi + 1;
+    }
+    x = seq(0.001,alpha,length.out = 20);
+    stat = max(sapply(x, HCstat, pval,p));
+    if(stat > HCquants[1]){
+      rejectHC = rejectHC + 1;
+    }
+    if(ks.test(data,"pnorm")$p.value <= alpha){
+      rejectKS = rejectKS + 1;
+    }
+    if(ad.test(data, null = "pnorm",0,1)$p.value <= alpha){
+      rejectAD = rejectAD + 1;
+    }
+  }
+  c(rejectBonf,rejectHC,rejectChi,rejectKS,rejectAD)/howmany;
+}  
+
+u = matrix(nrow = 3, ncol = p);
+u[1,] = c(1.2*sqrt(2*log(p)), seq(0,0, length.out = p-1));
+val = 0.15*sqrt(2*log(p))
+u[2,] = c(seq(val,val, length.out = 1000), seq(0,0, length.out = p-1000));
+u[3,] = c(seq(2,2,length.out = 100), seq(0,0,length.out = p-100));
+results = apply(u,1,runAllTests)
+results = data.frame(results, row.names = c('Bonf','HC','ChiKw','KS','AD'));
+colnames(results) <- c("$\\mu_1$","$\\mu_2$","$\\mu_3$")
+
+```
+
+```{r, results = 'asis'}
+
+library(knitr);
+library(xtable);
+options(xtable.comment = FALSE);
+print(xtable(results, caption = "Estymowane moce testów"),sanitize.text.function=function(x){x})
+```
+
+Widzimy, że jedynym testem nadającym się do szukania igły w stogu siana($H_1$) jest test Bonferroniego, bo pozostałe testy dla jednego sygnału mają bardzo małe moce. Jeśli chodzi o testy Higher Criticism i Chi-Kwadrat zachowują się one bardzo podobnie - zarówno dla wielu małych sygnałów($H_2$) jak i mniejszej liczby silniejszych sygnałów($H_3$) mają duże moce, a więc są skuteczne. Test Bonferroniego wyłapuje również całkiem dobrze sygnał o wielkości z $H_3$ - nie radzi sobie jednak z wieloma małymi sygnałami, co już sprawdzaliśmy na liście pierwszej.
+Jeśli chodzi o test Kołmogorowa-Smirnowa, jest on bardzo skuteczny dla wielu małych sygnałów($H_2$), jednak dla przypadku z trzeciej kolumny skuteczność przestaje być zadowalająca. Natomiast test Andersona-Darlinga wypada lepiej - zarówno dla $H_3$ jak i dla $H_2$ ma dużą moc.
+
+
+
+##Zadanie 3
+W tym zadaniu będzimey testować hipotezy $H_0: X_1, \ldots , X_p \sim N(0,1)$ przeciwko $H_1: X_1, \ldots, X_p \sim \epsilon N(\mu,1) + (1-\epsilon) N(0,1)$, gdzie $p \in \{5000,50000,500000\}$, $\epsilon = p^{-\beta}$, gdzie $\beta \in \{0.6,0.8\}$ i $\mu = \sqrt{2r \log{p}}$, gdzie $r \in \{0.1,0.2,0.3,0.4\}$. Dla każdych możliwych ustawień porównamy moce testów Neymana-Pearsona, Higher Criticism, Bonferroniego, KS, AD oraz Chi-Kwadrat. Najpierw jednak musimy zasymulować wartości krytyczne dla testu Neymana-Pearsona o staytystyce testowej $L = \prod_{i=1}^p((1-\epsilon)+ \epsilon \exp(\mu X_i - \frac{\mu^2}{2}))$.
+```{r, results = 'asis'}
+alpha = 0.05;
+BETA = c(0.6,0.8);
+P = c(5000,50000,500000);
+R = c(0.1,0.2,0.3,0.4);
+howmany = 100;
+library(knitr);
+library(xtable);
+options(xtable.comment = FALSE);
+
+crit1 = matrix(nrow = 3, ncol = 4);
+crit2 = matrix(nrow = 3, ncol = 4);
+fillCrit = function(beta){
+  crit = matrix(nrow = 3, ncol = 4);
+  for(i in 1:3){
+    for(j in 1:4){
+      L = vector(length = howmany)
+      for(k in 1:howmany){
+        p = P[i];
+        r = R[j];
+        eps = p^(-beta);
+        data = rnorm(p);
+        mi = sqrt(2*r*log(p));
+        y = (1 - eps) + eps*exp(mi*data - (mi^2)/2);
+        L[k] = prod(y);
+      }
+      crit[i,j] <- quantile(L,probs = c(0.95));
+    }
+  }
+  crit;
+}
+crit1 = fillCrit(BETA[1]);
+crit2 = fillCrit(BETA[2]);
+crit1 = data.frame(crit1, row.names = P);
+colnames(crit1) = R;
+crit2 = data.frame(crit2, row.names = P);
+colnames(crit2) = R;
+print(xtable(crit1, caption = "Wartości krytyczne dla $\\beta = 0.6$"),sanitize.text.function=function(x){x});
+print(xtable(crit2, caption = "Wartości krytyczne dla $\\beta = 0.8$"),sanitize.text.function=function(x){x});
+
+runAllTestsNew = function(i,j,k){
+  rejectNP = 0;
+  rejectHC = 0;
+  rejectBonf = 0;
+  rejectKS = 0;
+  rejectAD = 0;
+  rejectChi = 0;
+  crit = matrix(nrow = 3, ncol = 4);
+  if(i == 1){
+    crit = crit1;
+  } else{
+    crit = crit2;
+  }
+  beta = BETA[i];
+  p = P[j];
+  r = R[k];
+  
+  for(i in 1:howmany){
+    eps = p^(-beta);
+    u = c(0,sqrt(2*r*log(p)))
+    components = sample(1:2,prob = c(1-eps,eps), size=p, replace = TRUE);
+    data = rnorm(n = p, mean = u[components]);
+    mi = u[2];
+    y = (1 - eps) + eps*exp(mi*data - (mi^2)/2);
+    L = prod(y);
+    pval = genPvalue(data);
+    if(min(pval) <= alpha/p){
+      rejectBonf = rejectBonf + 1;
+    }
+    if(sum(data^2) > qchisq(1-alpha,p)){
+      rejectChi = rejectChi + 1;
+    }
+    x = seq(0.001,alpha,length.out = 50);
+    stat = max(sapply(x, HCstat, pval,p));
+    if(stat > HCquants[j]){
+      rejectHC = rejectHC + 1;
+    }
+    if(ks.test(data,"pnorm")$p.value < alpha){
+      rejectKS = rejectKS + 1;
+    }
+    if(ad.test(data, null = "pnorm",0,1)$p.value < alpha){
+      rejectAD = rejectAD + 1;
+    }
+    if(L > crit[j,k]){
+      rejectNP = rejectNP + 1;
+    }
+  }
+  c(rejectNP,rejectBonf,rejectHC,rejectChi,rejectKS,rejectAD)/howmany;
+}
+
+```
+Teraz porównamy wymienione wcześniej testy. Ustawienie są generowane następująco najpierw ustalamy $\beta$, dla ktorego przeglądamy mozliwe wartości $p$, dla którego przeglądamy kolejne wartości $r$ i stąd $24 = 2\cdot3\cdot4$ wiersze w tabelce. 
+
+```{r, results = 'asis'}
+library(stats);
+library(goftest);
+results = matrix(nrow = 24, ncol = 6);
+for(i in 1:2){
+  for(j in 1:3){
+    for(k in 1:4){
+      results[(i-1)*12+(j-1)*4+k,] = runAllTestsNew(i,j,k);
+    }
+  }
+}
+eksperyment = data.frame(matrix(nrow = 24, ncol = 3), row.names = seq(1,24,by = 1));
+eksperyment = data.frame(matrix(nrow = 24, ncol = 3), row.names = seq(1,24,by = 1));
+eksperyment[,1] = rep(BETA, each = 12);
+eksperyment[,2] = rep(P, times = 2, each = 4);
+eksperyment[,3] = rep(R , times = 6);
+results = data.frame(results, row.names = seq(1,24,by = 1));
+results = cbind(eksperyment,results);
+colnames(results) <- c('$\\beta$','$p$' ,'$r$', 'NP','Bonf','HC','ChiKw','KS','AD')
+library(knitr);
+library(xtable);
+options(xtable.comment = FALSE);
+print(xtable(results, caption = "Moce testów dla kolejnych ustawień"),sanitize.text.function=function(x){x});
+
+```
+Możemy zauważyć, że zgodnie z oczekiwaniami test Neymana-Pearsona ma największą moc. Zauważamy również, że dla $\beta = 0.8$ mieszanina jest na tyle rzadka, że zaden test nie działa dobrze - nie osiągamy mocy powyżej $0.5$. Co więcej widzimy, że dla ustalonych $\beta,p$ moc każdego testu rośnie wraz ze wzrostem $r$, co jest zgodne z teorią, gdyż silniejszy sygnał łatwiej rozpoznać. Ponadto dla $\beta=0.6$ i ustalonego $r$ możemy zauważyć, że moce testów Neymana-Pearsona, Bonferroniego i Higher Criticism rosną wraz ze wzrostem $p$, co sugeruje, że te testy przy tych ustawieniach są asymptotycznie mocne względem $p$. Jeśli chodzi o testy KS i AD widzimy, że przy żadnycb ustawieniach się nie mają dużej mocy. Oznacza to, że nie nadają się one do wykrywania rzadkich mieszanin.
+
+
+##Zadanie 4
+Niech $p=5000$. W tym zadaniu wygenerujemy 1000 trajektorii procesu empirycznego $U_p(t)$ na podstawie zmiennych losowych ze standardowego rozkładu normalnego, tzn. $U_p(t) = \sqrt{p}(F_p(t) - t)$, gdzie $F_p(t) = \frac{ \left\vert\{ i: p_i \leq t\right\}\vert }{p}$, gdzie $p_i$ są p-wartościami, czyli $p_i = 2(1-\Phi(x_i))$. Do wygenerowania 1000 trajektorii mostu Browna użyjemy funckji $rbridge\{e1071\}$.
+
+```{r, fig.height=6, fig.width=9}
+library(e1071)
+brown = matrix(nrow = 1000, ncol = 5000);
+empir = matrix(nrow = 1000, ncol = 5000);
+for(i in 1:1000){
+  brown[i,] = rbridge(frequency = 5000);
+  empir[i,] = genPvalue(rnorm(5000));
+}
+
+x = seq(0,1,length.out = 5000)
+mycol1 = topo.colors(5);
+plot(x,brown[1,], type = 'l', col = mycol1[1], ylim = c(-1.5,1.5), main = "Most Browna vs proces empiryczny", ylab = "", xlab = "");
+lines(x,brown[2,], type = 'l', col = mycol1[2])
+lines(x,brown[3,], type = 'l', col = mycol1[3])
+lines(x,brown[4,], type = 'l', col = mycol1[4])
+lines(x,brown[5,], type = 'l', col = mycol1[5])
+
+mycol2 = heat.colors(5)
+fn1 = ecdf(empir[1,]);
+lines(x, sqrt(5000)*(fn1(x) - x), col = mycol2[1]);
+fn2 = ecdf(empir[2,]);
+lines(x, sqrt(5000)*(fn2(x) - x), col = mycol2[2]);
+fn3 = ecdf(empir[3,]);
+lines(x, sqrt(5000)*(fn3(x) - x), col = mycol2[3]);
+fn4 = ecdf(empir[4,]);
+lines(x, sqrt(5000)*(fn4(x) - x), col = mycol2[4]);
+fn5 = ecdf(empir[5,]);
+lines(x, sqrt(5000)*(fn5(x) - x), col = mycol2[5]);
+legend("topright", c("Brown1","Brown2","Brown3","Brown4","Brown5","Empirical1","Empirical2","Empirical3","Empirical4","Empirical5"), col = c(mycol1,mycol2), pch = 15);
+
+maxBrown = vector(length = 1000);
+maxEmpirical = vector(length = 1000);
+for(i in 1:1000){
+  maxBrown[i] = max(abs(brown[i,]));
+  fn = ecdf(empir[i,]);
+  maxEmpirical[i] = max( sqrt(5000)*abs(fn(x) - x) );
+}
+
+quants = vector(length = 2);
+quants[1] = quantile(maxBrown, probs = c(0.8));
+quants[2] = quantile(maxEmpirical, probs = c(0.8));
+
+```
+
+Na wykresie przedstawiono przykładowe po 5 wygenerowanych procesów empirycznych i mostów Browna. Z samego wykresu, cieżko coś jednoznacznie wywnioskować, można jednak zauważyć, że procesy mają podobne przebiegi, tzn. bez legendy cięzko odróżnić most Browna od procesu empirycznego. W celu analizy podobieństwa porównujemy kwantyle próbkowe(po to generowaliśmy 1000 trajektorii) rzędu $80$% dla statystyk $T_1 = \sup_{t \in (0,1)} \vert{ B(t) \vert}$ oraz $T_2 = \sup_{t \in (0,1)} \vert{ U_p(t) \vert}$. Wynoszą one odpowiednio `r quants[1]` i `r quants[2]`, co potwierdza teorię z wykładu mówiącą, że $T_1 \rightarrow_{p \rightarrow \infty} T_2$.
+
+
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+a = [1:1:100];
+b = [1:2:100];
+c = [-1.0*pi: 0.01*pi: 1.00*pi];
+d =[ [-1.0*pi: 0.01*pi: -0.01*pi]  [0.01*pi: 0.01*pi: 1.00*pi] ];
+e = (sin(a)>0).*sin(a);
+A = reshape(a,10,10);
+x = [99:-1:1];
+B = zeros(100) + diag(a) + diag(x,-1) + diag(x,1);
+C = triu(ones(10));
+D = [(a+1)/2.*a ; factorial(a-1).*a];
+E = bsxfun(@mod,a',a);
+E = (E==0);

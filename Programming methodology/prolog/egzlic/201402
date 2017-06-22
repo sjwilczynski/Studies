@@ -1,0 +1,13 @@
+p1(L) :- \+ ( append(XX,YY,L), member(X,XX), member(Y,YY), X > Y ).
+p2(L) :- \+ ( member(X,L), member(Y,L), X > Y ).
+
+%nazwa dla p1 niemalejaca(L)
+%nazwa dla p2 wszystkierowne(L)
+
+wr([]).
+wr([_]).
+wr([A,B|X]) :-
+	A == B,
+	wr([B|X]).
+
+

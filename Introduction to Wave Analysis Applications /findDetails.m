@@ -1,0 +1,13 @@
+[A,map] = imread('brain.gif');
+figure(1);
+colormap(map);
+A = double(A);
+dwtmode('per');
+[ca,ch,cv,cd] = dwt2(A,'db6');
+image(A);
+[ca1,ch1,cv1,cd1] = dwt2(ca,'db6');
+ca = idwt2(ca1,2*ch1,2*cv1,2*cd1,'db6');
+B1 = idwt2(ca,ch,cv,cd,'db6');
+figure(2);
+colormap(map);
+image(B1);

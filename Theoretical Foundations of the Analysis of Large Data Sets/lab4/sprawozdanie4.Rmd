@@ -1,7 +1,6 @@
 ---
 title: "Sprawozdanie 4"
 author: "Stanisław Wilczyński"
-date: "4 maja 2017"
 output: pdf_document
 ---
 
@@ -11,7 +10,7 @@ knitr::opts_chunk$set(results = 'asis');
 library(knitr);
 library(xtable);
 options(xtable.comment = FALSE);
-rep = 10000;
+rep = 5000;
 ```
 
 ```{r}
@@ -84,7 +83,7 @@ runAllTets = function(p,mi, alpha, howManyNonZero){
   
   for(i in 1:4){
     if(rejected[i] > 0){
-      results[i,1] = trueNegatives[i]/rejected[i];
+      results[i,1] = trueNegatives[i]/howManyNonZero;
       results[i,2] = falseNegatives[i]/rejected[i];
       results[i,3] = falseNegatives[i] > 0;
     }
@@ -111,8 +110,7 @@ generateTable = function(results, i){
 
 ```
 ##Zadanie 1
-
-W tym zadaniu porównamy moce, False Discovery Rate(FDR) oraz Family-wise Error Rate(FWER) dla procedur Bonferroniego, Holma, Hochberga oraz Benjaminiego-Hochberga przy małej liczbie testów. Oczywiście jeśli $R$ bedzię liczbą odrzuconych hipotez, a $V$ oraz $W$ bedą odpowiednio liczbami prawdziwych hipotez odrzuconych przez procedurę oraz fałszywych hipotez odrzuconych przez procedurę to $FWER = P(V \geq 1)$,a $FDR = \frac{EV}{R}$ oraz $moc = \frac{EW}{R}$. Te wartości będziemy estymować, przeprowadzając symulacje $10000$ razy i wyciągając średnią z otrzymanych wyników. W tym zadaniu zmienne genereujemy z rozkładu normalnego o wariancji $1$ oraz testujemy hipotezy dla $p=20$: $H_{0i}: \mu_i = 0$ przeciwko $H_{1i} : \mu_i = \sqrt{2\log{\frac{p}{i}}}$ dla $i = 1, \ldots, 10$ oraz $\mu_i = 0$ dla $i = 11, \ldots, p$. Wszystkie testy przeprowadzamy na poziomie istotności $\alpha = 0.05$
+W tym zadaniu porównamy moce, False Discovery Rate(FDR) oraz Family-wise Error Rate(FWER) dla procedur Bonferroniego, Holma, Hochberga oraz Benjaminiego-Hochberga przy małej liczbie testów. Oczywiście jeśli $R$ bedzię liczbą odrzuconych hipotez, a $V$ oraz $W$ bedą odpowiednio liczbami prawdziwych hipotez odrzuconych przez procedurę oraz fałszywych hipotez odrzuconych przez procedurę to $FWER = P(V \geq 1)$,a $FDR = E\left[\frac{V}{R}\right]$ oraz $moc = E\left[\frac{W}{n_0}\right]$, gdzie $n_0$ to liczba fałszywych hipotez. Te wartości będziemy estymować, przeprowadzając symulacje $10000$ razy i wyciągając średnią z otrzymanych wyników. W tym zadaniu zmienne genereujemy z rozkładu normalnego o wariancji $1$ oraz testujemy hipotezy dla $p=20$: $H_{0i}: \mu_i = 0$ przeciwko $H_{1i} : \mu_i = \sqrt{2\log{\frac{p}{i}}}$ dla $i = 1, \ldots, 10$ oraz $\mu_i = 0$ dla $i = 11, \ldots, p$. Wszystkie testy przeprowadzamy na poziomie istotności $\alpha = 0.05$
 
 ```{r}
 
@@ -129,7 +127,7 @@ generateTable(results,1);
 
 Ze względu na to, że $p$ jest małe, średnie z rozkładu przy alternatywie nie są za duże. Odzwierciedlenie tego widzimy w tabeli w kolumnie mocy procedur - nie są one specjalnie wysokie. Jeśli chodzi o FWER już dla tak małego $p$ potwierdza się teoria z wykładu: procedu Bonferroniego, Holma i wynikowa Hochberga kontrolują FWER na poziomie $\alpha$, natomiast procedura Benjaminiego-Hochberga nie. Jeśli chodzi o FDR jest on kontrolowany na poziomie $\alpha$ przez wszystkie procedury.
 
-#Zadanie 2
+##Zadanie 2
 
 W tym zadaniu będziemy również porównywać FWER, FDR oraz moce dla procedur wykorzystanych w poprzednim zadaniu. Tym razem będziemy generować znacznie większe testy: $p = 5000$. Sprawdzimy również inne alternatywy, tzn. $H_{2i} : \mu_i = \sqrt{2\log{p}}$ dla $i = 1, \ldots, 100$ oraz $\mu_i = 0$ dla $i = 101, \ldots, p$, $H_{3i} : \mu_i = 2$ dla $i = 1, \ldots, 100$ oraz $\mu_i = 0$ dla $i = 101, \ldots, p$, $H_{4i} : \mu_1 = 1.2\sqrt{2\log{p}}$ oraz $\mu_i = 0$ dla $i = 2, \ldots, p$, $H_{5i} : \mu_i = 0.15\sqrt{2\log{p}}$ dla $i = 1, \ldots, 1000$ oraz $\mu_i = 0$ dla $i = 1001, \ldots, p$.
 
@@ -144,7 +142,7 @@ results = generateResults(p,mi,alpha);
 generateTable(results,2);
 ```
 
-Zauważmy, że przy tych ustawienich moce wszystkich procedur są bliskie $1$. Nie jest to zaskakujący rezultat, gdyż ustawiliśmy na pierwszych $100$ średnich bardzo duży sygnał. Podobnie jak w zadaniu 1 i zgodnie z teorią, FDR jest kontrolowany na poziomie $\alpha$ przez wszystkie procedury, z tą różnicą, że dla Benjaminiego-Hochberga jest on bliski $\alpha$ natomiast dla pozostałych trzech jest on bardzo mały. Jeśli chodzi o FWER trzy pierwsze procedury kontrolują go na poziomie $\alpha$, natomiast dla Benjaminiego-Hochberga wynosi on prawie 1, co wykazuje całkowity brak kontroli FWER dla tych ustawień, co zresztą udowodniliśmy na wykładzie.
+Zauważmy, że moce dla procedur Bonferroniego, Holma i Hochberga są nie za wysokie - spowodowane jest to graniczną(w sensie wykrywalności) wartością sygnału dla testu Bonferroniego. Jest ona niestety niewystarczająca. Natomiast procedura Benjaminiego-Hochberga radzi sobie zdecydowanie lepiej - moc jest na satysfakcjonującym poziomie. Podobnie jak w zadaniu 1 i zgodnie z teorią, FDR jest kontrolowany na poziomie $\alpha$ przez wszystkie procedury, z tą różnicą, że dla Benjaminiego-Hochberga jest on bliski $\alpha$ natomiast dla pozostałych trzech jest on bardzo mały. Jeśli chodzi o FWER trzy pierwsze procedury kontrolują go na poziomie $\alpha$, natomiast dla Benjaminiego-Hochberga wynosi on prawie 1, co wykazuje całkowity brak kontroli FWER dla tych ustawień, co zresztą udowodniliśmy na wykładzie.
 
 
 ```{r}
@@ -156,7 +154,7 @@ alpha = 0.05;
 results = generateResults(p,mi,alpha);
 generateTable(results,3);
 ```
-Przy tych ustawieniach wartości sygnału zostały zmiejszone do $2$. Jak widać w tabelce miało to ogromne przełożenie na moc procedur - zmalały one bardzo znacznie dla każdej z nich, jednak wciąż pozostały bliskie sobie. Jeśli chodzi o procedury Bonferroniego, Hochberga i Holma podobnie jak w poprzednich przypadkach kontrolują one FWER i FDR na poziomie $\alpha$, jednak już nie tak dobrze jak przy poprzenich ustawieniach(wciąż jednak wartości dla tych trzech procedur są do siebie zbliżone). Natomiast dla procedury Benajminiego-Hochberga FDR jest kontrolowany, w przeciwieństwie do FWER, który ponownie przekroczył wyznaczoną przez nas granicę.
+Przy tych ustawieniach wartości sygnału zostały zmiejszone do $2$. Jak widać w tabelce miało to ogromne przełożenie na moc procedur - zmalały one dla pierwszych trzech prawie do 0, natomiast dla Benjaminiego-Hochberga do również małej wartości. Jeśli chodzi o procedury Bonferroniego, Hochberga i Holma podobnie jak w poprzednich przypadkach kontrolują one FWER i FDR na poziomie $\alpha$, jednak w przypadku FDR już nie tak dobrze jak przy poprzenich ustawieniach(wciąż jednak wartości dla tych trzech procedur są do siebie zbliżone). Natomiast dla procedury Benajminiego-Hochberga FDR jest kontrolowany, w przeciwieństwie do FWER, który ponownie przekroczył wyznaczoną przez nas granicę.
 
 
 
@@ -169,7 +167,7 @@ alpha = 0.05;
 results = generateResults(p,mi,alpha);
 generateTable(results,4);
 ```
-Przy tych ustawieniach mamy tylko jeden duży sygnał. Moc wszystkich czterech procedur jest tym razem przeciętna(wciąż podobna). Tak jak poprzednio FDR jest kontrolowany przez wszytskie 4 procedury. Jeśli chodzi o FWER, jak zwykle, Benjamini-Hochberg go nie konroluje, natomiast dla pozostałych trzech procedur pierwszy raz zauważamy, że bardzo zbliżyły się one do granicy, co wiąże się oczywiście z tym, że mamy tylko jeden sygnał na całe $p$ testów.
+Przy tych ustawieniach mamy tylko jeden duży sygnał przekraczający granicę wykrywalności dla testu Bonferroniego. Tym razem moce wszystkich czterech procedur są do siebie zbliżone i na przyzwoitym poziomie. Tak jak poprzednio FDR jest kontrolowany przez wszytskie 4 procedury. Jeśli chodzi o FWER, jak zwykle, Benjamini-Hochberg go nie konroluje, natomiast pozostałe 3 procedury już tak.
 
 
 ```{r}
@@ -181,9 +179,9 @@ alpha = 0.05;
 results = generateResults(p,mi,alpha);
 generateTable(results,5);
 ```
-W ostatnim przypadku ponownie dajemy bardzo dużo, ale już jednak mniejszych, sygnałów. Ma to oczywiście wpływ na moc, która nie jest bardzo wysoka(wciąż podobna dla wszystkich czterech testów). FDR jest kontrolowany przez wszytskie cztery procedury na poziomie istotności $\alpha$. Tym razem jednak FWER jest kontrolowany przez wszystkie procedury( w tym  Benjaminiego-Hochberga ), co wynika z faktu, że sygnał jest mały nawet w porównaniu z sygnałem z $H_3$.
+W ostatnim przypadku ponownie dajemy bardzo dużo, ale już jednak mniejszych, sygnałów. Powoduje to spadek mocy dla wszystkich procedur do prawie zera, co wcale nas nie dziwi gdyż sygnał jest zdecyodwanie poniżej granicy wykrywalności. FDR jest kontrolowany przez wszytskie cztery procedury na poziomie istotności $\alpha$. Tym razem jednak FWER jest kontrolowany przez wszystkie procedury( w tym  Benjaminiego-Hochberga ), co wynika z faktu, że sygnał jest mały nawet w porównaniu z sygnałem z $H_3$, co powoduje, że cięzko odrzucić hipotezę zerową.
 
-Możemy zauważyć, patrząc na wszystkie tabelki, że procedury Bonferroniego, Holma i wynikowa Hochberga dla wszystkich przypadków zachowują się bardzo podobnie(czasem nawet identycznie). Ewidentnie zauważamy, że procedura Benajminiego-Hochberga jest z nich najsłabsza - raczej nie kontroluje FWER, a FDR ma zwykle większą wartość niż dla pozostałych procedur. Jedyną zaletą jest delikatnie większa moc dla $H_1$, $H_3$ i $H_5$. 
+Możemy zauważyć, patrząc na wszystkie tabelki, że procedury Bonferroniego, Holma i wynikowa Hochberga dla wszystkich przypadków zachowują się bardzo podobnie(czasem nawet identycznie). Ewidentnie zauważamy, że procedura Benajminiego-Hochberga ma zupełnie inną charakterystykę - łatwiej odrzuca hipotezę zerową, co z jednej strony wpływa na to, że w każdym przypadku ma ona największą moc, ale sprawia, że nie kontroluje ona FWER, a czasem i FDR.
 
 
 

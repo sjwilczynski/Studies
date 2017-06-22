@@ -1,0 +1,190 @@
+---
+title: "Sprawozdanie 6"
+author: "Stanisław Wilczyński"
+date: "11 czerwca 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE);
+knitr::opts_chunk$set(results = 'asis');
+library(knitr);
+library(xtable);
+options(xtable.comment = FALSE);
+library(mvtnorm);
+rep = 100;
+```
+
+```{r}
+
+genPvalue = function(x){
+    2*(1-pnorm(abs(x)))
+}
+
+myWhich = function(arr){
+  x <- which(arr);
+  if(length(x) > 0){
+    return(x);
+  }
+  else{
+    return(c(0));
+  }
+}
+
+compareEstimators = function(mu,sigma, mode = 0){
+  results = matrix(nrow = 3, ncol = rep);
+  results = replicate(rep, calculateEstimatorsError(mu,sigma, mode));
+  apply(results,1,mean);
+}
+
+calculateJSEstimator = function(X,p){
+  sqNormX = sum(X^2);
+  (1 - (p-2)/sqNormX)*X;
+}
+
+calculateMEBockEstimator = function(X,sigma){
+  estP = (sum(diag(sigma)))/(norm(sigma,type = "2"));
+  num = as.numeric(X %*% solve(sigma) %*% t(X));
+  (1 - (estP-2)/num)*X;
+}
+
+calculateHTBonferroniEstimator = function(X,p,alpha){
+  pval = genPvalue(X);
+  (pval <= alpha/p) * X;
+}
+
+calculateHTBenjaminiEstimator = function(X,p,alpha){
+  pval = genPvalue(X);
+  sorted = sort(pval);
+  values = vector(length = p);
+  for(i in 1:p){
+    values[i] = (sorted[i] <= alpha*i/p);
+  }
+  k = max(myWhich(values));
+  if(k > 0){
+    (pval <= sorted[k]) * X;
+  } else{
+    vector("integer",length = p);
+  }
+}
+
+
+calculateEstimatorsError = function(mu,sigma,mode){
+  p = length(mu);
+  X = rmvnorm(n=1,mean = mu, sigma = sigma, method = "chol");
+  muMLE = X;
+  if(!mode){
+    mu0 = vector("integer", length = p);
+    muJS = calculateJSEstimator(X,p);
+    muHTBonf = calculateHTBonferroniEstimator(X,p,0.1);
+    muHTBenj = calculateHTBenjaminiEstimator(X,p,0.1);
+    c( sum( (mu - muMLE)^2 ), sum( (mu - muJS)^2 ), sum( (mu - muHTBonf)^2 ), sum( (mu - muHTBenj)^2 ), sum( (mu - mu0)^2 ) );
+  } else{
+    muMEB = calculateMEBockEstimator(X,sigma);
+    c( sum( (mu - muMLE)^2 ), sum( (mu - muMEB)^2 ) )
+  }
+}
+```
+
+##Zadanie 1
+
+Podobnie jak na poprzedniej liście, oba zadania dotyczą estymacji ryzyka różnych estymatrów średniej w wielowymiarowym rozkładzie normalnnym. W tym zadaniu, podobnie jak w zadaniu drugim z poprzedniej listy, będziemy porównywać estymowane ryzyka estymatorów największej wiarogodności z modyfikacją estymatora bayesowskiego, tzn. $\hat{\mu}_{MEB} = \left(1- \frac{\tilde{p}-2}{X^TE^{-1}X}\right)X$, gdzie $\tilde{p} = \frac{Tr(\Sigma)}{\lambda_{max}(\Sigma)}$. Użyjemy ustawień: 
+$$
+\mu_1 = (0,0, \ldots, 0)
+$$
+
+$$
+\mu_2 \sim N(0,5I)
+$$
+
+$$
+\mu_3 \sim N(20,5I)
+$$
+dla dlugości wektora $p=500$. Aby wyestymować ryzyko w każdym przypadku generujemy nasz wektor danych $500$ razy i obliczamy średni błąd kwadratowy między średnią, z której generowaliśmy wektor, a otrzymanym estymatorem, tzn. wyciągamy średnią z norm euklidesowych podniesionych do kwadratu różnic średniej i estymatora. 
+```{r}
+p = 500;
+muA = vector(mode = "integer", length = p)
+muB = rnorm(p,0,sqrt(5));
+muC = rnorm(p,20,sqrt(5));
+sigma = matrix(rep(0.4, times = p^2), nrow = p, ncol = p);
+diag(sigma) = 1;
+resultsA = compareEstimators(muA,sigma, mode = 1);
+resultsB = compareEstimators(muB,sigma, mode = 1);
+resultsC = compareEstimators(muC,sigma, mode = 1);
+res = data.frame(rbind(resultsA,resultsB,resultsC), row.names = c('$\\mu_1$','$\\mu_2$', '$\\mu_3$'));
+colnames(res) <- c('$\\hat{\\mu}^{MLE}$','$\\hat{\\mu}^{MEB}$');
+tab = xtable(res, caption = paste("Estymowane ryzyko estymatorów przy kolejnych ustawieniach"));
+digits(tab) <- 5;
+print(tab, size = "large", sanitize.text.function=function(x){x});
+```
+Zgodnie z teorią modyfikacja estymatora bayesowskiego ma mniejsze estymowane ryzyko niż estymator największej wiarogodności. Różnica jednak nie jest duża, prawdopodbnie wynika z tego, że największa wartość własna macierzy jest dość duża ($200.6$), przez co estymator ma niewielki efekt ściągający do $0$.
+
+##Zadanie 2
+
+W tym zadaniu będziemy porównywać estymowane ryzyka $\hat{\mu}^{MLE} = X$, $\hat{\mu}^{JS} = \left(1-\frac{p-2}{||X||^2}\right)X$, $\hat{\mu}^{HTBonf}$ oraz $\hat{\mu}^{HTBenj}$. Dwa ostatnie estymatory są konstruowane na podstawie zasady "hard-thresholding" odpowiednio w procedurze Bonferroniego i Benjaminiego-Hochberga, tzn. dla $\alpha=0.1$ i $H_{0i} : \mu_i = 0$
+
+\begin{equation} \nonumber
+  \hat{\mu}^{HTBonf} =  \left\{ 
+                        \begin{array}{ll} X_i, $\textrm{ gdy metoda Bonferroniego odrzuca }$ H_{0i}  \\
+                        0 $\textrm{ w przeciwnym przypadku}$
+\end{array}
+\right.
+\end{equation}
+oraz
+\begin{equation} \nonumber
+  \hat{\mu}^{HTBenj} =  \left\{ 
+                        \begin{array}{ll} X_i, $\textrm{ gdy metoda Benjaminiego-Hochberga odrzuca }$ H_{0i}  \\
+                        0, $\textrm{ w przeciwnym przypadku}$
+\end{array}
+\right.
+\end{equation} gdzie za nominalne FWER metody Bonferroniego i nominalne FDR metody Benjaminiego-Hochberga przyjmujemy $\alpha$. Będziemy generować wektor $X$ z rozkładu $N(\mu,I)$ i używać następujących ustawień dla średnich:
+$$
+a) \mu_1 = \ldots = \mu_5 = 3.5, \mu_6 = \ldots = \mu_{500} = 0 
+$$
+$$
+b) \mu_1 = \ldots = \mu_{30} = 2.5, \mu_{31} = \ldots = \mu_{500} = 0 
+$$
+$$
+c) \mu_1 = \ldots = \mu_{100} = 1.8, \mu_{101} = \ldots = \mu_{500} = 0 
+$$
+$$
+d) \mu_1 = \ldots = \mu_{500} = 0.4 
+$$
+$$
+e) \mu_i = \frac{3.5}{\sqrt{i}} 
+$$
+$$
+f) \mu_i = \frac{3.5}{i} 
+$$
+Jednym z kryteriów oceny ryzyka estymatorów będzie porównanie ich ryzyka z "naiwnym" estymatorem $\hat{\mu}_0 = 0$, dla którego ryzyko to $E||\mu - \hat{\mu}_0 ||^2 = ||\mu||^2$.
+```{r}
+rep = 500;
+p = 500;
+muA = c(rep(3.5,5), rep(0,p-5));
+muB = c(rep(2.5,30), rep(0,p-30));
+muC = c(rep(1.8,100), rep(0,p-100));
+muD = rep(0.4,p);
+muE = vector(length = p);
+muF = vector(length = p);
+for(i in 1:p){
+  muE[i] = 3.5/sqrt(i);
+  muF[i] = 3.5/i;
+}
+sigma = diag(p);
+
+resultsA = compareEstimators(muA,sigma);
+resultsB = compareEstimators(muB,sigma);
+resultsC = compareEstimators(muC,sigma);
+resultsD = compareEstimators(muD,sigma);
+resultsE = compareEstimators(muE,sigma);
+resultsF = compareEstimators(muF,sigma);
+res = data.frame(rbind(resultsA,resultsB,resultsC, resultsD, resultsE, resultsF), row.names = c('a','b', 'c','d','e', 'f'));
+colnames(res) <- c('$\\hat{\\mu}^{MLE}$','$\\hat{\\mu}^{JS}$', '$\\hat{\\mu}^{HTBonf}$','$\\hat{\\mu}^{HTBenj}$','$\\hat{\\mu}^{0}$');
+tab = xtable(res, caption = paste("Estymowane ryzyko estymatorów przy kolejnych ustawieniach"));
+digits(tab) <- 3;
+print(tab, size = "large", sanitize.text.function=function(x){x});
+```
+
+Po pierwsze, widzimy, że dla wszystkich ustawień wszytskie estymatory mają mniejsze estymowane ryzyko niż estymator największej wiarogodności, nawet "naiwny"(z powodu takiego wyboru średnich). Po drugie, zauważmy, że $3.5 \approx \sqrt{2\log{p}}$, czyli jest to próg detekcji dla metody Bonferroniego. W takim razie przy ustawieniach a) oba estymatory oparte na zasadzie "hard thresholding" są lepsze niż estymator Jamesa-Steina i "naiwny".  W drugim przypadku mamy średnie poniżej progu detekcji dla metody Bonferroniego. Skutkuje to gorszymi wynikami estymatorów opartych na zasadzie "hard thresholding". W tym wypadku są już one mniej skuteczne niż estymator Jamesa Steina, ale wciąż lepsze niż estymator "naiwny". Przy ustawieniach c,d,e mamy jeszcze mniejsze średnie co powoduje, że tylko estymator Jamesa-Steina ma ryzyko wyraźnie mniejsze niż estymator "naiwny", w przeciwieństwie do estymatorów opartych na "hard thresholding". W ostatnim przypadku zauważamy jednak zmianę. Estymator Jamesa-Steina przestaje być lepszy od estymatora "naiwnego", a metody "hard thredholding", ponownie stają się od niego lepsze. Wynika to z faktu, że bardzo szybko średnie robią się bardzo bliskie $0$, przez co kilka pierwszych średnich jest wykrywana przez te metody, natomiast reszta średnich, które są różne od zera jest traktowane jako szum i dla nich $H_{0i}$ nie są odrzucane, a estymator Jamesa-Steina ściąga do $0$, jednak nie wystarczająco mocno.
+
+

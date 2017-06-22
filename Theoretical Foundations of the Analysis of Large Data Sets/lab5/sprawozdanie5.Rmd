@@ -1,0 +1,102 @@
+---
+title: "Sprawozdanie 5"
+author: "Stanisław Wilczyński"
+date: "26 maja 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE);
+knitr::opts_chunk$set(results = 'asis');
+library(knitr);
+library(xtable);
+options(xtable.comment = FALSE);
+library(mvtnorm);
+rep = 100;
+```
+
+##Zadanie 1
+
+W tym zadaniu będziemy porównywać ryzyko($E||\mu - \hat{\mu} ||^2$) dla różnych estymatorów średniej rozkładu. Dla $p=500$ będziemy generować $500$ razy wektor losowy $X = (X_1, \ldots ,X_p)$ z rozkładu $N(\mu,I)$ dla różnych ustawień $\mu$. Następnie dla każdego ustawienia obliczamy średni błąd kwadratowy między średnią rozkładu a estymatorem. Będziemy używali następujących ustawień:
+$$
+\mu_1 = (0,0, \ldots, 0)
+$$
+$$
+\mu_2 \sim N(0,5I)
+$$
+$$
+\mu_3 \sim N(20,5I)
+$$
+Jeśli chodzi o estymatory będziemy porównywać $\hat{\mu}^{MLE} = X$, $\hat{\mu}^{JS} = \left(1-\frac{p-2}{||X||^2}\right)X$ oraz $\hat{\mu_i}^{EB} = \overline{X} + \left(1-\frac{p-3}{S}\right)(X_i - \overline{X})$, gdzie $S = \sum_{i=1}^p(X_i - \overline{X})^2$. 
+```{r}
+
+compareEstimators = function(mu,sigma, mode = 0){
+  results = matrix(nrow = 3, ncol = rep);
+  results = replicate(rep, calculateEstimatorsError(mu,sigma, mode));
+  apply(results,1,mean);
+}
+
+
+calculateEstimatorsError = function(mu,sigma,mode){
+  p = length(mu);
+  X = rmvnorm(n=1,mean = mu, sigma = sigma, method = "chol");
+  sqNormX = sum(X^2);
+  muMLE = X;
+  muJS = (1 - (p-2)/sqNormX)*X;
+  S = sum( (X - mean(X))^2 );
+  muEB = mean(X) + (1 - (p-3)/S)*(X - mean(X));
+  estP = (sum(diag(sigma)))/(norm(sigma,type = "2"));
+  num = as.numeric(X %*% solve(sigma) %*% t(X));
+  muMEB = (1 - (estP-2)/num)*X;
+  if(!mode){
+    c( sum( (mu - muMLE)^2 ), sum( (mu - muJS)^2 ), sum( (mu - muEB)^2 ) );
+  } else{
+    c( sum( (mu - muMLE)^2 ), sum( (mu - muMEB)^2 ) )
+  }
+}
+
+```
+Otrzymane wyniki są całkowicie zgdone z naszymi oczekiwaniami i teorią z wykładu. Dla pierwszych ustawień $\hat{\mu}^{MLE}$ ma wyestymowane ryzyko około $p$, natomiat zarówno $\hat{\mu}^{JS}$ jak i $\hat{\mu}^{EB}$ ponad 100 razy mniejsze. Przy drugich ustawieniach z powodu większej wariancji naszego wektora średnich wartości ryzyka estymatorów bayesowkiego i Jamesa-Steina są większe niż w pierwszym przypadku, ale wciąż zdecydowanie lepsze niż estymatora największej wiarogodności. W obu tych przypadkach wyniki dla tych estymatorów są podobne, gdyż widzimy, że dla $\overline{X}=0$ wartości obu tych estymatorów są bardzo bliskie( a wartości bliskie $0$ są prawdopodobne, jeśli $\mu$ jest generowane z rozkładu o średniej $0$). W trzecim przypadku średnia rozkładu, z którego generowany jest wektor średnich jest daleko od $0$. Do takich ustawień przystosowany jest tylko estymator bayesowski, gdyż estymator Jamesa-Steina nie bierze pod uwagę $\overline{X}$, które estymuje średnią rozkładu, z którego było generowane $\mu$. W związku z tym tylko ryzyko estymatora bayesowkiego jest wyraźnie lepsze od ryzyka $\hat{\mu}^{MLE}$.
+```{r}
+p = 500;
+muA = vector(mode = "integer", length = p)
+muB = rnorm(p,0,sqrt(5));
+muC = rnorm(p,20,sqrt(5));
+sigma = diag(p);
+resultsA = compareEstimators(muA,sigma);
+resultsB = compareEstimators(muB,sigma);
+resultsC = compareEstimators(muC,sigma);
+```
+```{r}
+res = data.frame(rbind(resultsA,resultsB,resultsC), row.names = c('$\\mu_1$','$\\mu_2$', '$\\mu_3$'));
+colnames(res) <- c('$\\hat{\\mu}^{MLE}$', '$\\hat{\\mu}^{JS}$', '$\\hat{\\mu}^{EB}$');
+tab = xtable(res, caption = paste("Estymowane ryzyko estymatorów przy kolejnych ustawieniach"));
+digits(tab) <- 5;
+print(tab, size = "large", sanitize.text.function=function(x){x});
+```
+
+\newpage
+##Zadanie 2
+
+W tym zadaniu użyjemy ustawień dla średniej jak w zadaniu 1. Tym razem jednak nasz wektor $X = (X_1, \ldots, X_p) \sim N(\mu,\Sigma)$, gdzie $\Sigma_{ii} = 1$ oraz $\Sigma_{ij} = 0.7$ dla $i \neq j$. Będziemy porównywać ryzyka estymatorów największej wiarogodności z modyfikacją estymatora bayesowskiego, tzn. $\hat{\mu}_{MEB} = \left(1- \frac{\tilde{p}-2}{X^TE^{-1}X}\right)X$, gdzie $\tilde{p} = \frac{Tr(\Sigma)}{\lambda_{max}(\Sigma)}$.
+
+```{r}
+p = 500;
+muA = vector(mode = "integer", length = p)
+muB = rnorm(p,0,sqrt(5));
+muC = rnorm(p,20,sqrt(5));
+sigma = matrix(rep(0.7, times = p^2), nrow = p, ncol = p);
+diag(sigma) = 1;
+resultsA = compareEstimators(muA,sigma, mode = 1);
+resultsB = compareEstimators(muB,sigma, mode = 1);
+resultsC = compareEstimators(muC,sigma, mode = 1);
+```
+```{r}
+res = data.frame(rbind(resultsA,resultsB,resultsC), row.names = c('$\\mu_1$','$\\mu_2$', '$\\mu_3$'));
+colnames(res) <- c('$\\hat{\\mu}^{MLE}$','$\\hat{\\mu}^{MEB}$');
+tab = xtable(res, caption = paste("Estymowane ryzyko estymatorów przy kolejnych ustawieniach"));
+digits(tab) <- 5;
+print(tab, size = "large", sanitize.text.function=function(x){x});
+```
+Zgodnie z teorią zawartą w pracy M.E. Bock na temat modyfikacji estymatorów średniej w rozkładzie normalnym wielowymiarowym (\href{https://projecteuclid.org/download/pdf_1/euclid.aos/1176343009}{link do tej pracy}), aby estymator działał dobrze $\tilde{p}$ musi być wiekszę od $2$. Niestety, największa wartość własna macierzy $\Sigma$ wynosi $350.3$, przez co $\tilde{p}$ nie spełnia wymaganego warunku. Otrzymane przez nas rezultaty pokazują, że przy tym niespełnionym założeniu estymator $\hat{\mu}^{MEB}$ ma ryzyko bardzo bliskie ryzyka estymatora największej wiarogodności, w związku z czym działa po prostu słabo.
+

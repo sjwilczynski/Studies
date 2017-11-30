@@ -62,7 +62,7 @@ Summer 2016/2017:
 Winter 2017/2018:
 
 * Artificial Intelligence for Games 
-* Design i deployment of cloud systems
+* Design and deployment of cloud systems
 * Neural Networks and Deep Learning
 * Seminar: Data Mining - Classification and Clustering
 * Physical education - basketball

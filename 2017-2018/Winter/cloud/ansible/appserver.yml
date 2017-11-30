@@ -1,0 +1,6 @@
+- hosts: appserver
+  become: yes
+  roles:
+    - nginx
+    - website
+    - network

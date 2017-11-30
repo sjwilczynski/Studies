@@ -1,0 +1,59 @@
+---
+# tasks file for network
+- name: Disallow password authentication
+  lineinfile: dest=/etc/ssh/sshd_config
+              regexp="^PasswordAuthentication"
+              line="PasswordAuthentication no"
+              state=present
+  tags: [always]
+- name: send key to bastion
+  copy:
+    src: /home/stachu/.ssh/gcloud_key
+    dest: .ssh/gcloud_key
+  tags: [bastion]
+- name: deny all traffic
+  ufw:
+    state: enabled
+    policy: deny
+  tags: [always]
+- name: Allow internal network
+  ufw:
+    state: enabled
+    rule: allow
+    src: 10.132.0.0/16
+    port: 22
+    proto: tcp
+  tags: [always]
+- name: Allow ssh to bastion
+  ufw:
+    state: enabled
+    rule: allow
+    port: 22
+    proto: tcp
+  tags: [bastion]
+- name: Allow http
+  ufw:
+    state: enabled
+    rule: allow
+    port: 80
+    proto: tcp
+  tags: [loadbalancer, appserver]
+
+#- name: deny ssh traffic
+#  ufw:
+#    state: enabled
+#    rule: deny
+#    port: 22
+#    proto: tcp
+#
+#  tags: [loadbalancer, appserver]
+#- name: Allow internal network
+#  ufw:
+#    state: enabled
+#    rule: allow
+#    port: 22
+#    proto: tcp
+#    src: 10.132.0.0/16
+#  tags: [loadbalancer, appserver]
+
+

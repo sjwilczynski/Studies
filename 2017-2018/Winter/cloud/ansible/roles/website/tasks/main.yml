@@ -1,0 +1,15 @@
+---
+# tasks file for website
+
+- name: Ensure rsync is installed
+  apt:
+    name: rsync
+    state: installed
+  tags: [appserver]
+- name: Upload example site
+  synchronize:
+    src: site/
+    dest: /usr/share/nginx/html
+    rsync_opts: --chown=www-data
+    delete: yes
+  tags: [appserver]

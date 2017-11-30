@@ -1,0 +1,5 @@
+- hosts: loadbalancer
+  become: yes
+  roles:
+    - {role: haproxy, ip1: "{{ server1ip }}", ip2: "{{ server2ip }}", ip3: "{{ server3ip }}"}
+    - network

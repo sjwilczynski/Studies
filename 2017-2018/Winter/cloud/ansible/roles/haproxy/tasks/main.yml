@@ -1,0 +1,24 @@
+---
+- name: Ensure apache is not installed
+  apt:
+    name: apache2
+    state: absent
+- name: Ensure nginx is not installed
+  apt:
+    name: nginx
+    state: absent
+- name: Ensure haproxy is present or install it
+  apt:
+    name: haproxy
+    state: installed
+    update_cache: true
+- name: Enable haproxy
+  replace: dest=/etc/default/haproxy
+              regexp="ENABLED=0"
+              replace="ENABLED=1"
+- name: Install haproxy config
+  template:
+    src: templates/haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+  notify:
+   - Restart Haproxy

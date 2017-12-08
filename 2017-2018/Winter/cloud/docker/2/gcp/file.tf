@@ -42,19 +42,10 @@ resource "google_compute_instance" "two-docker-servers" {
       nat_ip = "${element(google_compute_address.public_ip.*.address, count.index)}"
     }
   }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo bash echo kjagfjkagkjf",
-
-    ]
-     connection {
-      type = "ssh"
-      user = "stachu"
-    }
-  }
 
   provisioner "local-exec" {
     command = <<SCRIPT
+    sleep 20
     scp -r /home/stachu/programy/cloud/docker/2/docker/ ${element(google_compute_address.public_ip.*.address, count.index)}:dockerfiles
     SCRIPT
   }

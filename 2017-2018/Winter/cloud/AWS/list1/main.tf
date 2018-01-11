@@ -2,6 +2,9 @@ provider "aws"{
   region = "us-west-2"
 }
 
+variable "port" {
+  default = "3411"
+}
 
 resource "aws_vpc" "my-new-vpc" {
   cidr_block = "10.2.0.0/16"
@@ -76,6 +79,25 @@ resource "aws_security_group" "elb-sg" {
   }
 }
 
+resource "aws_security_group" "sg-db" {
+  name = "db-sg"
+  vpc_id = "${aws_vpc.my-new-vpc.id}"
+
+  ingress {
+    from_port = "${var.port}"
+    to_port = "${var.port}"
+    protocol = "tcp"
+    cidr_blocks = ["10.2.0.0/16"]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_route" "internet_access" {
   route_table_id         = "${aws_vpc.my-new-vpc.main_route_table_id}"
   destination_cidr_block = "0.0.0.0/0"
@@ -123,6 +145,10 @@ resource "aws_route_table_association" "public_subnet_association3" {
     route_table_id = "${aws_vpc.my-new-vpc.main_route_table_id}"
 }
 
+resource "aws_db_subnet_group" "subnet-group" {
+  name = "db-sb-group"
+  subnet_ids = ["${aws_subnet.http-subnet1.id}", "${aws_subnet.http-subnet2.id}", "${aws_subnet.http-subnet3.id}"]
+}
 
 module "servers" {
   source = "./http_server_module/"
@@ -141,6 +167,12 @@ module "loadbalancer" {
   instance-ids = "${module.servers.ids}"
 }
 
+module "rds" {
+  source = "./database_module/"
+  subnet-group-name = "${aws_db_subnet_group.subnet-group.name}"
+  sg-id = "${aws_security_group.sg-db.id}"
+  port = "${var.port}"
+}
 
 output "public_ips" {
   value = "${module.servers.public-ips}"

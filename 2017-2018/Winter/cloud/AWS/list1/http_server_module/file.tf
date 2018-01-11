@@ -35,6 +35,8 @@ resource "aws_instance" "instances" {
               sudo apt-get install -y nginx
               echo "Hello Stachu, cool server${count.index}" > index.html
               sudo scp index.html /var/www/html/index.html
+			  sudo chmod +x /etc/init.d/nginx
+              update-rc.d -f nginx defaults
               EOF
 
   tags {

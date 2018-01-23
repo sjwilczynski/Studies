@@ -1,1 +1,1 @@
-Solution for the MeanMax contest
+Solution for the MeanMax contest (gold)

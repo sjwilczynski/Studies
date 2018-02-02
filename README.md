@@ -134,7 +134,7 @@ Zima 2017/2018
 * Projektowanie i wdrażanie systemów w chmurze
 * Sieci neuronowe i Deep Learning
 * Seminarium: Data-Mining - klasyfikacja i grupowanie danych
-* Wychowanie Fizyczne - Piłka koszykowa 
+* Wychowanie fizyczne - koszykówka 
 
 
 

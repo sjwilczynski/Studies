@@ -9,14 +9,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // How to test this class??
-public class AirportTimeProxy {
+public class AirportTimeProxy extends Airport {
 
-    private Airport airport;
     private static LocalTime startHour = LocalTime.of(8, 0);
     private static LocalTime endHour = LocalTime.of(22, 0);
 
     private AirportTimeProxy(int max_size) {
-        airport = Airport.getInstance(max_size);
+        super(max_size);
     }
 
     public static AirportTimeProxy getInstance(int max_size) throws IllegalAccessException {
@@ -26,12 +25,12 @@ public class AirportTimeProxy {
 
     public synchronized Plane acquirePlane() throws MaxPoolSizeReachedException, IllegalAccessException {
         checkTime();
-        return airport.acquirePlane();
+        return super.acquirePlane();
     }
 
     public synchronized void releasePlane(Plane plane) throws IllegalAccessException {
         checkTime();
-        airport.releasePlane(plane);
+        super.releasePlane(plane);
     }
 
     private static void checkTime() throws IllegalAccessException {
@@ -42,12 +41,11 @@ public class AirportTimeProxy {
     }
 }
 
-class AirportLoggingProxy {
-    private Airport airport;
+class AirportLoggingProxy extends Airport {
     private static final Logger logger = Logger.getLogger(AirportLoggingProxy.class.getName());
 
     private AirportLoggingProxy(int max_size) {
-        airport = Airport.getInstance(max_size);
+        super(max_size);
     }
 
     public static AirportLoggingProxy getInstance(int max_size) {
@@ -57,16 +55,16 @@ class AirportLoggingProxy {
         return returnedValue;
     }
 
-    public synchronized Plane acquirePlane() throws MaxPoolSizeReachedException {
+    public synchronized Plane acquirePlane() throws MaxPoolSizeReachedException, IllegalAccessException {
         logger.log(Level.INFO, LocalDateTime.now() + " Acquiring new plane");
-        Plane returnedValue = airport.acquirePlane();
+        Plane returnedValue = super.acquirePlane();
         logger.log(Level.INFO, LocalDateTime.now() + " Acquired plane " + returnedValue.toString());
         return returnedValue;
     }
 
-    public synchronized void releasePlane(Plane plane) {
+    public synchronized void releasePlane(Plane plane) throws IllegalAccessException {
         logger.log(Level.INFO, LocalDateTime.now() + " Releasing plane " + plane.toString());
-        airport.releasePlane(plane);
+        super.releasePlane(plane);
         logger.log(Level.INFO, LocalDateTime.now() + " Plane release");
     }
 
@@ -86,11 +84,11 @@ class Airport {
         this.acquired = new LinkedList<>();
     }
 
-    public static Airport getInstance(int max_size) {
+    public static Airport getInstance(int max_size) throws IllegalAccessException {
         return new Airport(max_size);
     }
 
-    public synchronized Plane acquirePlane() throws MaxPoolSizeReachedException {
+    public synchronized Plane acquirePlane() throws MaxPoolSizeReachedException, IllegalAccessException {
         if (free.size() > 0) {
             Plane plane = free.poll();
             acquired.add(plane);
@@ -106,7 +104,7 @@ class Airport {
         }
     }
 
-    public synchronized void releasePlane(Plane plane) {
+    public synchronized void releasePlane(Plane plane) throws IllegalAccessException {
         if (acquired.contains(plane)) {
             acquired.remove(plane);
             free.add(plane);

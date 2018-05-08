@@ -1,7 +1,6 @@
 package list7.list7_2;
 
 import java.awt.geom.RectangularShape;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -13,7 +12,6 @@ public class DrawingPanelCaretaker {
     DrawingPanelCaretaker(DrawingPanel drawingPanel) {
         this.drawingPanel = drawingPanel;
         undoStack = new Stack<>();
-        undoStack.push(new DrawingPanelMemento(new ArrayList<>(), null));
         redoStack = new Stack<>();
     }
 

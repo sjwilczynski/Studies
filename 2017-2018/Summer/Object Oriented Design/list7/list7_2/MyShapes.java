@@ -4,10 +4,11 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 
 class MyShapesFactory {
-    public static final int RECTANGLE_HEIGHT = 200;
-    public static final int RECTANGLE_WIDTH = 100;
-    public static final int SQUARE_WIDTH = 100;
-    public static final int CIRCLE_RADIUS = 100;
+    private static final int RECTANGLE_HEIGHT = 200;
+    private static final int RECTANGLE_WIDTH = 100;
+    private static final int SQUARE_WIDTH = 100;
+
+    private static final int CIRCLE_RADIUS = 100;
 
     static Rectangle2D getRectangle(double x, double y) {
         return new Rectangle2D.Double(x - RECTANGLE_WIDTH / 2, y - RECTANGLE_HEIGHT / 2, RECTANGLE_WIDTH, RECTANGLE_HEIGHT);

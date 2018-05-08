@@ -7,6 +7,9 @@ import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 import java.util.List;
 
+// problem - who should be the caretaker - DrawingFrame to totally disjoin the implementation of undo/redo with DrawingPanel?
+// Mediator properly used - DrawingFrame is a mediator for DrawingPanel and ButtonPanel - they have reference to it?
+
 class DrawingPanel extends JPanel {
     public final static String RECTANGLE = "RECTANGLE";
     public final static String CIRCLE = "CIRCLE";
@@ -20,9 +23,11 @@ class DrawingPanel extends JPanel {
     private List<RectangularShape> shapes;
     private List<RectangularShape> deletedShapes;
     private DrawingPanelMode mode;
-    private RectangularShape currentShape;
+    private RectangularShape addedShape;
+    private DrawingFrame mediator;
 
-    DrawingPanel() {
+    DrawingPanel(DrawingFrame mediator) {
+        this.mediator = mediator;
         mode = DrawingPanelMode.NONE;
         setPreferredSize(new Dimension(400, 400));
         setBackground(Color.WHITE);
@@ -32,7 +37,6 @@ class DrawingPanel extends JPanel {
         MouseHandler mouseHandler = new MouseHandler();
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
-
     }
 
     @Override
@@ -43,8 +47,8 @@ class DrawingPanel extends JPanel {
         for (Shape shape : shapes) {
             graphics2D.draw(shape);
         }
-        if (currentShape != null) {
-            graphics2D.draw(currentShape);
+        if (addedShape != null) {
+            graphics2D.draw(addedShape);
         }
     }
 
@@ -52,27 +56,43 @@ class DrawingPanel extends JPanel {
         this.mode = mode;
     }
 
+    public void restoreStateUndo(DrawingPanelMemento memento) {
+        shapes.addAll(memento.getDeletedShapes());
+        shapes.remove(memento.getAddedShape());
+        repaint();
+    }
+
+    public void restoreStateRedo(DrawingPanelMemento memento) {
+        shapes.removeAll(memento.getDeletedShapes());
+        RectangularShape addedShape = memento.getAddedShape();
+        if (addedShape != null) {
+            shapes.add(addedShape);
+        }
+        repaint();
+    }
+
     class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent event) {
             switch (mode) {
 
                 case RECTANGLE:
-                    currentShape = MyShapesFactory.getRectangle(event.getX(), event.getY());
+                    addedShape = MyShapesFactory.getRectangle(event.getX(), event.getY());
                     break;
                 case CIRCLE:
-                    currentShape = MyShapesFactory.getCircle(event.getX(), event.getY());
+                    addedShape = MyShapesFactory.getCircle(event.getX(), event.getY());
                     break;
                 case SQUARE:
-                    currentShape = MyShapesFactory.getSquare(event.getX(), event.getY());
+                    addedShape = MyShapesFactory.getSquare(event.getX(), event.getY());
                     break;
                 case MOVE:
                     for (RectangularShape shape : shapes) {
                         if (shape.contains(event.getX(), event.getY())) {
-                            currentShape = shape;
+                            addedShape = (RectangularShape) shape.clone();
+                            shapes.remove(shape);
+                            deletedShapes.add(shape);
                             break;
                         }
                     }
-                    shapes.remove(currentShape);
                     break;
                 case DELETE:
                     for (RectangularShape shape : shapes) {
@@ -93,23 +113,19 @@ class DrawingPanel extends JPanel {
                 case CIRCLE:
                 case SQUARE:
                 case MOVE:
-                    if (currentShape != null) {
-                        shapes.add(currentShape);
-                    }
-                    currentShape = null;
-                    repaint();
-                    break;
                 case DELETE:
+                    if (addedShape != null) {
+                        shapes.add(addedShape);
+                    }
                     shapes.removeAll(deletedShapes);
+                    mediator.processDrawingPanelStateChangeEvent(new ArrayList<>(deletedShapes), addedShape);
+                    addedShape = null;
                     deletedShapes.clear();
                     repaint();
                     break;
                 case NONE:
                     break;
             }
-        }
-
-        public void mouseMoved(MouseEvent event) {
         }
 
         public void mouseDragged(MouseEvent event) {
@@ -122,12 +138,12 @@ class DrawingPanel extends JPanel {
                 case NONE:
                     break;
                 case MOVE:
-                    if (currentShape != null) {
+                    if (addedShape != null) {
                         double x = event.getX();
                         double y = event.getY();
-                        double width = currentShape.getWidth();
-                        double height = currentShape.getHeight();
-                        currentShape.setFrame(x - width / 2, y - height / 2, width, height);
+                        double width = addedShape.getWidth();
+                        double height = addedShape.getHeight();
+                        addedShape.setFrame(x - width / 2, y - height / 2, width, height);
                         repaint();
                         break;
                     }
@@ -142,6 +158,7 @@ class DrawingPanel extends JPanel {
 class DrawingFrame extends JFrame {
 
     private DrawingPanel drawingPanel;
+    private DrawingPanelCaretaker caretaker;
 
     DrawingFrame() throws HeadlessException {
         super("Simple paint");
@@ -160,7 +177,8 @@ class DrawingFrame extends JFrame {
 
         setLayout(new BorderLayout());
         add(widgetPadder, BorderLayout.PAGE_START);
-        drawingPanel = new DrawingPanel();
+        drawingPanel = new DrawingPanel(this);
+        caretaker = new DrawingPanelCaretaker(drawingPanel);
         add(drawingPanel, BorderLayout.CENTER);
 
     }
@@ -170,14 +188,17 @@ class DrawingFrame extends JFrame {
     }
 
     void processUndoEvent() {
-
+        caretaker.processUndoEvent();
     }
 
     void processRedoEvent() {
-
+        caretaker.processRedoEvent();
     }
 
 
+    public void processDrawingPanelStateChangeEvent(List<RectangularShape> deletedShapes, RectangularShape addedShape) {
+        caretaker.processStateChangedEvent(deletedShapes, addedShape);
+    }
 }
 
 
@@ -194,5 +215,23 @@ enum DrawingPanelMode {
     @Override
     public String toString() {
         return text;
+    }
+}
+
+class DrawingPanelMemento {
+    private List<RectangularShape> deletedShapes;
+    private RectangularShape addedShape;
+
+    DrawingPanelMemento(List<RectangularShape> deletedShapes, RectangularShape addedShape) {
+        this.deletedShapes = deletedShapes;
+        this.addedShape = addedShape;
+    }
+
+    public List<RectangularShape> getDeletedShapes() {
+        return deletedShapes;
+    }
+
+    public RectangularShape getAddedShape() {
+        return addedShape;
     }
 }

@@ -11,7 +11,6 @@ class ButtonPanel extends JPanel {
 
     ButtonPanel(LayoutManager layoutManager, DrawingFrame mediator) {
         super(layoutManager);
-        DrawingFrame mediator1 = mediator;
         JButton rectangleButton = new JButton(DrawingPanel.RECTANGLE);
         JButton circleButton = new JButton(DrawingPanel.CIRCLE);
         JButton squareButton = new JButton(DrawingPanel.SQUARE);
@@ -22,11 +21,11 @@ class ButtonPanel extends JPanel {
         ArrayList<JButton> buttons = new ArrayList<>(Arrays.asList(rectangleButton, squareButton, circleButton,
                 moveButton, deleteButton));
         for (JButton button : buttons) {
-            button.addActionListener(new DrawingButtonHandler(mediator1));
+            button.addActionListener(new DrawingButtonHandler(mediator));
             add(button);
         }
-        undoButton.addActionListener(new UndoHandler(mediator1));
-        redoButton.addActionListener(new RedoHandler(mediator1));
+        undoButton.addActionListener(new UndoHandler(mediator));
+        redoButton.addActionListener(new RedoHandler(mediator));
         buttons.add(undoButton);
         buttons.add(redoButton);
         add(undoButton);

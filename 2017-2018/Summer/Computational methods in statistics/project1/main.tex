@@ -1,0 +1,133 @@
+\documentclass[a4paper]{article}
+
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{float}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Algorytmy statystyki praktycznej - projekt 1}
+\author{Stanisław Wilczyński}
+
+\begin{document}
+\maketitle
+\section{Wstęp}
+
+Celem projektu jest sprawdzenie skuteczności i czasu działania czterech różnych metod optymalizacji:
+\begin{enumerate}
+	\item Spadek po gradiencie
+    \item Stochastyczny spadek po gradiencie
+    \item SAGA \cite{SAGA}
+    \item SVRG \cite{SVRG}
+\end{enumerate}
+Do porównania metod użyjemy modelu regresji logistycznej:
+\begin{itemize}
+\item Mamy $n$ punktów $x_1, \ldots, x_n$ $d$-wymiarowych i odpowiadające im klasy $y_1, \ldots, y_n \in \{0,1\}$
+\item Każdy $y_i$ jest realizacją zmiennej losowej $Y_i$ i $p_i = P(Y_i=1|x_i)$
+\item Zakładamy, że $ \log(  \frac{p_i}{1-p_i}) = x_i \beta^T$, gdzie $\beta = (\beta_1, \ldots \beta_d)^T$ jest wektorem ukrytym
+\end{itemize}
+
+Celem dla każdego z naszych algorytmów jest wyznaczenie optymalnych (w sensie funkcji wiarygodności) $p_i$. Oczywiście jest to równoważne z wyznaczeniem optymalnego wektora $\beta$. Będziemy więc szukać wektora $\beta$ minimalizującego -logarytm z funkcji wiarygodności:
+\begin{align*}
+f(\beta) = -\log(L(\beta)) = \sum_{i=1}^n \log\left( 1+\exp(x_i\beta^T)\right) - y_ix_i\beta^T = \sum_{i=1}^n f_i(\beta)
+\end{align*}
+
+\section{Opis metod}
+W tej sekcji krótko opiszemy użyte porównane metody.
+\begin{enumerate}
+\item Spadek po gradiencie (GD) -  ten algorytm opiera się na bardzo prostej zasadzie. W każdej iteracji obliczamy gradient funkcji kary ($f$) względem $\beta$ i zmieniamy ten wektor o nieduże wartości w kierunku przeciwnym do gradientu. Dzięki temu w kolejnych krokach algorytmu powinniśmy otrzymywać coraz mniejsze wartości kary (jeśli stała uczenia $\gamma$ nie jest zbyt duża). Problemem spadku po gradiencie jest kosztowność każdej iteracji algorytmu - dla dużych $n$ w każdym kroku musimy policzyć wartości wszystkich $f_i$. W celu pozbycia się problemu dużej złożoności obliczeniowej została zaproponowana poniższa metoda.
+\item Stochastyczny spadek po gradiencie (SGD) - jest to prosta modyfikacja poprzedniego algorytmu. Zamiast poruszać się w kierunku przeciwnym do gradientu $f$ w każdej iteracji losowo wybieramy indeks $i$ i zmieniamy wartości wektora $\beta$ przeciwnie do kierunku gradientu $f_i$. Ze względu na dużą liczbę iteracji oczekujemy, że będziemy się poruszać jak w przypadku GD (przy dużej liczbie iteracji każde $i$ zostanie wybrane mniej więcej tyle samo razy). Problemem tego algorytmu jest niestety losowość związana z wyborem $i$-tej funkcji w każdym kroku algorytmu. Zgodnie z \cite{SVRG} taki losowy wybór powoduje, że w każdym kroku algorytmu nie poruszamy się w odpowiednim kierunku (zgodnie z gradientem całej funkcji kary) i problemy ze zbieżnością algorytmu. Następne dwie metody próbują radzić sobie z tym problemem, redukując wariancję (odstąpienia od właściwego kierunku) przy wykonywaniu kroku gradientowego.  
+\item SAGA, SVRG (stochastic variance reduced gradient) - idea obu tych metod jest bardzo podobna. W celu redukcji wspomnianej wariancji dla SGD przy wykonywaniu kroku gradientowego będziemy też brać pod uwagę średnią z gradientów dla wszystkich $f_i$ (niekoniecznie dla aktualnej wartości wektora $\beta$). Co ważne dzięki odpowiedniej implementacji taka zmiana powoduje bardzo niewielki narzut obliczeniowy w stosunku do SGD. Główną różnicą między SAGA, a SVRG jest co ile kroków algorytmu uaktualniamy nasz średni gradient - w przypadku SAGA dzieje się to w każdym kroku, w przypadku SVRG dzieje się to co $T$(parametr algorytmu) kroków.
+\end{enumerate}
+
+\section{Wyniki}
+W tej sekcji prezentujemy otrzymane wyniki dla trzech zadań: skuteczności metod, czasu działania metod, rezultaty dla rzadkiego wektora $\beta$ przy stosowaniu kary uwzględniającej pierwszą normę naszego wektora.
+\subsection{Skuteczność}
+W zadaniu kazano porównać metody również ze względu na sposób skorelowania danych $x_1, \ldots, x_n$:
+\begin{itemize}
+\item niezależne $\Sigma = I_n$
+\item parami tak samo skolerowane $\sigma_{ii}=1, \sigma{ij} = \rho$ dla $i<j$ i $\rho<1$
+\item autoskorelowane - $\sigma_{ij} = \rho^{|i-j|}$
+\end{itemize}
+Co więcej, porównywanie efektywności naszych metod ma sens tylko wtedy, gdy dla każdej z nich znajdziemy optymalną stałą uczenia ($\gamma$). W przeciwnym wypadku nie bylibyśmy w stanie stwierdzić, która metoda jest lepsza. W związku z czasochłonnymi obliczeniami z tym związanymi i trzema różnymi przypadkami generowania danych, w tej sekcji użyjemy tylko dwóch różnych rozmiarów zbioru danych $n=10^4, d=10$ oraz $n=1000, d=5$. Aby znaleźć optymalną stałą uczenia sprawdzamy 10 równo rozłożonych logarytmicznie wartości na przedziale $[10^{-5}, 10^{-2}]$. Taki przedział został wybrany, aby obniżyć szansę na błędy numeryczne spowodowane zbyt dużą stałą uczenia (powodowałaby ona bardzo dużą niestabilność kary po kolejnych iteracjach naszego algorytmu). Poniżej przedstawiamy wykresy kar względem liczby iteracji w każdym z trzech przypadków dla naszych algorytmów. Kryterium stopu była zarówno liczba iteracji (maksymalnie $5000$), jak i średnia wartości bezwzględna różnicy między współrzędnymi wektora $\beta$ w dwóch kolejnych iteracjach - jeśli mniejsza niż $10^{-7}$ przerywamy działanie algorytmu.
+
+\begin{figure}[H]
+\caption{Wyniki dla $n=10000, d=10$}
+\minipage{0.33\textwidth}
+  \includegraphics[width=\linewidth]{independent1.png}
+\endminipage \hfill 
+\minipage{0.33\textwidth}
+  \includegraphics[width=\linewidth]{samecorr1.png}
+\endminipage \hfill 
+\minipage{0.33\textwidth}
+  \includegraphics[width=\linewidth]{autocorr1.png}
+\endminipage \hfill 
+\end{figure}
+
+\begin{figure}[H]
+\caption{Wyniki dla $n=1000, d=5$}
+\minipage{0.33\textwidth}
+  \includegraphics[width=\linewidth]{independent2.png}
+\endminipage \hfill 
+\minipage{0.33\textwidth}
+  \includegraphics[width=\linewidth]{samecorr2.png}
+\endminipage \hfill 
+\minipage{0.33\textwidth}
+  \includegraphics[width=\linewidth]{autocorr2.png}
+\endminipage \hfill 
+\end{figure}
+
+Widzimy, że rozmiar danych nie powoduje zbyt dużej różnicy względnych wyników między metodami - wspólną cechą jest szybsza zbieżność dla mniejszych danych. Co więcej GD zbiega zdecydowania szybciej niż wszystkie pozostałe metody i praktycznie w każdym wypadku osiąga najlepszy wynik. Jest to spodziewany rezultat, gdyż ten algorytm najlepiej optymalizuje funkcję kary - w końcu zawsze podążamy w idealnym kierunku spadku funkcji. Co do pozostałych 3 metod otrzymane wyniki są bardzo podobne. Na wykresach jest to słabo widoczne, ale w załączonym do raportu pliku html możemy zobaczyć, że stochastyczny gradient wypada najgorzej, natomiast SAGA i SVRG działają lepiej na zmianę. Jeśli chodzi o błąd kwadratowy przybliżenia wektora $\beta$ (suma kwadratów różnic między prawdziwym, a wyestymowanym po współrzędnych), możemy zauważyć, że dla GD jest on rzędu dziesiątych lub setnych natomiast dla pozostałych metod rzędu jedności, a więc różnica jest znaczna na korzyść GD. Biorąc pod uwagę to kryterium SAGA wydaje się być troszeczkę lepsza od SVRG i SGD (również widoczne w pliku html). Jeśli chodzi o sposób generowania danych nie widać, żeby miał on wpływ na wyniki. Możemy jednak zauważyć, że dla drugiego sposobu generowania danych zbieżność wszystkich metod jest wyraźnie najszybsza.
+
+\subsection{Czas działania}
+Aby porównać czas działania algorytmów rozpatrujemy następujące wymiary zbioru danych: $(n,d) = (100,2), (1000,5), (5000, 10), (10^4, 10), (10^5, 20), (10^6, 50)$. W tym wypadku pomijamy już szukanie najlepszych parametrów dla każdego z algorytmów i ustawiliśmy stałą uczenia na $0.00001$. Wyniki są zaprezentowane na poniższym wykresie (czas jest podany w sekundach).
+
+\begin{figure}[H]
+\caption{Czas działania metod dla rosnących wartości $n$ i $d$}
+\minipage{0.5\textwidth}
+  \includegraphics[width=\linewidth]{time2.png}
+\endminipage \hfill 
+\minipage{0.5\textwidth}
+  \includegraphics[width=\linewidth]{time1.png}
+\endminipage \hfill 
+\end{figure}
+
+Na wykresie widzimy, że zgodnie z oczekiwaniami GD działał najwolniej i zwiększając rozmiar danych, różnica między nim a pozostałymi metodami rośnie bardzo szybko. SAGA i SVRG działają podobnie długo, a SGD jest oczywiście wyraźnie najszybszy, jednak jest to okupione najmniejszą dokładnością wyników, o czym wspominaliśmy w poprzedniej sekcji.
+
+\subsection{Rzadka $\beta$}
+W tej części optymalizujemy starą funkcję kary z dodanym składnikiem $\lambda \sum_{i=1}^d |\beta_i|$(kara LASSO). Aby stosować jakąkolwiek wersję spadku po gradiencie dla takiej nie różniczkowalnej funkcji po każdej iteracji na otrzymanym nowym wektorze $\beta$ wykonujemy operację proximal:
+$$
+	\beta = sign(\beta)(|\beta| - \gamma \lambda)_+
+$$
+Tym razem nasz wektor $\beta$ będzie rzadki, tzn. 87.5\% współrzędnych będzie zerami. Jeśli teraz podobnie jak w przypadku badania skuteczności zaczniemy wyszukiwać najlepsze parametry (względem nowej kary) dla naszych metod ($\gamma$ i $\lambda$) to otrzymamy wyniki jak na wykresie po niżej po lewej stronie. Niestety, mimo niezerowych wartości lambd dla każdego z algorytmów otrzymane wektory bet miały wszystkie współrzędne niezerowe. Wobec tego, żeby otrzymać lepszą estymację naszego wektora $\beta$ musimy zdecydowanie zwiększyć parametr $\lambda$ dla każdego z algorytmów. Aby otrzymać pożądany efekt musieliśmy pomnożyć znalezione wartości nawet 1000-krotnie (dokładne wartości lambd można zobaczyć w pliku html). Rezultaty przy nowych wartościach lambd są widoczne na wykresie poniżej po prawej stronie. 
+
+\begin{figure}[H]
+\caption{Wyniki działania metody z uwzględnieniem kary LASSO}
+\minipage{0.5\textwidth}
+  \includegraphics[width=\linewidth]{lambda1.png}
+\endminipage \hfill 
+\minipage{0.5\textwidth}
+  \includegraphics[width=\linewidth]{lambda2.png}
+\endminipage \hfill 
+\end{figure}
+
+O ile dla GD otrzymaliśmy bardzo dobrą estymację (zerowe współrzędne wyjściowego wektora są wyzerowane również w estymatorze), a co za tym idzie nie dużo gorszy wynik (w sensie sumy kwadratów błędów od oryginalnego wektora), o tyle dla pozostałych algorytmów wyniki nie są satysfakcjonujące. Przy wielokrotnym uruchomieniu dla tych samych parametrów otrzymujemy drastycznie różne liczby niezerowych współrzędnych (zdarza się zarówno $0$, jak i $10$). Również wyniki są dużo gorsze niż dla optymalnych wartości parametrów. Wynika to z losowości, która jest nieodłączną częścią tych algorytmów. W związku z tym możemy stwierdzić, że te metody nie są wystarczająco stabilne, żeby ich używać do znajdowania rzadkich estymatorów za pomocą kary LASSO. 
+
+
+\section{Podsumowanie}
+Na podstawie przeprowadzonych symulacji możemy stwierdzić, że spadek po gradiencie jest najskuteczniejszą z testowanych metod, jednak jak pokazaliśmy dla dużych rozmiarów danych jego czas działania bardzo ogranicza jego potencjalne zastosowania. Z pozostałych metod SAGA i SVRG osiągały podobne rezultaty, lepsze od SGD. Jeśli chodzi o problem estymowania rzadkich wektorów $\beta$ to widzimy, że metody stochastyczne oparte na losowości nie sprawdzają się i tylko GD potrafi dobrze odwzorować wyjściowy wektor.
+
+
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+\end{document}

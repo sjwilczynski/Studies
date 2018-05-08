@@ -39,3 +39,21 @@ public class DrawingPanelCaretaker {
         }
     }
 }
+
+class DrawingPanelMemento {
+    private List<RectangularShape> deletedShapes;
+    private RectangularShape addedShape;
+
+    DrawingPanelMemento(List<RectangularShape> deletedShapes, RectangularShape addedShape) {
+        this.deletedShapes = deletedShapes;
+        this.addedShape = addedShape;
+    }
+
+    public List<RectangularShape> getDeletedShapes() {
+        return deletedShapes;
+    }
+
+    public RectangularShape getAddedShape() {
+        return addedShape;
+    }
+}

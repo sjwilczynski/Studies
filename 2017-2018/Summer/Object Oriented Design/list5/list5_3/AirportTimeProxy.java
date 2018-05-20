@@ -8,7 +8,6 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// How to test this class??
 public class AirportTimeProxy extends Airport {
 
     private static LocalTime startHour = LocalTime.of(8, 0);
@@ -34,7 +33,7 @@ public class AirportTimeProxy extends Airport {
     }
 
     private static void checkTime() throws IllegalAccessException {
-        LocalTime currentTime = LocalTime.now();
+        LocalTime currentTime = new TimeLocalFactory().getTime();
         if (currentTime.isBefore(startHour) || currentTime.isAfter(endHour)) {
             throw new IllegalAccessException("Tried to access, when factory was closed");
         }

@@ -1,6 +1,7 @@
 package list8.list8_4;
 
 import java.util.List;
+//We could change it so that there would be one handle for each state - more code but better reflection of State Machine
 
 class ATM {
 

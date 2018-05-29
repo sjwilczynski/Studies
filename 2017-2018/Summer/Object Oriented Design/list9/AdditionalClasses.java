@@ -111,3 +111,15 @@ class L {
     public L(Foo foo) {
     }
 }
+
+
+class M {
+
+    Bar b1;
+    Bar b2;
+
+    public M(Bar b1, Bar b2) {
+        this.b1 = b1;
+        this.b2 = b2;
+    }
+}

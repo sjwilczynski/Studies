@@ -10,8 +10,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-//What more tests could I create?
-//reference to container in ContainerEntry, is it ok??
 public class SimpleContainer {
 
 

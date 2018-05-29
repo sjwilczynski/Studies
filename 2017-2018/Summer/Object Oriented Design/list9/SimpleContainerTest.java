@@ -126,6 +126,15 @@ class SimpleContainerTest {
     }
 
     @Test
+    void theSameTypeInConstructor() throws RegisterClassException, UnknownLifecycleException, ResolveException {
+        container.registerType(Bar.class, ContainerEntryType.SINGLETON);
+        container.registerType(M.class, ContainerEntryType.INSTANTIABLE);
+        M m = container.resolve(M.class);
+        assertNotNull(m.b1);
+        assertEquals(m.b1, m.b2);
+    }
+
+    @Test
     void nestedObjects() throws UnknownLifecycleException, ResolveException, RegisterClassException {
         container.registerInstance(Foo.class, new Foo());
         container.registerType(Woo.class, ContainerEntryType.INSTANTIABLE);

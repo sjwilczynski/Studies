@@ -1,0 +1,154 @@
+---
+title: "Complex Data - lab4"
+author: "Stanisław Wilczyński"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ALA)
+library(latex2exp)
+library(ggplot2)
+library(reshape2)
+library(nlme)
+library(lattice)
+library(magrittr)
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r}
+hrunbalanced <- read.csv(file = "../data/hrunbalanced.csv", header = TRUE)
+means <- tapply(hrunbalanced$hr, list(hrunbalanced$time, hrunbalanced$drug), mean)
+xyplot(hr~time|factor(drug), type='l',groups=id,data=hrunbalanced, main = "Spaghetti plot of the heart rate over time in 2 groups")
+```
+```{r}
+## Random intercept
+fit.RandInt <- lme(hr ~ time*factor(drug),
+random=~1|id,
+data=hrunbalanced)
+
+#Random slope
+fit.RandSlp <- lme(hr ~ time*factor(drug),
+random=~1+time|id,
+data=hrunbalanced)
+
+covar <- getVarCov(fit.RandSlp)
+varCorr <- VarCorr(fit.RandSlp)
+```
+
+## Task 1
+
+Here we just perform proper computations, as in the task description. First we calculate the means.
+```{r}
+#Calculating matrices (X,Z)
+coefs <- fit.RandSlp$coefficients$fixed
+coefs <- matrix(c(coefs[1], coefs[3], coefs[2], coefs[4]), ncol = 1)
+ones <- matrix(rep(1,6), nrow=6)
+zeros <- matrix(rep(0,6), nrow = 6)
+tN <- matrix(c(0,1,5,15,30,60), nrow = 6)
+t1 <- matrix(hrunbalanced$time[1:6], nrow = 6)
+t2 <- matrix(hrunbalanced$time[7:12], nrow = 6)
+t13 <- matrix(hrunbalanced$time[73:76], nrow = 4)
+x1 <- cbind(ones,zeros,t1,zeros)
+x2 <- cbind(ones,zeros, t2,zeros)
+x13 <- cbind(ones[1:4,],ones[1:4,],t13,t13)
+xNA <- cbind(ones, zeros, tN, zeros)
+xNB <- cbind(ones, ones, tN, tN)
+ZN <- cbind(ones,tN)
+Z1 <- cbind(ones,t1)
+Z2 <- cbind(ones, t2)
+Z13 <- cbind(ones[1:4], t13)
+```
+
+```{r, results='asis'}
+#Calculating means
+mA <- round(xNA%*%coefs,1)
+mB <- round(xNB%*%coefs,1)
+m1 <- round(x1%*%coefs,1)
+m2 <- round(x2%*%coefs,1)
+m13 <- rbind(round(x13%*%coefs,1), c(NA), c(NA))
+colnames(mA) <- c("Mean (drug A)")
+colnames(mB) <- c("Mean (drug B)")
+colnames(m1) <- c("Mean (obs. 1)")
+colnames(m2) <- c("Mean (obs. 2)")
+colnames(m13) <- c("Mean (obs. 13)")
+
+kable(cbind(mA,m1,m2,mB,m13), format = "latex", booktabs=TRUE, 
+          caption = "Means") %>% kable_styling(latex_options="HOLD_position")
+```
+
+And now we calculate the covariances:
+```{r}
+getCov <- function(Z){
+  Z%*%covar%*%t(Z) + as.numeric(varCorr[3,1])*diag(1,nrow = dim(Z)[1], ncol = dim(Z)[1])
+}
+#Calucalting covariances
+covZN <- round(getCov(ZN),1)
+covZ1 <- round(getCov(Z1),1)
+covZ2 <- round(getCov(Z2),1)
+covZ13 <- round(getCov(Z13),1)
+colnames(ZN) <- c("Cov. (standard)","")
+colnames(Z1) <- c("Cov. (obs. 1)","")
+colnames(Z2) <- c("Cov. (obs. 2)","")
+colnames(Z13) <- c("Cov. (obs. 13)","")
+
+
+kable(covZN, format = "latex", booktabs=TRUE, 
+      caption = "Cov. (standard)") %>% kable_styling(latex_options="HOLD_position")
+kable(covZ1, format = "latex", booktabs=TRUE, 
+      caption = "Cov. (obs. 1)") %>% kable_styling(latex_options="HOLD_position")
+kable(covZ2, format = "latex", booktabs=TRUE, 
+      caption = "Cov. (obs. 2)") %>% kable_styling(latex_options="HOLD_position")
+kable(covZ13, format = "latex", booktabs=TRUE, 
+      caption = "Cov. (obs. 13)") %>% kable_styling(latex_options="HOLD_position")
+```
+
+## Task 2
+
+```{r}
+## step one
+coef.hr <- matrix(NA,ncol = 3, nrow = 0)
+for (i in unique(hrunbalanced$id)) {
+  model <- lm(hr~time, data = hrunbalanced, subset = id == i)
+  model.drug <- unique(hrunbalanced[hrunbalanced$id == i, "drug"])
+  coef.hr <- rbind(coef.hr, c(model.drug, coef(model)))
+}
+colnames(coef.hr) <- c("drug","intercept","slope")
+coef.hr <- as.data.frame(coef.hr)
+print(coef.hr)
+```
+
+```{r}
+
+## step two
+hr.int <- lm(intercept~drug, data = coef.hr)
+hr.slp <- lm(slope~drug, data=coef.hr)
+
+sum.int <- summary(hr.int)
+sum.slp <- summary(hr.slp)
+sum.lme <- summary(fit.RandSlp)
+print(sum.int)
+print(sum.slp)
+
+info.int <- round(sum.int$coefficients[,c(1,4)], 4)
+info.slp <- round(sum.slp$coefficients[,c(1,4)], 4)
+info.mixed <- round(summary(fit.RandSlp)$tTable[,c(1,5)], 4)
+```
+From above summaries we can clearly see that p-values for $drug$ effect are greater than $0.05$. Therefore, we conclude that neither the mean intercepts, nor the mean slopes differ significantly in the two groups.
+
+Below we provide a table with coefficients' estimates and their p-values bot in Two-Stage and Mixed Effects analysis.
+
+\begin{center}
+  \begin{tabular}{c c c}
+     & Two-Stage & Mixed Effects \\ \hline
+    Intercept & $`r info.int[1,1]` (`r info.int[1,2]`)$ & $`r info.mixed[1,1]` (`r info.mixed[1,2]`)$ \\
+    Time & $`r info.slp[1,1]` (`r info.slp[1,2]`)$ & $`r info.mixed[2,1]` (`r info.mixed[2,2]`)$\\
+    Drug & $`r info.int[2,1]` (`r info.int[2,2]`)$ & $`r info.mixed[3,1]` (`r info.mixed[3,2]`)$ \\
+    Time*Drug & $`r info.slp[2,1]` (`r info.slp[2,2]`)$ & $`r info.mixed[4,1]` (`r info.mixed[4,2]`)$ \\
+    \hline
+  \end{tabular}
+\end{center}
+
+We can see that there are small differences both in estimates and the p-values when comparing these two models, however the interpretation didn't change - in both models only $time$ and $intercept$ are significant and they both indicate that the drug effect is not significant.

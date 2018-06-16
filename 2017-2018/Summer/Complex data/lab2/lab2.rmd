@@ -1,0 +1,148 @@
+---
+title: "Complex data - lab2"
+author: "Stanisław Wilczyński"
+date: "22 May 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ALA)
+library(latex2exp)
+library(ggplot2)
+library(reshape2)
+library(nlme)
+```
+
+## Task 1 ##
+
+1. $(0,0,1,0)$
+2. $(0,0,1,-1)$ -  this is a contrast
+```{r}
+lead <- read.table(file = "../data/lead.txt", header = FALSE)
+## Give names to variables
+names(lead) <- c("id", paste("y", 1:4, sep=""))
+lead.uni <- data.frame(id=rep(lead$id, each=4),
+  y=as.numeric(t(as.matrix(lead[,2:5]))),
+  time=rep(c(0,1,4,6)),
+  time.cat=rep(1:4))
+
+```
+
+
+3. Below is the output for the test. The answer is 3.
+```{r}
+lead.cat.ml <- gls(y~factor(time),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | factor(time)),
+method = "ML",
+data=lead.uni)
+
+lead.cat.no.ml <- gls(y~1,
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | factor(time)),
+method = "ML",
+data=lead.uni)
+
+anova(lead.cat.ml, lead.cat.no.ml)
+```
+
+4. REML can't be used to compare nested models for the means in likelihood ratio tests. The reason is that REML estimates the random effects by considering linear combinations of the data that remove the fixed effects. If the fixed effects are changed two models are not directly comparable anymore. For example in case of simple linear regression the restricted maximum likelihood estimator is $\hat \sigma^2 = \frac{RSS}{n-p}$, which is clearly dependent on the number of regression coefficients.
+
+5. We used multivariate Wald test for model parameters. We conclude that there is no group by time effect because p-value for group by time is quite large ($0.3265$) - we do not reject null hypothesis. 
+
+6. We conclude that both time and diet are significant - for both covariates the p-value is below standard significance level of $0.05$. Score test, likelihood ratio test and Wald test can all be used for testing if some models' parameters are zeros. In fact, Wald and score tests are asymptotically equivalent to the likelihood ratio test. Therefore these 3 tests can be used exchangeably. The main difference is that for Wald and score test you just have to fit one model. In comparison in LRT you need to fit two models. Therefore when fitting model is computationally expensive it may be more reasonable to use Wald or score tests. If we were to use LRT in to test these two hypothesis we would have to create two $reduced$ models: one without \textbf{factor(diet)} as explanatory variable, the other one without \textbf{factor(time)}.
+
+
+
+## Task 2 ##
+
+a) Here we define our covariates:
+
+$X_{1ij} = 1$ for all measurements \newline
+$X_{2ij} = 1$ if $j$th measurement was taken at $time=2$ weeks, 0 otherwise \newline
+$X_{3ij} = 1$ if $j$th measurement was taken at $time=3$ weeks, 0 otherwise \newline
+$X_{4ij} = 1$ if $j$th measurement was taken at $time=4$ weeks, 0 otherwise \newline
+$X_{5ij} = 1$ if $i$th cow ate barley and lupins, 0 otherwise \newline
+$X_{6ij} = 1$ if $i$th cow ate only lupins, 0 otherwise \newline
+$X_{7ij} = 1$ if $i$th cow ate barley and lupins and the $j$th measurement is at $time=2$, 0 otherwise \newline
+$X_{8ij} = 1$ if $i$th cow ate barley and lupins and the $j$th measurement is at $time=3$, 0 otherwise \newline
+$X_{9ij} = 1$ if $i$th cow ate barley and lupins and the $j$th measurement is at $time=4$, 0 otherwise \newline
+$X_{10ij} = 1$ if $i$th cow ate only lupins and the $j$th measurement is at $time=2$, 0 otherwise \newline
+$X_{11ij} = 1$ if $i$th cow ate only lupins and the $j$th measurement is at $time=3$, 0 otherwise \newline
+$X_{12ij} = 1$ if $i$th cow ate only lupins and the $j$th measurement is at $time=4$, 0 otherwise \newline
+
+Then the model is:
+$$
+Y_{ij} = \epsilon_{ij} + \beta_1 + \sum_{k=2}^{12} \beta_k X_{kij} 
+$$
+and
+
+\begin{eqnarray*}
+\mu_{b1} &= \beta_1 \\
+\mu_{b2} &= \beta_1 + \beta_2 \\
+\mu_{b3} &= \beta_1 + \beta_3 \\
+\mu_{b4} &= \beta_1 + \beta_4 \\
+\mu_{lb1} &= \beta_1 + \beta_5 \\
+\mu_{lb2} &= \beta_1 + \beta_2 + \beta_5 + \beta_7 \\
+\mu_{lb3} &= \beta_1 + \beta_3 + \beta_5 + \beta_8 \\
+\mu_{lb4} &= \beta_1 + \beta_4 + \beta_5 + \beta_9 \\
+\mu_{l1} &= \beta_1 + \beta_6 \\
+\mu_{l2} &= \beta_1 + \beta_2 + \beta_6 + \beta_{10} \\
+\mu_{l3} &= \beta_1 + \beta_3 + \beta_6 + \beta_{11} \\
+\mu_{l4} &= \beta_1 + \beta_4 + \beta_6 + \beta_{12} \\
+\end{eqnarray*}
+
+
+
+First we will try to get some intuition about possible results of the tests for parallelism and main effects based on data visualization. Here we provide the plot of means vs time grouped by the cows' diet.
+
+```{r}
+moo <- read.table(file = "../data/mooAll.txt", header = TRUE)
+colnames(moo) <- c("protein", "week", "cow", "diet")
+moo.multi <- NULL
+for(cow in unique(moo$cow)){
+  p1 <- moo$protein[which(moo$cow==cow & moo$week==1)]
+  p2 <- moo$protein[which(moo$cow==cow & moo$week==2)]
+  p3 <- moo$protein[which(moo$cow==cow & moo$week==3)]
+  p4 <- moo$protein[which(moo$cow==cow & moo$week==4)]
+  diet <- unique(moo$diet[which(moo$cow==cow & moo$week==1)])[1]
+  moo.multi <- rbind(moo.multi, c(p1,max(p2,3),p3,p4,diet))
+} 
+moo.barley.means <- apply(moo.multi[which(moo.multi[,5]==1),], mean, MARGIN = 2, na.rm=TRUE)
+moo.mixed.means <-  apply(moo.multi[which(moo.multi[,5]==2),], mean, MARGIN = 2, na.rm=TRUE)
+moo.lupins.means <- apply(moo.multi[which(moo.multi[,5]==3),], mean, MARGIN = 2, na.rm=TRUE)
+moo.means <- data.frame(rbind(moo.barley.means, moo.mixed.means, moo.lupins.means))
+colnames(moo.means) <- c("0", "1", "4", "6", "diet")
+moo.means <- melt(moo.means, id.vars = c("diet"))
+
+
+ggplot(moo.means, aes(x=variable, y=value, group=diet, color=factor(diet))) +
+       geom_line() +
+       scale_color_manual(labels=c("barley", "barley+lupins", "lupins"), values=c("blue", "red", "green")) +
+       labs(x="Weeks", y=TeX('$\\mu$'), colour="Legend")
+
+```
+We can clearly see that mean value of \textbf{protein} variable decreases with time, so we expect that the influence of time variable to be high. Although the plots look quite similar (in terms of slopes) based purely on visualization it is hard to predict the result of test for parallelism.
+
+b) Now it's time for a real test. We fit the model which takes into account group by time interactions, which means $H_0 : \beta_7 = \ldots = \beta_{12} = 0$ vs $H_a :$ at least one is non-zero.
+```{r}
+moo.gls.interaction <- gls(protein~factor(week)*factor(diet),
+correlation=corSymm(form= ~1 | cow),
+weights=varIdent(form= ~1 | factor(week)),
+data=moo)
+summary(moo.gls.interaction)
+anova(moo.gls.interaction)
+```
+As we can see from the anova output the p-value ($0.3322$) for $factor(week):factor(diet)$ from the multivariate Wald test (so for group by time interaction) is quite high. Therefore we don't reject the $H_0$.
+
+c) Now we test the main effect. We change the model slightly (not to include interactions) and run anova function once again. We test $H_0^1: \beta_5 = \beta_6 = 0$ and $H_0^2: \beta_2 = \beta_3 = \beta_4 = 0$
+```{r}
+moo.gls.main <- gls(protein~factor(week)+factor(diet),
+correlation=corSymm(form= ~1 | cow),
+weights=varIdent(form= ~1 | factor(week)),
+data=moo)
+summary(moo.gls.main)
+anova(moo.gls.main)
+```
+We can clearly see that p-value for time covaraites are very low. This means that these variables are significant in our model and we reject $H_0^2$. On the other hand the p-value for group factor is $0.0606$ - still above the standard significance level of $0.05$. Therefore we conclude that the influence of the group on our data is negligible and we do not reject $H_0^1$.

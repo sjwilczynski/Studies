@@ -1,0 +1,32 @@
+---
+title: "Complex Data - final project outline"
+author: Anna Zaleska, Stanisław Wilczyński
+date: 21.05.2018
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(results = 'asis');
+options(xtable.comment=FALSE)
+library(PBImisc)
+library(xtable)
+data(kidney)
+```
+
+
+In our project we would like to examine \textbf{kidney} dataset from R package \textbf{PBImisc}. In this dataset we can find information about 334 patients' kidney condition after kidney transplant surgery. The condition is measured at 8 different time points after the transplant. For each patient we have a set of additional features like donor's age, recipient's age, if the patient is diabetic and the type of therapy that each patient underwent. Here we present the first 5 rows of the dataset divided to time measurements and mentioned additional features.
+
+```{r}
+print(xtable(kidney[1:5,9:16], caption = "Time measurements"),  sanitize.text.function=function(x){x})
+print(xtable(kidney[1:5,1:8], caption = "Other features"), sanitize.text.function=function(x){x})
+```
+
+In our analysis we would like to find and test some potential dependencies between kidney condition, time and the additional features eg.:
+
+1. Are there any global trends of the condition in time?
+2. Can we split the data using some factors (therapy, diabetes) and see different trends within each group (test for parallelism)?
+3. We would like to find out which covariates impact the kidney condition (test for main effects).
+4. We will test different levels of models complexity (eg. different covariance classes).
+5. We will try to fit other models than linear (maybe quadratic curves).
+6. Possibly some other things that will be covered within following weeks during the lecture.

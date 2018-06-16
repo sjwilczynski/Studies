@@ -1,0 +1,125 @@
+---
+title: "Complex Data - lab1"
+author: "Stanisław Wilczyński"
+date: "15 May 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(latex2exp)
+library(ggplot2)
+library(reshape2)
+library(nlme)
+```
+
+## Task 1 and Task 2
+
+
+In the first two tasks we compare two different estimators of error variance covariance matrices. We consider unstructured matrices. The first one is REML estimator:
+```{r}
+lead <- read.table(file = "../data/lead.txt", header = FALSE)
+names(lead) <- c("id", "baseline", paste("week", c(1,4,6), sep=""))
+lead.uni <- melt(lead, id.vars = c("id"), value.name = "y")
+lead.uni <- lead.uni[c(1,3)]
+lead.uni <- lead.uni[order(lead.uni$id),]
+lead.uni$time <- rep(c(0,1,4,6))
+lead.uni$time.cat <- rep(1:4)
+lead.cat <- gls(y~factor(time.cat),
+                correlation = corSymm(form=~1 | id),
+                weights = varIdent(form= ~1 | factor(time.cat)),
+                data=lead.uni)
+lead.cat.summary <- summary(lead.cat)
+lead.cat.sigma <- lead.cat.summary$sigma
+covariance.matrix <- getVarCov(lead.cat)
+print(covariance.matrix)
+```
+The second one is ML estimator:
+
+```{r}
+lead.cat.ml <- gls(y~factor(time.cat),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | factor(time.cat)),
+data=lead.uni, method = "ML")
+lead.cat.ml.summary <- summary(lead.cat.ml)
+lead.cat.ml.sigma <- lead.cat.ml.summary$sigma
+covariance.matrix.ml <- getVarCov(lead.cat.ml)
+print(covariance.matrix.ml)
+```
+We can see that they don't differ much. Actually the only distinction when considering summaries for both models (first using REML estimators, second one using ML estimators) is the residual standard error (or using notation form exercises - $\sigma_{11}$). They are `r lead.cat.sigma` and `r lead.cat.ml.sigma` respectively. Therefore these variance covariance matrices differ just by multiplication constant.
+
+
+## Task 3 and Task 4
+
+In task 3 and 4 we should choose some assumptions about the structure of the variance covariance matrix from the first task. Unfortunately, at the first glance the matrix does not have any structure at all. The only clearly visible thing is that the variances are getting bigger with time. First we try to test if assumptions of equal variance is plausible. From the unstructured variance covariance matrix it does not look so. To compare the models we use \textit{anova} function, which performs likelihood ratio test. We received following output:
+
+```{r}
+lead.cat.new <- gls(y~factor(time.cat),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(),
+data=lead.uni)
+print(getVarCov(lead.cat.new))
+print(anova(lead.cat.new, lead.cat))
+```
+We can clearly see that p-value was very small - we reject the null hypothesis that the unstructured model explains as much variability as the simpler one.
+
+Next we choose some better assumption: variances are powers of \textit{time} variable.
+```{r}
+lead.cat.new <- gls(y~factor(time.cat),
+correlation=corSymm(form= ~1 | id),
+weights=varPower(form = ~time+1),
+data=lead.uni)
+print(getVarCov(lead.cat.new))
+print(anova(lead.cat.new, lead.cat))
+```
+Here the p-value is just above significance level - we do not reject the null hypothesis and such assumption about the such structure of variance covariance matrix is believable.
+
+Due to the problem with seeing a structure in correlations, we checked many different possible correlations structure. However none of them seemed good enough. For example for parameters \textit{correlation=corCompSymm(form= $\sim$1 | id),
+weights=varIdent(form = $\sim$1 | factor(time.cat))} we got:
+```{r}
+lead.cat.new <- gls(y~factor(time.cat),
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form = ~1 | factor(time.cat)),
+data=lead.uni)
+print(getVarCov(lead.cat.new))
+print(anova(lead.cat.new, lead.cat))
+```
+Therefore we reject the null hypothesis - for this case unstructured model is significantly different than structured one.
+
+## Task 5
+In this task we compare confidence intervals for means at different time points in two settings: taking into account correlations and the opposite. In this case these confidence intervals are the same as confidence intervals for coefficients $\beta$, because our explanatory variables are just levels of a factor \textit{time.cat}. We expect to get narrower CIs for model which better explains our data, so the model which takes into account the correlation.  
+```{r}
+lmod <- lm(y~factor(time.cat), data = lead.uni)
+intervs_lm <- confint(lmod)
+intervs <- intervals(lead.cat)$coef
+for(i in 2:4){
+  intervs[i,] <- intervs[i,] + intervs[1,]
+  intervs_lm[i,] <- intervs_lm[i,] + intervs_lm[1,]
+}
+intervs <- as.data.frame(intervs)
+
+intervs$type <- "95% CI from gls"
+colnames(intervs) <- c("lower", "mean", "upper", "type")
+intervs_lm <- as.data.frame(intervs_lm)
+intervs_lm[,3] <- intervs[,2]
+intervs_lm[,4] <- "Standard 95% CI (no correlation)"
+intervs_lm <- intervs_lm[,c(1,3,2,4)]
+colnames(intervs_lm) <- c("lower", "mean", "upper", "type")
+intervs_plot <- rbind(intervs, intervs_lm)
+intervs_plot$time <- c(0,1,4,6)
+
+pd <- position_dodge(0.1)
+ggplot(intervs_plot, aes(x=intervs_plot$time, y=intervs_plot$mean, color = intervs_plot$type)) +
+    geom_errorbar(aes(ymin=intervs_plot$lower, ymax=intervs_plot$upper), width=.1, position = pd) +
+    geom_line(position = pd) +
+    geom_point(position = pd) +
+    labs(x="Time", y=TeX('$\\mu$'), colour="Legend")
+```
+Of course in both settings means are the same. However,as expected the CIs for means from \textit{gls} are narrower because model taking into account correlation better explains the variability in our data.  
+
+## Task 6
+In this task we just have to test a contrast $L=(0,1,-1,0)$. This means that $H_0: L^T \beta =0$. Again we can use \textit{anova} function which takes the model and contrast as parameters:
+```{r}
+anova(lead.cat, L=c(0,1,-1,0))
+```
+Here we can see that p-value is lower that $0.05$. Therefore we reject the null hypothesis at significance level $0.05$ and infer that these means are significantly different.

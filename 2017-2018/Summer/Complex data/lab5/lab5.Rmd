@@ -1,0 +1,140 @@
+---
+title: "Complex Data - lab5"
+author: "Stanisław Wilczyński"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ALA)
+library(latex2exp)
+library(ggplot2)
+library(reshape2)
+library(nlme)
+library(lattice)
+library(magrittr)
+library(knitr)
+library(kableExtra)
+library(gee)
+library(lme4)
+```
+
+## Muscatine data set
+
+```{r}
+musc.dat <- read.table("../data/muscatine.txt",na.strings=".", as.is=T)
+names(musc.dat) <- c("id", "gender", "baseage", "age", "occasion", "y")
+musc.dat$cage <- musc.dat$age - 12
+```
+
+Looking at the summary on the p.1 we can clearly see some patterns:
+
+* for both males and females percentage of obese increases in time for children aged 5-9
+* for both males and females percentage of obese is stable in time for children aged 9-11
+* for both males and females percentage of obese decreases in time for children aged 11-15
+* the percentage of obese female is greater then percentage of obese male for almost all time points and ages
+
+
+```{r}
+## Model fit
+musc.gee <- gee(y~gender*cage + gender*I(cage^2),
+  id=id,
+  family="binomial",
+  data=musc.dat,
+  corstr="unstructured")
+## Summary of the output
+summary(musc.gee)
+```
+
+For this model we can see that included interactions yielded very small coefficients compared to main effects. Therefore, it is reasonable to fit a model without interactions.
+
+```{r}
+## Model fit - no interactions
+musc.gee.noInt <- gee(y~gender + cage + I(cage^2),
+id=id,
+family="binomial",
+data=musc.dat,
+corstr="unstructured")
+## Summary of the output
+summary(musc.gee.noInt)
+```
+
+As in the task description we can conclude for our model that young females have higher probability of being obese ($1.142$ time higher odds ratio) and that quadratic curve fits our data set well. The consequence of neglecting interactions is that the patterns of change in rates of obesity (profiles) do not depend on gender (check plot below).  
+
+```{r}
+## predictions
+musc.sel.dat <- matrix(unlist(expand.grid(unique(musc.dat$gender),
+unique(musc.dat$cage))), ncol=2)
+musc.sel.dat <- cbind(rep(1,dim(musc.sel.dat)[1]),
+musc.sel.dat, musc.sel.dat[,2]^2)
+colnames(musc.sel.dat) <- c("Int", "gender","cage", "cage2")
+musc.lin.pred <- musc.sel.dat %*% matrix(coef(musc.gee.noInt), ncol=1)
+musc.exp.pred <- exp(musc.lin.pred)/(1+exp(musc.lin.pred))
+musc.all.pred <- cbind(musc.sel.dat, musc.lin.pred, musc.exp.pred)
+musc.all.pred.plot <- as.data.frame(musc.all.pred[,c(2,3,6)])
+colnames(musc.all.pred.plot) <- c("gender","age", "probability")
+musc.all.pred.plot$gender <- as.factor(musc.all.pred.plot$gender)
+ggplot(musc.all.pred.plot, aes(x=age, y=probability, colour = gender)) + geom_line() + scale_colour_discrete(name="Gender",
+                         breaks=c(0,1),
+                         labels=c("Male", "Female"))
+```
+
+## Depress data set
+```{r}
+depress.dat <- read.table("../data/depress.txt",na.strings=".")
+names(depress.dat) <- c("id", "y", "severe", "drug", "time")
+depress.gee <- gee(y~severe + drug*time,
+  id=id,
+  family="binomial",
+  data=depress.dat,
+  corstr="unstructured")
+sum.gee <- summary(depress.gee)
+sum.gee
+```
+
+
+```{r}
+## GLMM
+depress.glmer <- glmer(y ~ severe + drug*time + (1|id),
+family = binomial,
+data=depress.dat)
+sum.glmm <- summary(depress.glmer)
+sum.glmm
+```
+
+```{r}
+coefs <- cbind(sum.gee$coefficients[,c(1,2)], sum.glmm$coefficients[,c(1,2)])
+colnames(coefs) <- c("Coeffcients (gee)", "Std. Err. (gee)", "Coeffcients (glmm)", "Std. Err. (glmm)")
+kable(coefs, format = "latex", booktabs=TRUE, 
+          caption = "Coefficients") %>% kable_styling(latex_options="HOLD_position")
+```
+
+
+As we can see from the table above the differences in coefficients and their standard errors are quite small for these two models. 
+
+## Task 1
+
+We just have to extract time trends for these two therapies.
+
+* standard treatment: $logit\{P(Y_{ij}=1|b_{i1})\} = \beta_1 + \beta_2 severe_i + \beta_4 time_{ij} + b_{i1}$
+* new treatment: $logit\{P(Y_{ij}=1|b_{i1})\} = \beta_1 + \beta_2 severe_i + \beta_3 + (\beta_4 + \beta_5) time_{ij} + b_{i1}$
+
+Therefore the difference between old and new treatment is $\beta_3 + \beta_5 time_{ij}$. It means that for $time_{ij}=0$ the difference is $\beta_3$, for $time_{ij}=1$ the difference is $\beta_3+\beta_5$ and for $time_{ij}=2$ the difference is $\beta_3 + 2\beta_5$.
+
+As stated in the task, our main goal was to discover if there is a difference in probability of remission between these tow treatments. We can see that p-value for $\beta_5$ is almost zero and we reject the null hypothesis that there is no difference. 
+
+## Task 2
+
+Due to the problem with finding out what confidence interval should be calculated, we stick with analysis of how the odds ratio differ for used treatments:
+
+* the odds of remission increase by $e^{\beta_4} = 1.62$ with each time period for patients on standard treatment
+* the odds of remission increase by $e^{\beta_4+\beta_5} = 4.49$ with each time period for patients on new treatment
+
+Effect of initial diagnosis:
+
+* for patients diagnosed with severe depression the odds of remission are $e^{\beta_1} = 0.27$ times the odds for the subject with mild depression
+
+Random effect:
+
+* As expected by looking at Table 1., the random effect is almost neglectable: $Var(b) = 0.0032$ and this means that values of $b$ for each observation are very small compared to other variables multiplied by proper betas
+

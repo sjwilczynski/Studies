@@ -1,0 +1,330 @@
+---
+title: "Complex Data - lab3"
+author: "Stanisław Wilczyński"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ALA)
+library(latex2exp)
+library(ggplot2)
+library(reshape2)
+library(nlme)
+library(lattice)
+```
+
+## Data input and Calculating Means
+
+```{r}
+wtloss <- read.table("../data/weightloss.dat",
+header=F)
+## Give names to variables
+names(wtloss) <- c("id", paste("y", 1:4, sep=""), "program")
+## Univariate format
+wtloss.uni <- data.frame(id=rep(wtloss$id, each=4),
+wgtloss=as.numeric(t(as.matrix(wtloss[,2:5]))),
+program=rep(wtloss$program, each=4),
+month=seq(0,9,3),
+time.cat=rep(1:4))
+wtloss.uni$prog.fac <- factor(wtloss.uni$program, labels=c("1:encourage", "2:none"))
+attach(wtloss.uni)
+wgt.mean <- tapply(wgtloss, list(month, program), mean)
+wgt.sd <- tapply(wgtloss, list(month, program), sd)
+detach(wtloss.uni)
+```
+
+## Plotting Response Profiles
+
+```{r}
+xyplot(wgtloss~month|prog.fac, type='l',groups=id,data=wtloss.uni)
+```
+
+## Choice of covariance structure
+
+We will consider three covariance structures: \newline
+1. Unstructured (UN) \newline
+2. Compound symmetry (CS) \newline
+3. Autoregressive (AR-1) \newline
+
+```{r}
+
+## CATEGORICAL time, UN, REML
+wtloss.un.cat <- gls(wgtloss~factor(month)*prog.fac,
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | month),
+data=wtloss.uni)
+#summary(wtloss.un.cat)
+
+## CATEGORICAL time, CS, REML
+wtloss.cs.cat <- gls(wgtloss~factor(month)*prog.fac,
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni)
+#summary(wtloss.cs.cat)
+
+## CATEGORICAL time, AR1, REML
+wtloss.ar1.cat <- gls(wgtloss~factor(month)*prog.fac,
+correlation=corAR1(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni)
+#summary(wtloss.ar1.cat)
+```
+
+### Compound symmetry vs unstructured 
+
+$H_0:$ compound symmetry is adequate for the data \newline
+$H_1:$ unstructured is required
+```{r}
+un_vs_cs <- anova(wtloss.un.cat, wtloss.cs.cat)
+```
+
+\begin{center}
+  \begin{tabular}{ l  c c }
+  \multicolumn{3}{c}{CS vs. UN} \\
+    \hline \hline
+     & -2 REML & Number of \\ 
+    Structure & Log-Likelihood & Cov. Parameters \\ \hline
+    Compound Symmetry & `r -2*un_vs_cs$logLik[2]` & `r un_vs_cs$df[2]` \\
+    Unstructured & `r -2*un_vs_cs$logLik[1]` & `r un_vs_cs$df[1]` \\
+    Difference & `r -2*un_vs_cs$logLik[2] + 2*un_vs_cs$logLik[1] ` &  `r un_vs_cs$df[1]-un_vs_cs$df[2]` \\
+    \hline
+  \end{tabular}
+\end{center}
+
+LRT yields $G^2$ =  `r -2*un_vs_cs$logLik[2] + 2*un_vs_cs$logLik[1] ` with `r un_vs_cs$df[1]-un_vs_cs$df[2]` df  (p-value = `r un_vs_cs$"p-value"[2]`)
+so we do not reject the null hypothesis
+at $\alpha = 0.05$ and conclude that the assumption of compound symmetry
+covariance structure is adequate for the data.
+
+### Autoregressive vs unstructered
+
+$H_0:$ autoregressive is adequate for the data \newline
+$H_1$: unstructured is required
+
+```{r}
+un_vs_ar <- anova(wtloss.un.cat, wtloss.ar1.cat)
+```
+
+\begin{center}
+  \begin{tabular}{ l  c c }
+  \multicolumn{3}{c}{AR-1 vs. UN} \\
+    \hline \hline
+     & -2 REML & Number of \\ 
+    Structure & Log-Likelihood & Cov. Parameters \\ \hline
+    Autoregressive & `r -2*un_vs_ar$logLik[2]` & `r un_vs_ar$df[2]` \\
+    Unstructured & `r -2*un_vs_ar$logLik[1]` & `r un_vs_ar$df[1]` \\
+    Difference & `r -2*un_vs_ar$logLik[2] + 2*un_vs_ar$logLik[1] ` &  `r un_vs_ar$df[1]-un_vs_ar$df[2]` \\
+    \hline
+  \end{tabular}
+\end{center}
+
+LRT yields $G^2$ =  `r -2*un_vs_ar$logLik[2] + 2*un_vs_ar$logLik[1] ` with `r un_vs_ar$df[1]-un_vs_ar$df[2]` df  (p-value = $`r un_vs_ar$"p-value"[2]`)$, so we reject the null hypothesis at $\alpha = 0.05$ and conclude that the assumption of autoregressive covariance
+structure is not adequate when compared to unstructured.
+
+
+### Compound symmetry vs autoregressive 
+```{r}
+cs_vs_ar1 <- anova(wtloss.cs.cat, wtloss.ar1.cat)
+```
+
+Since CS and AR-1 have the same number of parameters = 10, no LRT is necessary.  We can directly compare their likelihoods, or -2*log(likelihood):
+\begin{itemize}
+\item $-2*log(likelihood)$ for CS = `r -2*un_vs_cs$logLik[2]`
+\item $-2*log(likelihood)$ for AR-1 = `r -2*un_vs_ar$logLik[2]`
+\end{itemize}
+Since $-2*log(likelihood)$ for CS is smaller  than for AR-1, CS has a higher likelihood
+and we conclude that CS is an  adequate model for the covariance
+structure when compared to AR-1.
+
+\textbf{The most adequate covariance structure is compound symmetry model.}
+
+Are all these tests correct?
+
+No, the last test is theoretically not correct, because for non nested models we shouldn't draw conclusions just basing on comparison of log-likelihoods or performing LRT. We should compare AIC or BIC instead. However, in this case the number of parameters is the same, so comparing likelihoods is equivalent to comparing AICs. Moreover, when comparing many models instead of pairwise tests we can use a better strategy and choose the one with the lowest value of AIC.
+
+\begin{center}
+  \begin{tabular}{ l  c c c }
+    \hline \hline
+     & -2 REML & Number of  &\\ 
+    Structure & Log-Likelihood & Parameters  & AIC\\ \hline
+    Compound Symmetry & `r -2*un_vs_cs$logLik[2]` & `r un_vs_cs$df[2]` & `r un_vs_cs$AIC[2]` \\
+    Autoregressive & `r -2*un_vs_ar$logLik[2]` & `r un_vs_ar$df[2]` &  `r un_vs_ar$AIC[2]`\\
+    Unstructured & `r -2*un_vs_cs$logLik[1]` & `r un_vs_cs$df[1]` & `r un_vs_cs$AIC[1]` \\
+    \hline
+  \end{tabular}
+\end{center}
+
+Thus, we will use a compound symmetry covariance structure for the remainder of the lab.
+
+## Single Degree of Freedom Contrasts
+
+### AUC - test for equality of the area under the curve in two groups.
+
+```{r}
+t <- wtloss.uni$month
+L2 <- 0.5*c(t[1] + t[2] - 2*t[4], t[3] - t[1], t[4]-t[2], t[4]-t[3])
+coefs <- summary(wtloss.cs.cat)$coefficients
+#Estimated mean AUC in encouragement program
+AUC_enc <- sum(L2 * wgt.mean[,1])
+#Estimated mean AUC in no encouragement program
+AUC_none <- sum(L2 * wgt.mean[,2])
+```
+The obtained values of AUCs are:
+
+Estimated mean AUC in encouragement program is `r AUC_enc`. \newline
+Estimated mean AUC in no encouragement program is `r AUC_none`.
+
+As written in the textbook to test for the equality of AUCs, we employ the contrast $(-L_2, L_2)$.
+```{r}
+L <- c(-L2, L2)
+anova(wtloss.cs.cat, L=L)
+```
+
+The p-value is almost $0$, so we reject the null hypothesis that the response profile is the same for two treatments.
+
+## Parametric curves 
+### Quadratic time trend
+
+```{r}
+## QUADRATIC time, CS, ML,
+wtloss.cs.quad <- gls(wgtloss~month*prog.fac + I(month^2)*prog.fac,
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni,
+method="ML")
+
+## CATEGORICAL time, CS, ML
+wtloss.cs.cat.ml <- gls(wgtloss~factor(month)*prog.fac,
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni,
+method="ML")
+```
+
+$H_0:$ quadratic model \newline
+$H_1:$ saturated mode
+
+```{r}
+qm_vs_sm <- anova(wtloss.cs.cat.ml, wtloss.cs.quad)
+```
+
+\begin{center}
+  \begin{tabular}{ l  c c }
+  \multicolumn{3}{c}{Testing the Quadratic trend} \\
+    \hline \hline
+     & -2 Log & Number of \\ 
+    Structure & Likelihood & Parameters \\ \hline
+    Quadratic model & `r -2*qm_vs_sm$logLik[2]` & `r qm_vs_sm$df[2]` \\
+    Saturated model & `r -2*qm_vs_sm$logLik[1]` & `r qm_vs_sm$df[1]` \\
+    Difference & `r -2*qm_vs_sm$logLik[2] + 2*qm_vs_sm$logLik[1] ` &  `r qm_vs_sm$df[1]-qm_vs_sm$df[2]` \\
+    \hline
+  \end{tabular}
+\end{center}
+
+LRT yields $G^2$ =  `r -2*qm_vs_sm$logLik[2] + 2*qm_vs_sm$logLik[1] ` with `r qm_vs_sm$df[1]-qm_vs_sm$df[2]` df  (p-value = $`r qm_vs_sm$"p-value"[2]`)$, so we fail to reject the null hypothesis at $\alpha = 0.05$ and conclude that the model with Month as a quadratic effect
+seems to fit the data adequately. (Note: $\chi_{2,0.95}^2 = 5.99$)
+
+### Linear time trend
+
+```{r}
+wtloss.cs.lin <- gls(wgtloss~month*prog.fac,
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni,
+method="ML")
+```
+
+
+$H_0:$ linear model \newline
+$H_1:$ quadratic model
+
+```{r}
+qm_vs_lm <- anova(wtloss.cs.quad, wtloss.cs.lin)
+```
+
+\begin{center}
+  \begin{tabular}{ l  c c }
+  \multicolumn{3}{c}{Linear vs. Quadratic} \\
+    \hline \hline
+     & -2 Log & Number of \\ 
+    Structure & Likelihood & Parameters \\ \hline
+    Linear model & `r -2*qm_vs_lm$logLik[2]` & `r qm_vs_lm$df[2]` \\
+    Quadratic model & `r -2*qm_vs_lm$logLik[1]` & `r qm_vs_lm$df[1]` \\
+    Difference & `r -2*qm_vs_lm$logLik[2] + 2*qm_vs_lm$logLik[1] ` &  `r qm_vs_lm$df[1]-qm_vs_lm$df[2]` \\
+    \hline
+  \end{tabular}
+\end{center}
+
+LRT yields $G^2$ =  `r -2*qm_vs_lm$logLik[2] + 2*qm_vs_lm$logLik[1] ` with `r qm_vs_lm$df[1]-qm_vs_lm$df[2]` df  (p-value = $`r qm_vs_lm$"p-value"[2]`)$, so we fail to reject the null hypothesis at $\alpha = 0.05$ and conclude that the model with Month as a linear effect
+fits the data better than the model with Month as a quadratic effect. (Note: $chi_{2,0.95}^2 = 5.99$)
+
+
+### Testing for intersections in the linear model
+
+```{r}
+## Linear model, NO interacations
+wtloss.cs.lin.noint <- gls(wgtloss~month + prog.fac,
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni,
+method="ML")
+```
+
+$H_0: \beta_4 = 0$ \newline
+$H_1: \beta_4 \neq 0$
+
+```{r}
+anova(wtloss.cs.lin)
+#we employ proper contrast
+anova(wtloss.cs.lin, L=c(0,0,0,1))
+```
+
+Since the p-value for month*program is almost $0$, we reject the null hypothesis and
+conclude that there is a significant interaction between month and program. \newline
+
+Thus, our final model is the linear model with interaction. \newline
+
+```{r}
+final.wtloss.cs.lin <- gls(wgtloss~month*prog.fac,
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni)
+summary(final.wtloss.cs.lin)
+```
+
+In terms of effectiveness we can conclude that the first program is much more effective than the second one: in the first group the estimated rate of change equals $\hat\beta_2 =$ `r final.wtloss.cs.lin$coefficients[2]` whereas in the second group estimated rate of change is $\hat\beta_2 + \hat\beta_4 =$  `r final.wtloss.cs.lin$coefficients[2] + final.wtloss.cs.lin$coefficients[4]`.
+
+## Interpreting quadratic trends:
+```{r}
+wtloss.cs.quad.noint <- gls(wgtloss~month + prog.fac + I(month^2),
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=wtloss.uni)
+ncoefs <- wtloss.cs.quad.noint$coefficients
+coefs <- c(ncoefs[1], ncoefs[2], ncoefs[4], ncoefs[3])
+change_rates <- coefs[2] + 2*coefs[3]*t[1:4] 
+expected1 <- coefs[1] + coefs[2]*t[1:4] + coefs[3]*t[1:4]*t[1:4]
+```
+
+$\hat{\beta_1} =$ `r coefs[1]` expected mean response at baseline of subjects in program 1. \newline
+$\hat{\beta_4} =$ `r coefs[4]` change in expected response at baseline of subjects in program 2 vs. program 1.\newline
+Rate of change in program 1 is $\beta_2 + 2\beta_3 time_{ij}$ . \newline
+Plugging in the above estimates,
+
+\begin{center}
+  \begin{tabular}{ l  c c }
+  \multicolumn{3}{c}{Program 1} \\
+    \hline \hline
+     & Rate of & Expected \\ 
+    time & Change & Response \\ \hline
+    0 &  `r change_rates[1]` & `r expected1[1]` \\
+    1 &  `r change_rates[2]` & `r expected1[2]` \\
+    2 &  `r change_rates[3]` & `r expected1[3]` \\
+    3 &  `r change_rates[4]` & `r expected1[4]` \\
+    \hline
+  \end{tabular}
+\end{center}
+
+
+Thus, the mean response for Program 1 decreases over time. For the second program the effect is exactly the same - in this case for every time point `r coefs[4]` is added to the expected response, because in our model we don't include any interactions and the group effect is incorporated just by adding a constant.

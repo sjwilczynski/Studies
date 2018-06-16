@@ -1,0 +1,479 @@
+---
+title: "Complex data - project"
+author: "Stanisław Wilczyński, Anna Zaleska"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(results = 'asis');
+options(xtable.comment=FALSE)
+library(PBImisc)
+library(xtable)
+library(lattice)
+library(lme4)
+library(nlme)
+library(neuralnet)
+#library(lmerTest)
+
+data(kidney)
+```
+
+
+```{r}
+
+xy.kidney <- reshape(kidney, direction = "long", varying = list(9:16), v.names = c("MDRD"), times = c(1/4,1,3,6,12,24,36,60))
+xy.kidney$ltime <- log(xy.kidney$time)
+
+square.panel <- function(...) {
+  nx = list(...)$x
+  ny = list(...)$y
+  cc = lm(ny~nx+I(nx^2))$coef
+  panel.xyplot(...)
+  panel.curve(x^2*cc[3]+x*cc[2]+cc[1], from = min(nx), to=max(nx), col = "red")
+}
+
+xyplot(MDRD ~ time | id, xy.kidney, type=c("g","p","r"), xlab = "time since transplant", ylab = "MDRD", pch=19, layout=c(3,4), panel = square.panel, subset = id>150 & id<163)
+xyplot(MDRD ~ ltime | id, xy.kidney, type=c("g","p","r"), xlab = "log(time since transplant)", ylab = "MDRD", pch=19, layout=c(3,4), panel = square.panel, subset = id>150 & id<163)
+
+lkidney <- reshape(kidney, direction = "long", varying = list(9:16), v.names = c("MDRD"), times = c(1/4,1,3,6,12,24,36,60))
+lkidney$ltime <- log(lkidney$time)
+
+colMeans(kidney[,9:16])
+```
+
+
+### Fixed effects
+
+```{r}
+for(i in 1:8){
+  model.variable <- lm(MDRD ~ lkidney[,i], data = lkidney)
+  print(paste("Model for", colnames(lkidney)[i]))
+  print(summary(model.variable))
+  print("---------------------------------------------------------------------------")
+  #donor.age, CIT, discrepanacy.DR
+}
+```
+
+
+
+## time as factor
+```{r}
+un.model.reml <- gls(MDRD~donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(diabetes+therapy),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney)
+
+cs.model.reml <- gls(MDRD~donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(diabetes+therapy),
+correlation=corCompSymm(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=lkidney)
+
+ar.model.reml <- gls(MDRD~donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(diabetes+therapy),
+correlation=corAR1(form= ~1 | id),
+weights=varIdent(form= ~1),
+data=lkidney)
+
+car.model.reml <- gls(MDRD~donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(diabetes+therapy),
+correlation=corCAR1(form= ~ltime | id),
+data=lkidney)
+
+```
+
+
+
+```{r}
+anova(un.model.reml,ar.model.reml, cs.model.reml, car.model.reml)
+anova(un.model.reml)
+```
+```{r}
+un.model <- gls(MDRD~donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(diabetes+therapy),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+un.model.no.int <- gls(MDRD~factor(time)+(donor.age+bpl.drugs+recipient.age+discrepancy.AB+diabetes+discrepancy.DR+CIT+therapy),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+quad.model <- gls(MDRD~(ltime + I(ltime^2))*(therapy+diabetes) + (donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+lin.model <- gls(MDRD~(ltime)*(therapy+diabetes) + (donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+cube.model <- gls(MDRD~(ltime + I(ltime^2)+I(ltime^3))*(therapy+diabetes) + (donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+```
+
+
+```{r}
+anova(quad.model, un.model)
+anova(quad.model, lin.model)
+anova(un.model.no.int, un.model)
+anova(un.model, cube.model)
+anova(un.model)
+```
+
+```{r}
+
+un.model <- gls(MDRD~diabetes+donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(therapy),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+simpler.un.model <- gls(MDRD~factor(time)*(therapy+diabetes) + (donor.age+bpl.drugs),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+simpler.un.model2 <- gls(MDRD~factor(time)*(therapy) + (donor.age+bpl.drugs+diabetes),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+simplest.un.model <- gls(MDRD~factor(time)*(therapy) + (donor.age+bpl.drugs),
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+```
+
+```{r}
+anova(simpler.un.model, un.model)
+anova(simpler.un.model, simplest.un.model)
+anova(simplest.un.model, un.model)
+anova(simpler.un.model2, simplest.un.model)
+anova(simpler.un.model2, un.model)
+anova(simpler.un.model2)
+anova(un.model)
+anova(simpler.un.model)
+```
+```{r}
+xtable(matrix(c(summary(simplest.un.model)$coefficients, 1,1,1,1), nrow=5, byrow = T), digits = 2, caption = "Coefficients")
+```
+
+
+
+```{r}
+simplest.un.model.lin <- gls(MDRD~ltime+therapy+donor.age+bpl.drugs,
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+simplest.un.model.quad <- gls(MDRD~(ltime+I(ltime^2))+therapy+donor.age+bpl.drugs,
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+
+simplest.un.model.cube <- gls(MDRD~(ltime+I(ltime^2)+I(ltime^3))+therapy+donor.age+bpl.drugs,
+correlation=corSymm(form= ~1 | id),
+weights=varIdent(form= ~1 | time),
+data=lkidney, method = "ML")
+```
+
+```{r}
+anova(simplest.un.model, simplest.un.model.quad, simplest.un.model.cube)
+```
+
+### Prediction
+
+```{r}
+explained.var <- function(model, data.set) {
+  var1 <- var(data.set$MDRD)
+  var2 <- var(residuals(model))
+  (1-var2/var1)*100
+}
+
+analyse.model <- function(model, train.data, test.data){
+  model.test.pred <- predict(model, test.data)
+  model.train.pred <- predict(model, train.data)
+  model.train.mse <- mean((model.train.pred-train.data$MDRD)**2) #the same as residuals
+  model.test.mse <- mean((model.test.pred-train.data$MDRD)**2)
+  c(model.train.mse, model.test.mse)
+}
+
+analyse.models <- function(data.set=kidney, normalize=F, data.split = 0.8){
+  smp.size <- floor(data.split * nrow(data.set))
+  train.ind <- sample(seq_len(nrow(data.set)), size = smp.size)
+  nkidney <- data.set
+  ntime <- log(c(1/4,1,3,6,12,24,36,60))
+  if(normalize) {
+    for(i in (1:ncol(data.set))){
+      if(is.numeric(data.set[2,i])){
+        nkidney[,i] <- scale(data.set[,i])
+      } 
+    }
+    ntime <- scale(ntime)
+  }
+  # changing to long representation 
+  kidney.train <- nkidney[train.ind, ]
+  kidney.test <- nkidney[-train.ind, ]
+  
+  lkidney.train <- reshape(kidney.train, direction = "long", varying = list(9:16), v.names = c("MDRD"), times = ntime)
+  
+  lkidney.test <- reshape(kidney.test, direction = "long", varying = list(9:16), v.names = c("MDRD"), times = ntime)
+  
+  # fitting models
+  
+  n.growth.model <- lme(MDRD~(time + I(time^2))*therapy  + donor.age +  bpl.drugs , random =~time + I(time^2)|factor(id), data = lkidney.train)
+  
+  n.growth.model.cube <- lme(MDRD~(time + I(time^2)+I(time^3))*therapy  + donor.age +  bpl.drugs , random =~time + I(time^2)+I(time^3)|factor(id), data = lkidney.train)
+  
+
+  n.simplest.un.model <- gls(MDRD~factor(time)*therapy+donor.age+bpl.drugs,
+  correlation=corSymm(form= ~1 | id),
+  weights=varIdent(form= ~1 | time),
+  data=lkidney.train)
+  
+  n.un.full.model <- gls(MDRD~donor.age+bpl.drugs+recipient.age+discrepancy.AB+discrepancy.DR+CIT+factor(time)*(diabetes+therapy),
+  correlation=corSymm(form= ~1 | id),
+  weights=varIdent(form= ~1 | time),
+  data=lkidney.train)
+  
+  n.simplest.quad.model <- gls(MDRD~(time+I(time^2))*therapy+donor.age+bpl.drugs,
+  correlation=corSymm(form= ~1 | id),
+  weights=varIdent(form= ~1 | time),
+  data=lkidney.train)
+  
+  all.models <- list(n.growth.model, n.growth.model.cube, n.simplest.un.model, n.simplest.quad.model, n.un.full.model)
+  
+  AICs <- anova(n.growth.model, n.growth.model.cube, n.simplest.un.model, n.simplest.quad.model, n.un.full.model)$AIC
+  vars <- sapply(all.models, explained.var, rbind(lkidney.train, lkidney.test))
+  errors <- sapply(all.models, analyse.model, lkidney.train, lkidney.test)
+  result <- rbind(AICs, vars, errors)
+  result <- as.data.frame(result)
+  rownames(result) <- c("AIC", "% var.", "Train err.", "Test err.")
+  if(!normalize){
+    nkidney <- data.set
+    ntime <- log(c(1/4,1,3,6,12,24,36,60))
+    for(i in (1:ncol(data.set))){
+      if(is.numeric(data.set[2,i])){
+        nkidney[,i] <- scale(data.set[,i])
+      } 
+    }
+    ntime <- scale(ntime)
+    # changing to long representation 
+    kidney.train <- nkidney[train.ind, ]
+    kidney.test <- nkidney[-train.ind, ]
+    
+    lkidney.train <- reshape(kidney.train, direction = "long", varying = list(9:16), v.names = c("MDRD"), times = ntime)
+    
+    lkidney.test <- reshape(kidney.test, direction = "long", varying = list(9:16), v.names = c("MDRD"), times = ntime)
+  }
+  f <- as.formula("MDRD~donor.age+bpl.drugs+time")
+  nn <- neuralnet(f, data=lkidney.train, hidden=c(9,3), threshold = 0.1, linear.output=T)
+  pr.nn.test <- as.vector(compute(nn, lkidney.test[,c(2, 8, 9)])$net.result)
+  real.values.test <- lkidney.test$MDRD
+  if(!normalize){
+    real.values.test <- lkidney.test$MDRD*sd(lkidney$MDRD-mean(lkidney$MDRD))+mean(lkidney$MDRD)
+    pr.nn.test <- pr.nn.test*sd(lkidney$MDRD-mean(lkidney$MDRD))+mean(lkidney$MDRD)
+  }
+  test.err <- mean((real.values.test-pr.nn.test)**2)
+  pr.nn.train <- as.vector(compute(nn, lkidney.train[,c(2, 8, 9)])$net.result)
+  real.values.train <- lkidney.train$MDRD
+  if(!normalize){
+    pr.nn.train <- pr.nn.train*sd(lkidney$MDRD-mean(lkidney$MDRD))+mean(lkidney$MDRD)
+    real.values.train <- lkidney.train$MDRD*sd(lkidney$MDRD-mean(lkidney$MDRD))+mean(lkidney$MDRD)
+  }
+  train.err <- mean((real.values.train-pr.nn.train)**2)
+  result <- cbind(result, c(NA, NA, train.err, test.err))
+  colnames(result) <- c("Mixed(q.)", "Mixed(c.)", "Fixed(s.)", "Fixed(q.)", "Fixed(f.)", "NNet")
+  result
+}
+```
+```{r}
+mean((predict(n.growth.model, lkidney.test, level = 1)-lkidney.test$MDRD)**2)
+mean((predict(n.growth.model, lkidney.train, level = 1)-lkidney.train$MDRD)**2)
+mean((predict(n.un.full.model, lkidney.train)-lkidney.train$MDRD)**2)
+mean((predict(n.un.full.model, lkidney.test)-lkidney.test$MDRD)**2)
+analyse.model(n.un.full.model, lkidney.train, lkidney.test)
+```
+
+
+
+```{r}
+#for debugging analyse.models
+data.split=0.8
+normalize=F
+data.set=kidney
+#plot(nn, rep = "best", information = F, show.weights = F)
+```
+
+
+```{r}
+result.list <- list()
+for(i in 1:5){
+  print(paste(i))
+  result.list[[i]] <- analyse.models()
+}
+res <- (result.list[[1]]+result.list[[2]]+result.list[[3]]+result.list[[4]]+result.list[[5]])/5
+xtable(res)
+```
+
+
+
+```{r}
+result.list.norm <- list()
+for(i in 1:5){
+  result.list.norm[[i]] <- analyse.models(normalize = T)
+}
+```
+
+
+### Mixed effects models
+
+
+
+#### random intercept
+```{r}
+const.mixed.model2 <- lme(MDRD~ltime, random =~1|factor(id),
+                         data = lkidney, method = "ML")
+summary(const.mixed.model2)
+```
+
+
+####random intercept and slope
+```{r}
+lin.mixed.model2 <- lme(MDRD~ltime, random =~ltime|factor(id),
+                         data = lkidney, method = "ML")
+summary(lin.mixed.model2)
+```
+
+
+#### random intercept and slope quadratic model
+
+```{r}
+
+quadr.mixed.model2 <- lme(MDRD~ltime + I(ltime^2), random =~ltime + I(ltime^2)|factor(id),
+                         data = lkidney, method = "ML")
+summary(quadr.mixed.model2) 
+
+```
+
+
+```{r}
+anova(const.mixed.model2,lin.mixed.model2,quadr.mixed.model2)
+```
+
+
+#### full model
+```{r}
+full.model2 <- lme(MDRD~donor.age + recipient.age + therapy + diabetes + bpl.drugs + discrepancy.AB + discrepancy.DR + ltime + I(ltime^2)  , random =~ltime + I(ltime^2)|factor(id), data = lkidney,  method = "ML")
+summary(full.model2)
+```
+
+
+```{r}
+final.model <- lme(MDRD~donor.age + bpl.drugs + ltime + I(ltime^2)  , random =~ltime + I(ltime^2)|factor(id), data = lkidney,  method = "ML")
+final.model2 <- lme(MDRD~donor.age + therapy +  bpl.drugs + ltime + I(ltime^2)  , random =~ltime + I(ltime^2)|factor(id), data = lkidney,  method = "ML")
+final.model3 <- lme(MDRD~donor.age + therapy +  bpl.drugs + recipient.age + ltime + I(ltime^2)  , random =~ltime + I(ltime^2)|factor(id), data = lkidney,  method = "ML")
+anova(final.model, final.model2)
+anova(final.model2, final.model3)
+```
+
+
+```{r}
+library(car)
+qqPlot(ranef(final.model2)[,1], envelope = FALSE, ylab = expression(a[i]))
+qqPlot(ranef(final.model2)[,1], envelope = FALSE, ylab = expression(b[i]))
+qqPlot(ranef(final.model2)[,1], envelope = FALSE, ylab = expression(c[i]))
+```
+
+#### two stage model - therapy interaction
+
+```{r}
+lkidney$ltime2 <- lkidney$ltime^2
+coef.kidney <- matrix(NA,ncol = 7, nrow = 0)
+for (i in unique(lkidney$id)) {
+  model <- lm(MDRD~ltime+ltime2, data = lkidney, subset = id == i)
+  model.age <- unique(lkidney[lkidney$id == i, "donor.age"])
+  model.drug <- unique(lkidney[lkidney$id == i, "bpl.drugs"])
+  model.ther <- unique(lkidney[lkidney$id == i, "therapy"])
+  coef.kidney <- rbind(coef.kidney, c(i, model.age, model.drug, model.ther, coef(model)))
+  #print(coef(model))
+}
+colnames(coef.kidney) <- c("id","donor.age","bpl.drugs","therapy","intercept","slope", "quadr.slope")
+coef.kidney <- as.data.frame(coef.kidney)
+#coef.kidney
+```
+
+
+
+
+```{r}
+### step two
+kidney.int <- lm(intercept~factor(therapy)+donor.age+bpl.drugs, data = coef.kidney)
+kidney.slp <- lm(slope~factor(therapy), data = coef.kidney)
+kidney.quadr.slp <- lm(quadr.slope~factor(therapy), data = coef.kidney)
+
+info.int <- round(summary(kidney.int)$coefficients[,c(1,4)], 4)
+info.int
+info.slp <- round(summary(kidney.slp)$coefficients[,c(1,4)], 4)
+info.quadr <-round(summary(kidney.quadr.slp)$coefficients[,c(1,4)], 4)
+
+summary(kidney.int)$coefficients
+```
+
+```{r}
+
+growth.model <- lme(MDRD~(ltime + I(ltime^2))*therapy  + donor.age +  bpl.drugs , random =~ltime + I(ltime^2)|factor(id), data = lkidney)
+info.mixed <- round(summary(growth.model)$tTable[,c(1,5)], 4)
+summary(growth.model)$tTable
+```
+
+
+\begin{center}
+  \begin{tabular}{c c c}
+     & Two-Stage & Mixed Effects \\ \hline
+    Intercept & $`r info.int[1,1]` (`r info.int[1,2]`)$ & $`r info.mixed[1,1]` (`r info.mixed[1,2]`)$ \\
+    logTime & $`r info.slp[1,1]` (`r info.slp[1,2]`)$ & $`r info.mixed[2,1]` (`r info.mixed[2,2]`)$\\
+    $logTime^2$ & $`r info.quadr[1,1]` (`r info.quadr[1,2]`)$ & $`r info.mixed[3,1]` (`r info.mixed[3,2]`)$ \\
+   donor.age & $`r info.int[2,1]` (`r info.int[2,2]`)$ & $`r info.mixed[4,1]` (`r info.mixed[4,2]`)$ \\
+    therapy.cm & $`r info.int[3,1]` (`r info.int[3,2]`)$ & $`r info.mixed[5,1]` (`r info.mixed[5,2]`)$ \\
+   therapy.tc & $`r info.int[4,1]` (`r info.int[4,2]`)$ & $`r info.mixed[6,1]` (`r info.mixed[6,2]`)$ \\
+      bpl.drugs & $`r info.int[5,1]` (`r info.int[5,2]`)$ & $`r info.mixed[7,1]` (`r info.mixed[7,2]`)$ \\
+     logTime*therapy.cm & $`r info.slp[2,1]` (`r info.slp[2,2]`)$ & $`r info.mixed[8,1]` (`r info.mixed[8,2]`)$ \\
+    logTime*therapy.tc & $`r info.slp[3,1]` (`r info.slp[3,2]`)$ & $`r info.mixed[9,1]` (`r info.mixed[9,2]`)$ \\
+     $logTime^2$*therapy.cm & $`r info.quadr[2,1]` (`r info.quadr[2,2]`)$ & $`r info.mixed[10,1]` (`r info.mixed[10,2]`)$ \\
+    $logTime^2$*therapy.tc & $`r info.quadr[3,1]` (`r info.quadr[3,2]`)$ & $`r info.mixed[11,1]` (`r info.mixed[11,2]`)$ \\
+
+    \hline
+  \end{tabular}
+\end{center}
+
+
+```{r}
+growth.model <- lme(MDRD~(ltime + I(ltime^2))*therapy  + donor.age +  bpl.drugs , random =~ltime + I(ltime^2)|factor(id), data = lkidney)
+
+var.MDRD <- var(lkidney$MDRD)
+var.growth.model <- var(residuals(growth.model))
+(1-var.growth.model/var.MDRD)*100
+```
+
+#### ltime vs therapy interaction
+```{r}
+final.model2.ml.inter <- lme(MDRD~donor.age + therapy +  bpl.drugs + ltime + I(ltime^2) + ltime*therapy  , random =~ltime + I(ltime^2)|factor(id), data = lkidney, method = "ML")
+anova(final.model2.ml.inter, final.model2)
+```
+```{r}
+growth.model.ml <- lme(MDRD~(ltime + I(ltime^2))*therapy  + donor.age +  bpl.drugs , random =~ltime + I(ltime^2)|factor(id), data = lkidney, method = "ML")
+anova(final.model2.ml.inter,growth.model.ml)
+```
+
+
+### cubic time
+```{r}
+final.model3.ml <- lme(MDRD~donor.age + therapy +  bpl.drugs + ltime + I(ltime^2) +I(ltime^3)  , random =~ltime + I(ltime^2) + I(ltime^3)|factor(id), data = lkidney, method = "ML")
+anova(final.model2, final.model3.ml )
+```
+
+
+

@@ -4,8 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,9 +49,33 @@ public class SimpleContainer {
             // we have to check dependencies of concrete class, not interface
             Class<T> concreteType = containerEntry.type;
             checkDependencies(concreteType, new ArrayList<>(Collections.singletonList(concreteType)));
-            return containerEntry.resolve();
+            T instance = containerEntry.resolve();
+            resolveInjectedMethods(instance);
+            return instance;
         } else {
             throw new NotRegisteredClassException("Couldn't find class: " + type.getName());
+        }
+    }
+
+    private <T> void resolveInjectedMethods(T instance) throws ResolveException {
+        List<Executable> methods = Arrays.asList(instance.getClass().getMethods());
+        List<Executable> annotatedMethods = getAnnotatedExecutables(methods);
+        for(Executable executable : annotatedMethods){
+            Method method = (Method) executable;
+            if(!method.getReturnType().equals(Void.TYPE)){
+                continue;
+            }
+            Class[] parameters = method.getParameterTypes();
+            for(Class parameter : parameters){
+                //TO DO - concrete types - tests for that
+                checkDependencies(parameter, new ArrayList<>(Collections.singletonList(parameter)));
+            }
+            try {
+                //getDependencies is wise enough to get concreteTypes
+                method.invoke(instance, getDependencies(parameters));
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                throw new ResolveException(e);
+            }
         }
     }
 
@@ -97,36 +120,38 @@ public class SimpleContainer {
 
     @VisibleForTesting
     Constructor getConstructor(Class type) throws ResolveException {
-        List<Constructor> constructors = Arrays.asList(type.getConstructors());
+        List<Executable> constructors = Arrays.asList(type.getConstructors());
         if (constructors.isEmpty()) {
             constructors = Arrays.asList(type.getDeclaredConstructors());
         }
-        List<Constructor> annotatedConstructors = constructors.stream()
-                .filter(c -> Arrays.stream(c.getDeclaredAnnotations())
-                        .map(Annotation::annotationType).collect(Collectors.toList())
-                        .contains(Inject.class)).collect(Collectors.toList());
+        List<Executable> annotatedConstructors = getAnnotatedExecutables(constructors);
 
         switch (annotatedConstructors.size()) {
             case 0:
-                List<Integer> lengths = constructors.stream().map(Constructor::getParameterCount)
+                List<Integer> lengths = constructors.stream().map(Executable::getParameterCount)
                         .collect(Collectors.toList());
                 int maximumLength = Collections.max(lengths);
                 if (lengths.indexOf(maximumLength) != lengths.lastIndexOf(maximumLength)) {
                     throw new EqualLengthConstructorsException("Two constructors with the same " +
                             "number of parameters");
                 }
-                return Collections.max(constructors, Comparator.comparing(Constructor::getParameterCount));
+                return (Constructor) Collections.max(constructors, Comparator.comparing(Executable::getParameterCount));
             case 1:
-                return annotatedConstructors.get(0);
+                return (Constructor) annotatedConstructors.get(0);
             default:
-                throw new TooManyInjectableConstuctors("Too many constructors for:" + type.getName());
-
-
+                throw new TooManyInjectableConstructors("Too many constructors for:" + type.getName());
         }
     }
 
     public void clear() {
         registeredTypes.clear();
+    }
+
+    private List<Executable> getAnnotatedExecutables(List<Executable> executables) {
+        return executables.stream()
+                .filter(c -> Arrays.stream(c.getDeclaredAnnotations())
+                        .map(Annotation::annotationType).collect(Collectors.toList())
+                        .contains(Inject.class)).collect(Collectors.toList());
     }
 }
 
@@ -167,9 +192,9 @@ class RegisterClassException extends Exception {
     }
 }
 
-class TooManyInjectableConstuctors extends ResolveException {
+class TooManyInjectableConstructors extends ResolveException {
 
-    TooManyInjectableConstuctors(String message) {
+    TooManyInjectableConstructors(String message) {
         super(message);
     }
 }

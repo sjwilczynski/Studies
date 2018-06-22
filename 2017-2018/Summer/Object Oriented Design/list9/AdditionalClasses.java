@@ -123,3 +123,23 @@ class M {
         this.b2 = b2;
     }
 }
+
+class N {
+    Bar b1;
+    Bar b2;
+    Bar b3;
+
+    public N(Bar b){
+        this.b1 = b;
+    }
+
+    @Inject
+    public void setB1(Bar b2) {
+        this.b2 = b2;
+    }
+
+    @Inject
+    public void setB3(Bar b3) {
+        this.b3 = b3;
+    }
+}

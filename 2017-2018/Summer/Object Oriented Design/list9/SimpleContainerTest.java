@@ -193,6 +193,20 @@ class SimpleContainerTest {
     @Test
     void twoAnnotatedConstructors() throws RegisterClassException, UnknownLifecycleException {
         container.registerType(L.class, ContainerEntryType.INSTANTIABLE);
-        assertThrows(TooManyInjectableConstuctors.class, () -> container.resolve(L.class));
+        assertThrows(TooManyInjectableConstructors.class, () -> container.resolve(L.class));
     }
+
+    //list 11
+
+    @Test
+    void methodInjection() throws RegisterClassException, UnknownLifecycleException, ResolveException {
+        container.registerType(Bar.class, ContainerEntryType.INSTANTIABLE);
+        container.registerType(N.class, ContainerEntryType.INSTANTIABLE);
+        N n = container.resolve(N.class);
+        assertNotNull(n.b1);
+        assertNotNull(n.b2);
+        assertNotNull(n.b3);
+    }
+
+
 }

@@ -163,12 +163,7 @@ class SimpleContainerTest {
     void cyclePreventedByInstances() throws RegisterClassException, UnknownLifecycleException,
             ResolveException {
         container.registerInstance(A.class, new A());
-        container.registerType(Woo.class, ContainerEntryType.SINGLETON);
-        container.registerType(B.class, ContainerEntryType.INSTANTIABLE);
-        container.registerType(Bar.class, ContainerEntryType.INSTANTIABLE);
-        container.registerType(SubBar.class, ContainerEntryType.INSTANTIABLE);
-        container.registerType(F.class, ContainerEntryType.INSTANTIABLE);
-        container.registerType(F.class, ContainerEntryType.INSTANTIABLE);
+        initializeADependencies();
         B b = container.resolve(B.class);
         assertNotNull(b);
     }
@@ -200,13 +195,53 @@ class SimpleContainerTest {
 
     @Test
     void methodInjection() throws RegisterClassException, UnknownLifecycleException, ResolveException {
-        container.registerType(Bar.class, ContainerEntryType.INSTANTIABLE);
-        container.registerType(N.class, ContainerEntryType.INSTANTIABLE);
-        N n = container.resolve(N.class);
-        assertNotNull(n.b1);
+        N n = getNFromContainer();
         assertNotNull(n.b2);
         assertNotNull(n.b3);
     }
 
+    @Test
+    void notAnnotatedMethodNotInjected() throws RegisterClassException, ResolveException, UnknownLifecycleException {
+        N n = getNFromContainer();
+        assertNull(n.b5);
+    }
+
+    @Test
+    void nonVoidMethodNtoInjected() throws RegisterClassException, ResolveException, UnknownLifecycleException {
+        N n = getNFromContainer();
+        assertNull(n.b4);
+    }
+
+    @Test
+    void methodInjectionDependenciesProblem() throws RegisterClassException, UnknownLifecycleException {
+        container.registerType(A.class, ContainerEntryType.SINGLETON);
+        initializeADependencies();
+        container.registerType(O.class, ContainerEntryType.INSTANTIABLE);
+        assertThrows(DependencyCycleException.class, () -> container.resolve(O.class));
+    }
+
+    @Test
+    void buildUp() throws RegisterClassException, UnknownLifecycleException, ResolveException {
+        container.registerType(Bar.class, ContainerEntryType.INSTANTIABLE);
+        N n = new N(new SubBar());
+        container.buildUp(n);
+        assertNotNull(n.b2);
+        assertNotNull(n.b3);
+    }
+
+    private N getNFromContainer() throws UnknownLifecycleException, RegisterClassException, ResolveException {
+        container.registerType(Bar.class, ContainerEntryType.INSTANTIABLE);
+        container.registerType(N.class, ContainerEntryType.INSTANTIABLE);
+        return container.resolve(N.class);
+    }
+
+    private void initializeADependencies() throws UnknownLifecycleException, RegisterClassException {
+        container.registerType(Woo.class, ContainerEntryType.SINGLETON);
+        container.registerType(Foo.class, ContainerEntryType.INSTANTIABLE);
+        container.registerType(B.class, ContainerEntryType.INSTANTIABLE);
+        container.registerType(Bar.class, ContainerEntryType.INSTANTIABLE);
+        container.registerType(SubBar.class, ContainerEntryType.INSTANTIABLE);
+        container.registerType(F.class, ContainerEntryType.INSTANTIABLE);
+    }
 
 }

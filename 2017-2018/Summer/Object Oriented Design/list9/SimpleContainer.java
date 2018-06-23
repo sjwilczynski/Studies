@@ -4,7 +4,10 @@ import com.google.common.annotations.VisibleForTesting;
 
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,9 +16,11 @@ public class SimpleContainer {
 
 
     private Map<Class, ContainerEntry> registeredTypes;
+    private Map<Class, Boolean> hasDependenciesChecked;
 
     SimpleContainer() {
         this.registeredTypes = new HashMap<>();
+        this.hasDependenciesChecked = new HashMap<>();
     }
 
 
@@ -57,22 +62,30 @@ public class SimpleContainer {
         }
     }
 
+    public <T> void buildUp(T instance) throws ResolveException {
+        resolveInjectedMethods(instance);
+    }
+
     private <T> void resolveInjectedMethods(T instance) throws ResolveException {
-        List<Executable> methods = Arrays.asList(instance.getClass().getMethods());
-        List<Executable> annotatedMethods = getAnnotatedExecutables(methods);
-        for(Executable executable : annotatedMethods){
+        List<Executable> annotatedMethods = getAnnotatedExecutables(Arrays.asList(instance.getClass().getMethods()));
+        for (Executable executable : annotatedMethods) {
             Method method = (Method) executable;
-            if(!method.getReturnType().equals(Void.TYPE)){
+            if (!method.getReturnType().equals(Void.TYPE)) {
                 continue;
             }
-            Class[] parameters = method.getParameterTypes();
-            for(Class parameter : parameters){
-                //TO DO - concrete types - tests for that
-                checkDependencies(parameter, new ArrayList<>(Collections.singletonList(parameter)));
+            Class[] parameterTypes = method.getParameterTypes();
+            for (Class type : parameterTypes) {
+                if (registeredTypes.containsKey(type)) {
+                    // we have to check dependencies of concrete class, not interface
+                    Class concreteType = registeredTypes.get(type).type;
+                    checkDependencies(concreteType, new ArrayList<>(Collections.singletonList(concreteType)));
+                } else {
+                    throw new NotRegisteredClassException("Couldn't find class: " + type.getName());
+                }
             }
             try {
                 //getDependencies is wise enough to get concreteTypes
-                method.invoke(instance, getDependencies(parameters));
+                method.invoke(instance, getDependencies(parameterTypes));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new ResolveException(e);
             }
@@ -100,22 +113,33 @@ public class SimpleContainer {
     @VisibleForTesting
     void checkDependencies(Class type, List<Class> classes) throws ResolveException {
         //if it is registered as instance we don't care about constructors
-        if (!(registeredTypes.get(type) instanceof Instance)) {
-            Constructor constructor = getConstructor(type);
-            Class[] params = constructor.getParameterTypes();
-            for (Class param : params) {
-                if (!registeredTypes.containsKey(param)) {
-                    throw new NotRegisteredClassException("Couldn't find class: " + param.getName());
-                }
-                Class concreteClass = registeredTypes.get(param).type;
-                if (classes.contains(concreteClass)) {
-                    throw new DependencyCycleException("Cycle in dependencies");
-                }
-                classes.add(concreteClass);
-                checkDependencies(concreteClass, classes);
-                classes.remove(concreteClass);
+        if (registeredTypes.get(type) instanceof Instance) {
+            return;
+        }
+        if (hasDependenciesChecked.containsKey(type)) {
+            if (hasDependenciesChecked.get(type)) {
+                // already checked
+                return;
+            } else {
+                throw new DependencyCycleException("Cycle in dependencies");
             }
         }
+        Constructor constructor = getConstructor(type);
+        Class[] params = constructor.getParameterTypes();
+        for (Class param : params) {
+            if (!registeredTypes.containsKey(param)) {
+                throw new NotRegisteredClassException("Couldn't find class: " + param.getName());
+            }
+            Class concreteClass = registeredTypes.get(param).type;
+            if (classes.contains(concreteClass)) {
+                hasDependenciesChecked.put(type, false);
+                throw new DependencyCycleException("Cycle in dependencies");
+            }
+            classes.add(concreteClass);
+            checkDependencies(concreteClass, classes);
+            classes.remove(concreteClass);
+        }
+        hasDependenciesChecked.put(type, true);
     }
 
     @VisibleForTesting

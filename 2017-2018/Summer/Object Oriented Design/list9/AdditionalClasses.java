@@ -5,6 +5,8 @@ import javax.inject.Inject;
 interface Fooable {
 }
 
+interface IA {}
+
 class Foo implements Fooable {
 }
 
@@ -30,7 +32,7 @@ class Moo {
     }
 }
 
-class A {
+class A implements IA {
     A(Woo woo, Foo foo, B b) {
     }
 
@@ -128,6 +130,8 @@ class N {
     Bar b1;
     Bar b2;
     Bar b3;
+    Bar b4;
+    Bar b5;
 
     public N(Bar b){
         this.b1 = b;
@@ -141,5 +145,24 @@ class N {
     @Inject
     public void setB3(Bar b3) {
         this.b3 = b3;
+    }
+
+    @Inject
+    public Bar setB4(Bar b4){
+        this.b4 = b4;
+        return b4;
+    }
+
+    public void setB5(Bar b5) {
+        this.b5 = b5;
+    }
+}
+
+class O {
+    A a;
+
+    @Inject
+    public void setA(A a) {
+        this.a = a;
     }
 }

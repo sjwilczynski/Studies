@@ -81,4 +81,9 @@ Winter 2018/2019:
 * Seminar: Agile Software Development
 * Seminar: Implementing User Interfaces
 
+Summer 2018/2019:
+
+* Another View of Economy
+* Design and implementation of advanced PHP applications
+
 

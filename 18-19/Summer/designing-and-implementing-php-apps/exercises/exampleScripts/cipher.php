@@ -4,10 +4,10 @@ use ciphers\Cipher;
 use ciphers\CipherException;
 
 
-require 'vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 if ($argc != 4) {
-    exit("You should pass 3 parameters");
+    exit("You should pass 3 parameters" . PHP_EOL);
 }
 
 try {
@@ -15,6 +15,6 @@ try {
     $modifiedText = $cipher->cypher($argv[3]);
     echo $modifiedText . PHP_EOL;
 } catch (CipherException $e) {
-    exit("You should pass as key and values strings of the same lengths");
+    exit("You should pass as key and values strings of the same lengths" . PHP_EOL);
 }
 

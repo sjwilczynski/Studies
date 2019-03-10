@@ -1,7 +1,7 @@
 <?php
 
-use ciphers\Cipher;
-use ciphers\CipherException;
+namespace ciphers;
+
 use PHPUnit\Framework\TestCase;
 
 // ./vendor/bin/phpunit --testdox ./tests -- run tests with pretty output
@@ -45,6 +45,6 @@ class CipherTest extends TestCase {
     private function performTest(string $oldChar, string $newChars, string $oldText, string $newText): void {
         $cipher = new Cipher($oldChar, $newChars);
         $modifiedText = $cipher->cypher($oldText);
-        $this->assertEquals($newText, $modifiedText);
+        self::assertEquals($newText, $modifiedText);
     }
 }

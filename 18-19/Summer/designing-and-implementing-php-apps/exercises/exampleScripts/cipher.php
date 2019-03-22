@@ -1,7 +1,7 @@
 <?php
 
-use ciphers\Cipher;
-use ciphers\CipherException;
+use list1\Cipher;
+use list1\CipherException;
 
 
 require __DIR__.'/../vendor/autoload.php';

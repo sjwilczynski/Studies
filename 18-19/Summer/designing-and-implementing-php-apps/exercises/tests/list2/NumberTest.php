@@ -1,6 +1,6 @@
 <?php
 
-namespace numbers;
+namespace list2;
 
 use PHPUnit\Framework\TestCase;
 

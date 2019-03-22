@@ -1,6 +1,6 @@
 <?php
 
-namespace numbers;
+namespace list2;
 
 class StandardNumberFormatter implements NumberFormatter {
 

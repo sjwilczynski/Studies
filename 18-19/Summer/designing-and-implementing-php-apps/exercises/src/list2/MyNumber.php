@@ -1,6 +1,6 @@
 <?php
 
-namespace numbers;
+namespace list2;
 
 //without renaming there are warnings in add
 class MyNumber {

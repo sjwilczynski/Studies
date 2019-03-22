@@ -1,8 +1,8 @@
 <?php
 
-use numbers\MyNumber;
-use numbers\RomanNumberFormatter;
-use numbers\RomanNumberRangeExceededException;
+use list2\MyNumber;
+use list2\RomanNumberFormatter;
+use list2\RomanNumberRangeExceededException;
 
 
 require __DIR__ . '/../vendor/autoload.php';

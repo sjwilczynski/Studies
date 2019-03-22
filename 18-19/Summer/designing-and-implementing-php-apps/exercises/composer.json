@@ -1,8 +1,8 @@
 {
   "autoload": {
     "psr-4": {
-      "ciphers\\": "src/list1",
-      "numbers\\": "src/list2"
+      "list1\\": "src/list1",
+      "list2\\": "src/list2"
     }
   },
   "require-dev": {

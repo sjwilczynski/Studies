@@ -4,7 +4,7 @@ namespace list1;
 
 use PHPUnit\Framework\TestCase;
 
-// ./vendor/bin/phpunit --testdox ./tests -- run tests with pretty output
+// ./vendor/bin/phpunit --testdox ./test -- run test with pretty output
 
 class CipherTest extends TestCase {
 

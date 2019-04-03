@@ -32,7 +32,7 @@ abstract class SorterTestCase extends TestCase {
         $a1 = new Application($students[0], new DateTimeImmutable("2019-03-16"), 30);
         $a2 = new Application($students[1], new DateTimeImmutable("2019-03-15"), 40);
         $a3 = new Application($students[2], new DateTimeImmutable("2019-03-17"), 50);
-        $a4 = new Application($students[3], new DateTimeImmutable("2019-03-18"), 60);
+        $a4 = new Application($students[3], new DateTimeImmutable("2019-03-18"), 20);
 
         return array($a1, $a2, $a3, $a4);
     }

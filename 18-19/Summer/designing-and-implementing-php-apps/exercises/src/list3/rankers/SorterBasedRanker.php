@@ -5,7 +5,7 @@ namespace list3\rankers;
 
 
 use list3\Application;
-use list3\ListSorter;
+use list3\sorters\ListSorter;
 
 class SorterBasedRanker implements ApplicationListRanker {
 

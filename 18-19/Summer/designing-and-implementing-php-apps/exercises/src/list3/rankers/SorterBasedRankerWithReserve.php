@@ -30,7 +30,9 @@ class SorterBasedRankerWithReserve extends SorterBasedRanker implements Applicat
     /**
      * @return Application[]
      */
-    public function getReserveApplications(): array {
-        return $this->groupedApplications[2];
+    public function getReserveStudents(ListSorter $sorter): array {
+        return array_map(function (Application $application) {
+            return $application->getStudent();
+        }, $sorter->sort($this->groupedApplications[2]));
     }
 }

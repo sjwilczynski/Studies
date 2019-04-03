@@ -4,19 +4,23 @@
 namespace list3\rankers;
 
 
-use list3\Application;
+use list3\sorters\ListSorter;
+use list3\Student;
 
+//for me it is not well defined point of change
 interface ApplicationListRanker {
 
 
     public function prepareRanking(array $applications);
+
     /**
-     * @return Application[]
+     * @return Student[]
      */
-    public function getAcceptedApplications() : array;
+    public function getAcceptedStudents(ListSorter $sorter): array;
+
     /**
-     * @return Application[]
+     * @return Student[]
      */
-    public function getRejectedApplications() : array;
+    public function getRejectedStudents(ListSorter $sorter): array;
 
 }

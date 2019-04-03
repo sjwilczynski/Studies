@@ -1,11 +1,10 @@
 <?php
 
 
-namespace list3\sorters\application;
+namespace list3\sorters;
 
 
 use list3\Application;
-use list3\sorters\ListSorter;
 
 class DateSorter implements ListSorter {
 

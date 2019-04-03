@@ -1,19 +1,18 @@
 <?php
 
-namespace list3\sorters\application;
 
-
+namespace list3\sorters;
 
 
 use list3\Application;
-use list3\sorters\ListSorter;
 
-class PointsSorter implements ListSorter {
+class FirstNameSorter implements ListSorter {
 
     public function sort(array $list): array {
         $newList = $list;
         usort($newList, function (Application $application1, Application $application2) {
-            return $application1->getPoints() - $application2->getPoints();
+            //Not ok with LSP?
+            return strcmp($application1->getStudent()->getFirstName(), $application2->getStudent()->getFirstName());
         });
         return $newList;
     }

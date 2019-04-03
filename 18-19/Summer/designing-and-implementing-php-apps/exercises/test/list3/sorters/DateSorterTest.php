@@ -1,8 +1,6 @@
 <?php
 
-namespace list3\sorters\application;
-
-use list3\sorters\SorterTestCase;
+namespace list3\sorters;
 
 class DateSorterTest extends SorterTestCase {
 

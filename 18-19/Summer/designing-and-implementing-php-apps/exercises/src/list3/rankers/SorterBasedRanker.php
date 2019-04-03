@@ -43,14 +43,18 @@ class SorterBasedRanker implements ApplicationListRanker {
     /**
      * @return Application[]
      */
-    public function getAcceptedApplications(): array {
-        return $this->groupedApplications[0];
+    public function getAcceptedStudents(ListSorter $sorter): array {
+        return array_map(function (Application $application) {
+            return $application->getStudent();
+        }, $sorter->sort($this->groupedApplications[0]));
     }
 
     /**
      * @return Application[]
      */
-    public function getRejectedApplications(): array {
-        return $this->groupedApplications[1];
+    public function getRejectedStudents(ListSorter $sorter): array {
+        return array_map(function (Application $application) {
+            return $application->getStudent();
+        }, $sorter->sort($this->groupedApplications[1]));
     }
 }

@@ -3,12 +3,13 @@
 
 namespace list3\rankers;
 
-use list3\Application;
+use list3\sorters\ListSorter;
+use list3\Student;
 
 interface ApplicationListRankerWithReserve extends ApplicationListRanker {
 
     /**
-     * @return Application[]
+     * @return Student[]
      */
-    public function getReserveApplications() : array;
+    public function getReserveStudents(ListSorter $sorter): array;
 }

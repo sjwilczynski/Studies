@@ -1,0 +1,13 @@
+{% extends "main.twig" %}
+
+{% block title %} Accounts view {% endblock %}
+
+{% block accountsView %}
+    {% for account in accounts %}
+        * {{ account.email }}
+        * {{ account.description }}
+        * {{ account.points }}
+        * {{ account.active }}
+    {% endfor %}
+
+{% endblock %}

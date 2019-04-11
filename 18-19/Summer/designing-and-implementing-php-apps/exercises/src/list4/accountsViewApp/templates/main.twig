@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     {% block head %}
-        {#<link rel="stylesheet" href="style.css"/>#}
+        <link rel="stylesheet" href="{{ asset('accountsView.css', 'css') }}"/>
         <title>{% block title %}{% endblock %} - my page</title>
     {% endblock %}
 </head>
 <body>
 <div>
-    {% block accountsView %}{% endblock %}
+    {% block content %}{% endblock %}
 </div>
 </body>
 </html>

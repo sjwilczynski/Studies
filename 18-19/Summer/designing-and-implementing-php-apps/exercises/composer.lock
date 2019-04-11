@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-  "content-hash": "c9a4fe88706c903604e9bc6961b2496b",
+  "content-hash": "598d1a99b1c3f8fc8ea60732b3862a33",
   "packages": [
     {
       "name": "container-interop/container-interop",
@@ -219,6 +219,45 @@
         "url"
       ],
       "time": "2018-12-04T20:46:45+00:00"
+    },
+    {
+      "name": "lovecoding/twig-asset",
+      "version": "v1.1.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/thangl3/simple-twig-asset.git",
+        "reference": "be08c8b61d5942e3244a972406786bc25c6a387a"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/thangl3/simple-twig-asset/zipball/be08c8b61d5942e3244a972406786bc25c6a387a",
+        "reference": "be08c8b61d5942e3244a972406786bc25c6a387a",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^7.0",
+        "psr/http-message": "^1.0",
+        "symfony/asset": "^4.2",
+        "twig/twig": "^2.0|^3.4"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "LoveCoding\\TwigAsset\\": "src"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "thangl3",
+          "email": "lethethangdn@gmail.com"
+        }
+      ],
+      "description": "A simple twig asset extension for Slim 3.x",
+      "time": "2018-12-15T08:46:12+00:00"
     },
     {
       "name": "nikic/fast-route",
@@ -576,6 +615,62 @@
         "view"
       ],
       "time": "2019-04-06T16:34:38+00:00"
+    },
+    {
+      "name": "symfony/asset",
+      "version": "v4.2.5",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/asset.git",
+        "reference": "7eee96a8630f9448304ae4f0e3b474ea4e033664"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/asset/zipball/7eee96a8630f9448304ae4f0e3b474ea4e033664",
+        "reference": "7eee96a8630f9448304ae4f0e3b474ea4e033664",
+        "shasum": ""
+      },
+      "require": {
+        "php": "^7.1.3"
+      },
+      "require-dev": {
+        "symfony/http-foundation": "~3.4|~4.0",
+        "symfony/http-kernel": "~3.4|~4.0"
+      },
+      "suggest": {
+        "symfony/http-foundation": ""
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "4.2-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Symfony\\Component\\Asset\\": ""
+        },
+        "exclude-from-classmap": [
+          "/Tests/"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Fabien Potencier",
+          "email": "fabien@symfony.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Symfony Asset Component",
+      "homepage": "https://symfony.com",
+      "time": "2019-01-16T20:35:37+00:00"
     },
     {
       "name": "symfony/polyfill-ctype",

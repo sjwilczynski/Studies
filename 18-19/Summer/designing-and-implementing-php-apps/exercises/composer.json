@@ -17,6 +17,7 @@
     "slim/slim": "^3.12",
     "slim/twig-view": "^2.5",
     "ext-json": "*",
-    "guzzlehttp/guzzle": "~6.0"
+    "guzzlehttp/guzzle": "~6.0",
+    "lovecoding/twig-asset": "^1.1"
   }
 }

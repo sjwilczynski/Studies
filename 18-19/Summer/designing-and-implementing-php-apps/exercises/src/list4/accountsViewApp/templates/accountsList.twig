@@ -2,12 +2,29 @@
 
 {% block title %} Accounts view {% endblock %}
 
-{% block accountsView %}
-    {% for account in accounts %}
-        * {{ account.email }}
-        * {{ account.description }}
-        * {{ account.points }}
-        * {{ account.active }}
-    {% endfor %}
+{% block content %}
+    <table>
+        <caption>Accounts:</caption>
+        <thead>
+        <tr>
+            <th> ID</th>
+            <th> Email</th>
+            <th> Description</th>
+            <th> Points</th>
+            <th> Active</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for account in accounts %}
+            <tr>
+                <td> {{ account.id }} </td>
+                <td> {{ account.email }}  </td>
+                <td> {{ account.description }}  </td>
+                <td> {{ account.points }}  </td>
+                <td> {{ account.active ? 'Yes' : 'No' }}  </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}

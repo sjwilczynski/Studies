@@ -2,6 +2,7 @@
 
 use list4\accountsViewApp\classes\AccountsController;
 use list4\accountsViewApp\classes\AccountServiceHttp;
+use LoveCoding\TwigAsset\TwigAssetManagement;
 use Slim\App;
 use Slim\Container;
 use Slim\Http\Environment;
@@ -23,6 +24,13 @@ $container['view'] = function (Container $container) {
     $router = $container->get('router');
     $uri = Uri::createFromEnvironment(new Environment($_SERVER));
     $view->addExtension(new TwigExtension($router, $uri));
+
+    $assetManager = new TwigAssetManagement([
+        'verion' => '1'
+    ]);
+    $assetManager->addPath('css', 'styles/');
+
+    $view->addExtension($assetManager->getAssetExtension());
 
     return $view;
 };

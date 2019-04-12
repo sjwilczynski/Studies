@@ -3,28 +3,32 @@
 {% block title %} Accounts view {% endblock %}
 
 {% block content %}
-    <table>
-        <caption>Accounts:</caption>
-        <thead>
-        <tr>
-            <th> ID</th>
-            <th> Email</th>
-            <th> Description</th>
-            <th> Points</th>
-            <th> Active</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for account in accounts %}
+    {% if accounts %}
+        <table>
+            <caption>Accounts:</caption>
+            <thead>
             <tr>
-                <td> {{ account.id }} </td>
-                <td> {{ account.email }}  </td>
-                <td> {{ account.description }}  </td>
-                <td> {{ account.points }}  </td>
-                <td> {{ account.active ? 'Yes' : 'No' }}  </td>
+                <th> ID</th>
+                <th> Email</th>
+                <th> Description</th>
+                <th> Points</th>
+                <th> Active</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+                <tr>
+                    <td> {{ account.id }} </td>
+                    <td> {{ account.email }}  </td>
+                    <td> {{ account.description }}  </td>
+                    <td> {{ account.points }}  </td>
+                    <td> {{ account.active ? 'Yes' : 'No' }}  </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <span class="warning">There are no accounts in the system!</span>
+    {% endif %}
 
 {% endblock %}

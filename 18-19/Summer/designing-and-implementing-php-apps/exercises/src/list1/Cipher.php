@@ -2,11 +2,6 @@
 
 namespace list1;
 
-use Exception;
-
-
-class CipherException extends Exception {
-}
 
 class Cipher {
     private $cipherMap;

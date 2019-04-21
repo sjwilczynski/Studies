@@ -2,9 +2,6 @@
 
 namespace list2;
 
-class RomanNumberRangeExceededException extends \Exception {
-}
-
 class RomanNumberFormatter implements NumberFormatter {
 
     private $romanNumerals = array(

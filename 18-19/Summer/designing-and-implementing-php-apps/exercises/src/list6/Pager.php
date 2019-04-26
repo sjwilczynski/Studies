@@ -44,6 +44,7 @@ class Pager {
         if ($offset > $this->getPagesCount()) {
             throw new PageIndexOutOfBoundsException();
         }
+
         $this->pagesOffset = $offset;
     }
 
@@ -85,6 +86,7 @@ class Pager {
     private function getFirstPages(): array {
         $start = 1;
         $end = min($this->getPagesCount(), $this->pagesRange);
+
         return range($start, $end);
     }
 

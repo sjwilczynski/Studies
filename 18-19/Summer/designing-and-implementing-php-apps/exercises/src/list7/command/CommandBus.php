@@ -6,6 +6,8 @@ namespace list7\command;
 use list7\router\NoRouteFoundException;
 use list7\router\Router;
 
+
+/* obczaj symphony messanger */
 class CommandBus {
 
     /**

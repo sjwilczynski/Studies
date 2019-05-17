@@ -19,10 +19,11 @@ class PingPongRegistry {
     /**
      * PingPongRegistry constructor.
      */
-    public function __construct() {
+    private function __construct() {
         $this->registry = array();
     }
 
+    /*w phpie trzeb auwazac na serializacje i deserializacje ktora moglaby dac nowe instancje - metody magiczne wakeUp*/
     public static function getInstance() {
         if (self::$instance == null) {
             self::$instance = new PingPongRegistry();

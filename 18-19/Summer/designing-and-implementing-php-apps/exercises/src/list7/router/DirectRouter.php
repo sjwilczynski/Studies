@@ -4,7 +4,9 @@
 namespace list7\router;
 
 
+use Exception;
 use list7\command\Command;
+use list7\command\IllegalCommandException;
 
 class DirectRouter implements Router {
 
@@ -23,13 +25,19 @@ class DirectRouter implements Router {
 
     /**
      * @throws NoRouteFoundException
+     * @throws IllegalCommandException
      */
     public function route(Command $command) {
         if (!array_key_exists(get_class($command), $this->handlers)) {
             throw new NoRouteFoundException();
         } else {
-            $handler = new $this->handlers[get_class($command)];
-            $handler($command);
+            try {
+                $handler = new $this->handlers[get_class($command)];
+                $handler($command);
+            } catch (Exception $exception) {
+                throw new IllegalCommandException($exception);
+            }
+
         }
     }
 }

@@ -11,7 +11,6 @@ use list8\financialCommitment\events\FinancialCommitmentOverPaid;
 use list8\financialCommitment\events\FinancialCommitmentPaid;
 use list8\financialCommitment\events\FinancialCommitmentPartiallyPaid;
 use Money\Money;
-use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 class FinancialCommitment {
@@ -20,10 +19,6 @@ class FinancialCommitment {
      */
     private $id;
 
-    /**
-     * @var UuidInterface
-     */
-    private $userId;
 
     /**
      * @var Event[]
@@ -35,11 +30,14 @@ class FinancialCommitment {
      */
     private $balance;
 
-    public function __construct(Money $amount, $userId) {
-        $this->id = Uuid::uuid1();
+
+    // gdzie powinno być generowane id dla tworzonych obiektów?? ale chyba jest potrzebne po stronie klienta jeśli używamy jakiejś asynchronicznej kolejki - pytanie z intro07-08
+    // wydaje sie ze wystarczy lazy zmiana stanu w tej klasie - pytanie z task08
+    public function __construct(Money $amount, UuidInterface $id) {
         $this->balance = $amount;
-        $this->userId = $userId;
+        $this->id = $id;
         $this->events[] = new FinancialCommitmentCreated($amount);
+
     }
 
     /**

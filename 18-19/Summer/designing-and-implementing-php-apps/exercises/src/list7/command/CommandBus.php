@@ -8,6 +8,7 @@ use list7\router\Router;
 
 
 /* obczaj symphony messanger */
+
 class CommandBus {
 
     /**
@@ -25,6 +26,7 @@ class CommandBus {
 
     /**
      * @throws NoRouteFoundException
+     * @throws IllegalCommandException
      */
     public function dispatch(Command $command) {
         $this->router->route($command);

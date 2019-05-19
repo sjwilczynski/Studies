@@ -29,6 +29,7 @@ class CommandBusTest extends TestCase {
 
     /**
      * @throws NoRouteFoundException
+     * @throws IllegalCommandException
      */
     public function testPingPongDispatch() {
         $this->commandBus->dispatch(new PingCommand());
@@ -43,6 +44,7 @@ class CommandBusTest extends TestCase {
 
     /**
      * @throws NoRouteFoundException
+     * @throws IllegalCommandException
      */
     public function testNoHandlerDispatch() {
         self::expectException(NoRouteFoundException::class);

@@ -32,12 +32,11 @@ class FinancialCommitment {
 
 
     // gdzie powinno być generowane id dla tworzonych obiektów?? ale chyba jest potrzebne po stronie klienta jeśli używamy jakiejś asynchronicznej kolejki - pytanie z intro07-08
-    // wydaje sie ze wystarczy lazy zmiana stanu w tej klasie - pytanie z task08
     public function __construct(Money $amount, UuidInterface $id) {
         $this->balance = $amount;
         $this->id = $id;
         $this->events[] = new FinancialCommitmentCreated($amount);
-
+        // jednak lepiej jak event ma id commitmentu, bo wtedy mozna latwo szukac po bazie eventow
     }
 
     /**
@@ -61,6 +60,45 @@ class FinancialCommitment {
         }
     }
 
+    // pytanie z 08:
+    // jakbysmy sobie mysleli ze mamy w bazie same eventy to wtedy chcemy oddtwarzac stan z tych eventow (EventSourcing) - wtedy mozna to zrobic tak jak ponizej
+    // wersjonowanie po to zeby uniknac problemow jak 2 ludzi chce na raz zrobic przeciwstawne operacje (unique na id, typie eventu, wersji)
+    // wydajnosciowo naprawiamy to tak ze co n eventow robmy snapshoty (bo eventy sa append only) i jak pobieramy z repozytorium to aplikujemy eventy tylko od pewnej wersji
+    //problem -  aco jak chcemy zmienic klasy eventw - np wchodzi rodo a uzytkownik chce byc zapomniany - Versioning in Event sourcing systems (ksiazka)
+
+//    protected function record(Event $event)
+//    {
+//        $event->setVersion(++$this->version);
+//
+//        $this->events[] = $event;
+//
+//        $this->apply($event);
+//    }
+//
+//    protected function apply(Event $event)
+//    {
+//        switch (get_class($event)) {
+//            case FinancialCommitmentCanceled::class:
+//                $this->status = 'cancelled';
+//                $this->balance = $this->balance->subtract($this->balance);
+//
+//                break;
+//        }
+//    }
+//
+//    public static function fromEvents(array $events)
+//    {
+//        $o = new self();
+//
+//        foreach ($events as $event) {
+//            $o->apply($event);
+//            $o->version = $event->getVersion();
+//        }
+//
+//        return $o;
+//    }
+
+
     /**
      * @throws FinancialCommitmentIllegalOperationException
      */
@@ -71,6 +109,7 @@ class FinancialCommitment {
         }
 
         $this->events[] = new FinancialCommitmentCanceled();
+        //$this->record(new FinancialCommitmentCanceled()); - do EventSoucingu
     }
 
     public function getBalance(): Money {

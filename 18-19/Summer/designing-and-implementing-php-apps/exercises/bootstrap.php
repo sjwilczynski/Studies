@@ -29,5 +29,8 @@ PhpEnumType::registerEnumType(Status::class);
 $platform = $entityManager->getConnection()->getDatabasePlatform();
 $platform->registerDoctrineTypeMapping('string', Status::class);
 
+Type::addType('uuid', 'Ramsey\Uuid\Doctrine\UuidType');
+$platform->registerDoctrineTypeMapping('string', 'uuid');
+
 Type::addType('currency', 'Mdg\Money\Doctrine\CurrencyType');
 $platform->registerDoctrineTypeMapping('string', 'currency');

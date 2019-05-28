@@ -1,0 +1,13 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="list9\Transaction" table="transactions">
+        <id name="id" type="integer"/>
+        <field name="amount" type="Money"/>
+        <field name="toAccount"/>
+        <field name="fromAccount"/>
+        <field name="status" type="Status"/>
+    </entity>
+</doctrine-mapping>

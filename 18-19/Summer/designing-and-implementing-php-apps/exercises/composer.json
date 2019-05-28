@@ -22,6 +22,8 @@
     "guzzlehttp/guzzle": "~6.0",
     "lovecoding/twig-asset": "^1.1",
     "ramsey/uuid": "^3.8",
-    "moneyphp/money": "^3.2"
+    "moneyphp/money": "^3.2",
+    "myclabs/php-enum": "^1.7",
+    "doctrine/orm": "^2.6.2"
   }
 }

@@ -5,9 +5,9 @@
 
     <entity name="list9\Transaction" table="transactions">
         <id name="id" type="integer"/>
-        <field name="amount" type="Money"/>
+        <embedded name="amount" class="Money\Money"/>
         <field name="toAccount"/>
         <field name="fromAccount"/>
-        <field name="status" type="Status"/>
+        <field name="status" type="list9\Status"/>
     </entity>
 </doctrine-mapping>

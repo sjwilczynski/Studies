@@ -24,6 +24,8 @@
     "ramsey/uuid": "^3.8",
     "moneyphp/money": "^3.2",
     "myclabs/php-enum": "^1.7",
-    "doctrine/orm": "^2.6.2"
+    "doctrine/orm": "^2.6.2",
+    "michaelgooden/mdg-money-doctrine": "^0.1.0",
+    "acelaya/doctrine-enum-type": "^2.2"
   }
 }

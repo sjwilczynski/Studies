@@ -13,7 +13,7 @@ class DoctrineTransactionRepository extends EntityRepository implements Transact
 
 
     public function get(Uuid $transactionId): Transaction {
-        return $this->_em->find(Transaction::class, $transactionId);
+        return $this->_em->find('list9\Transaction', $transactionId);
     }
 
     public function save(Transaction $transaction): void {

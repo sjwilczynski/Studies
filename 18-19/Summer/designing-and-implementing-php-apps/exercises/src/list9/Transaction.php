@@ -51,5 +51,68 @@ class Transaction {
         $this->status = $status;
     }
 
+    /**
+     * @return Uuid
+     */
+    public function getId(): Uuid {
+        return $this->id;
+    }
+
+    /**
+     * @return Money
+     */
+    public function getAmount(): Money {
+        return $this->amount;
+    }
+
+    /**
+     * @param Money $amount
+     */
+    public function setAmount(Money $amount): void {
+        $this->amount = $amount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFromAccount(): string {
+        return $this->fromAccount;
+    }
+
+    /**
+     * @param string $fromAccount
+     */
+    public function setFromAccount(string $fromAccount): void {
+        $this->fromAccount = $fromAccount;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToAccount(): string {
+        return $this->toAccount;
+    }
+
+    /**
+     * @param string $toAccount
+     */
+    public function setToAccount(string $toAccount): void {
+        $this->toAccount = $toAccount;
+    }
+
+    /**
+     * @return Status
+     */
+    public function getStatus(): Status {
+        return $this->status;
+    }
+
+    /**
+     * @param Status $status
+     */
+    public function setStatus(Status $status): void {
+        $this->status = $status;
+    }
+
 
 }

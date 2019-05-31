@@ -12,14 +12,14 @@ $transactionRepository = $entityManager->getRepository('list9\Transaction');
 
 
 //create and save
-$newTransaction = new Transaction(Uuid::uuid1(), Money::PLN(50), 'acc4', 'acc7', Status::CLOSED());
+$newTransaction = new Transaction(Uuid::uuid1(), Money::PLN(5000), 'acc4', 'acc7', Status::CLOSED());
 $transactionRepository->save($newTransaction);
 
 //fetch, edit, save
 
 $id = Uuid::fromString('a35db5cc-816f-11e9-94c0-3c2c30aa334b');
 $transaction = $transactionRepository->get($id);
-$transaction->setAmount(Money::USD(300));
+$transaction->setAmount(Money::USD(1234));
 $transactionRepository->save($transaction);
 
 // transaction finder

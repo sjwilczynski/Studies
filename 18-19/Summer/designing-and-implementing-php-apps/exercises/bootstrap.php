@@ -30,6 +30,7 @@ $platform = $entityManager->getConnection()->getDatabasePlatform();
 $platform->registerDoctrineTypeMapping('string', Status::class);
 
 Type::addType('uuid', 'Ramsey\Uuid\Doctrine\UuidType');
+//should be uuid type because string can lead to performance problems
 $platform->registerDoctrineTypeMapping('string', 'uuid');
 
 Type::addType('currency', 'Mdg\Money\Doctrine\CurrencyType');

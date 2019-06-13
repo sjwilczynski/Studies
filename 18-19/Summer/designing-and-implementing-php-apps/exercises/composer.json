@@ -27,6 +27,7 @@
     "doctrine/orm": "^2.6.2",
     "michaelgooden/mdg-money-doctrine": "^0.1.0",
     "acelaya/doctrine-enum-type": "^2.2",
-    "ramsey/uuid-doctrine": "^1.5"
+    "ramsey/uuid-doctrine": "^1.5",
+    "symfony/console": "^4.3"
   }
 }

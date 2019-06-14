@@ -33,6 +33,7 @@ class NumbersCommand extends Command {
         $base = $input->getArgument(self::$BASE_ARGUMENT);
 
         $value = new MyNumber(intval($number, $base), $base);
+        //formatter powininen zostac wstrzykniety przez kontener DI
         $formatter = new RomanNumberFormatter();
         try {
             $formattedValue = $formatter->format($value);

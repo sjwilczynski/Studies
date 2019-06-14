@@ -85,5 +85,5 @@ Summer 2018/2019:
 
 * Another View of Economy
 * Design and implementation of advanced PHP applications
-
+* Workshop - making a start-up
 
